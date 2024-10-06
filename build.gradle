@@ -59,18 +59,13 @@ jacoco {
 }
 jacocoTestReport {
 	group "Reporting"
-	dependsOn test
+	mustRunAfter = ['test']
 	reports {
-        xml.required = true
         html.required = true
 	}
 }
 tasks.named('test') {
 	useJUnitPlatform()
+	finalizedBy jacocoTestReport
 	systemProperty 'spring.profiles.active', 'test'
-
-	testLogging {
-		showStandardStreams = true
-		events 'passed', 'skipped', 'failed'
-	}
 }
