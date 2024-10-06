@@ -9,10 +9,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
@@ -27,13 +34,77 @@ jobs:
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
-                ${{ runner.os }}-gradle-
+            ${{ runner.os }}-gradle-
 
       - name: Execute permissions
         run: chmod +x gradlew
 
+      - name: Build
+        run: ./gradlew build
 
-      - name: Build and test
-        run: ./gradlew clean test
+      - name: Test
+        run: ./gradlew test jacocoTestReport
 
+      - name: Deploy report
+        if: ${{ github.ref == 'refs/heads/master' }} # Run only on pushed to master
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "Github Actions"
+
+          # Copy coverage report
+          mkdir -p gh-pages/code-coverage
+          cp -r build/reports/jacoco/test/html/* gh-pages/code-coverage/
+
+          # Copy test reports (JUnit)
+          mkdir -p gh-pages/test-reports
+          cp -r build/reports/tests/test/* gh-pages/test-reports/
+
+          cd gh-pages
+          # Make a simple index to navigate between code coverag and test reports.
+          cat > index.html <<EOF
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Project Reports</title>
+          </head>
+          <body>
+              <h1>Project Reports</h1>
+              <ul>
+                  <li><a href="code-coverage/index.html">Code Coverage Report</a></li>
+                  <li><a href="test-reports/index.html">Test Reports</a></li>
+              </ul>
+          </body>
+          </html>
+          EOF
+
+          # Orphan branch for gh-pages if nonexistend
+          git init
+          git checkout --orphan gh-pages
+          git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+
+          git add *
+          git commit -m "Deploy reports to github pages"
+          git push --force origin gh-pages
+          
+          cd ..
+          rm -rf gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Bump superproject commits
+        if: ${{ github.ref == 'refs/heads/master' }} # Run only on pushed to master
+        run: |
+          mkdir superproject
+          cd superproject
+          git clone https://x-access-token:${{ secrets.BUMP_TOKEN }}@github.com/aeiouxx/nivlalulu .
+          ls -lha
+          git submodule update --init --remote backend
+          cd backend
+          git checkout $GITHUB_SHA
+          cd ..
+          git add backend
+          git commit -m "Update commit version [skip ci]"
+          git push origin master
 
