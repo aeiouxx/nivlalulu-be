@@ -34,4 +34,8 @@ public class Invoice {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
     private List<Product> productList;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }
