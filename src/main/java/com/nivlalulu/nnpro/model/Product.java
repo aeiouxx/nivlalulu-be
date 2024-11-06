@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -30,9 +31,13 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal price;
 
-    @ManyToOne
-    @JoinColumn(name = "invoice_id")
-    private Invoice invoice;
+    @ManyToMany
+    @JoinTable(
+            name = "products_invoice",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "invoice_id")
+    )
+    private Set<Invoice> invoice;
 
     public Product(String name, Integer quantity, BigDecimal price) {
         this.name = name;
@@ -44,6 +49,5 @@ public class Product {
         this.name = name;
         this.quantity = quantity;
         this.price = price;
-        this.invoice = invoice;
     }
 }

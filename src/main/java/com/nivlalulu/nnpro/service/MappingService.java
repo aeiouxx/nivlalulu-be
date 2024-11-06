@@ -25,4 +25,14 @@ public class MappingService {
     public static InvoiceDto convertToDto(Invoice invoice) {
         return modelMapper.map(invoice, InvoiceDto.class);
     }
+
+    public static Product convertToEntity(ProductDto productDto) {
+        return modelMapper.map(productDto, Product.class);
+    }
+
+    public static Invoice convertToEntity(InvoiceDto invoiceDto) {
+        return modelMapper.map(invoiceDto, Invoice.class);
+    }
+
+
 }

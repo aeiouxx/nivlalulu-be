@@ -17,7 +17,4 @@ public class ProductDto {
     private Integer quantity;
 
     private BigDecimal price;
-
-    private UUID invoiceId;
-
 }
