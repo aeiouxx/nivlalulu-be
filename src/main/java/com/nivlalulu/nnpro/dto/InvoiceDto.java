@@ -23,7 +23,7 @@ public class InvoiceDto {
 
     private Timestamp expiration;
 
-    private List<UUID> productsId;
+    private List<ProductDto> products;
 
     private UUID user;
 

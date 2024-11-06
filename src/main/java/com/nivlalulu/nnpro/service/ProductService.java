@@ -1,7 +1,6 @@
 package com.nivlalulu.nnpro.service;
 
 import com.nivlalulu.nnpro.dao.ProductRepository;
-import com.nivlalulu.nnpro.dto.InvoiceDto;
 import com.nivlalulu.nnpro.dto.ProductDto;
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.Product;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,6 +29,11 @@ public class ProductService {
     private MappingService mappingService;
 
     public ProductDto createProduct(ProductDto productDto) {
+        boolean isProductExisting = productRepository.existsByNameAndPriceAndVisible(productDto.getName(),
+                productDto.getPrice(), true);
+        if (isProductExisting) {
+            throw new RuntimeException(String.format("Product with name %s and price %s exists", productDto.getName(), productDto.getPrice()));
+        }
         Product product = new Product(productDto.getName(), productDto.getQuantity(), productDto.getPrice());
         return mappingService.convertToDto(productRepository.save(product));
     }
@@ -41,15 +46,18 @@ public class ProductService {
         product.setName(productDto.getName());
         product.setPrice(productDto.getPrice());
         product.setQuantity(productDto.getQuantity());
-        Optional<Invoice> invoice = invoiceService.findInvoiceById(productDto.getInvoiceId());
-        product.setInvoice(invoice.orElse(null));
 
         return mappingService.convertToDto(productRepository.save(product));
     }
 
     public ProductDto deleteProduct(UUID id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(String.format("Product with id %s doesn't exist, can't be updated", id)));
+                .orElseThrow(() -> new NoSuchElementException(String.format("Product with id %s doesn't exist, can't be deleted", id)));
+
+        List<Invoice> listWhichContainsProduct = invoiceService.findAllContainsProduct(product);
+        if (!listWhichContainsProduct.isEmpty()) {
+            throw new RuntimeException(String.format("Product with id %s can't be deleted, is in invoices", id));
+        }
 
         productRepository.delete(product);
         return mappingService.convertToDto(product);
@@ -65,6 +73,10 @@ public class ProductService {
 
     public List<Product> findProductsByIds(List<UUID> ids) {
         return productRepository.findByIdIn(ids);
+    }
+
+    public Optional<Product> findProductById(UUID id) {
+        return productRepository.findById(id);
     }
 
 }

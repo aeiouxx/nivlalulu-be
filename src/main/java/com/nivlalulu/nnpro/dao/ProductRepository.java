@@ -18,4 +18,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     List<Product> findByIdIn(List<UUID> productLists);
 
+    boolean existsByNameAndPriceAndVisible(String name, BigDecimal price, boolean isVisible);
+
 }

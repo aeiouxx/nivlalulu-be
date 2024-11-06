@@ -6,7 +6,6 @@ import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.Product;
 import com.nivlalulu.nnpro.model.User;
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +32,7 @@ public class InvoiceService {
 
 
     public InvoiceDto createInvoice(InvoiceDto invoiceDto) {
-        List<Product> productList = productService.findProductsByIds(invoiceDto.getProductsId());
+        List<Product> productList = invoiceDto.getProducts().stream().map(MappingService::convertToEntity).collect(Collectors.toList());
         Optional<User> user = userService.findById(invoiceDto.getId());
         Invoice invoice = new Invoice(invoiceDto.getCompanyName(), invoiceDto.getCompanyId(), invoiceDto.getTaxId(),
                 invoiceDto.getCreated(), invoiceDto.getExpiration(), productList, user.orElse(null));
@@ -41,7 +40,7 @@ public class InvoiceService {
     }
 
     public InvoiceDto updateInvoice(InvoiceDto invoiceUpdated) {
-        List<Product> productList = productService.findProductsByIds(invoiceUpdated.getProductsId());
+        List<Product> productList = invoiceUpdated.getProducts().stream().map(MappingService::convertToEntity).collect(Collectors.toList());
 
         Invoice invoice = invoiceRepository.findById(invoiceUpdated.getId())
                 .orElseThrow(() -> new RuntimeException(String.format("Invoice with id %s doesn't exist, can't be updated",
@@ -90,6 +89,10 @@ public class InvoiceService {
 
     public List<InvoiceDto> findAllInvoices() {
         return invoiceRepository.findAll().stream().map(MappingService::convertToDto).collect(Collectors.toList());
+    }
+
+    public List<Invoice> findAllContainsProduct(Product product){
+        return invoiceRepository.findAllByProductListContains(product);
     }
 
 }
