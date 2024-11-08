@@ -3,7 +3,7 @@ package com.nivlalulu.nnpro.service;
 import com.nivlalulu.nnpro.dao.InvoiceRepository;
 import com.nivlalulu.nnpro.dto.InvoiceDto;
 import com.nivlalulu.nnpro.dto.ProductDto;
-import com.nivlalulu.nnpro.dto.UserDto;
+
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.Product;
 import com.nivlalulu.nnpro.model.User;
@@ -30,9 +30,6 @@ public class InvoiceService {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private MappingService mappingService;
-
 
     public InvoiceDto createInvoice(InvoiceDto invoiceDto) {
         validateInvoice(invoiceDto);
@@ -43,7 +40,7 @@ public class InvoiceService {
 
         Invoice invoice = new Invoice(invoiceDto.getCompanyName(), invoiceDto.getCreated(), invoiceDto.getExpiration(),
                 invoiceDto.getPaymentMethod(), productList, customer, supplier);
-        return mappingService.convertToDto(invoiceRepository.save(invoice));
+        return MappingService.convertToDto(invoiceRepository.save(invoice));
     }
 
     public InvoiceDto updateInvoice(InvoiceDto invoiceUpdated) {
@@ -54,13 +51,13 @@ public class InvoiceService {
         invoice.setCompanyName(invoiceUpdated.getCompanyName());
         invoice.setExpiration(invoiceUpdated.getExpiration());
 
-        return mappingService.convertToDto(invoiceRepository.save(invoice));
+        return MappingService.convertToDto(invoiceRepository.save(invoice));
     }
 
     public InvoiceDto deleteInvoice(UUID id) {
         Invoice invoice = checkIfInvoiceExisting(id);
         invoiceRepository.delete(invoice);
-        return mappingService.convertToDto(invoice);
+        return MappingService.convertToDto(invoice);
     }
 
     public InvoiceDto addProductToInvoice(UUID invoiceId, List<ProductDto> productsIds) {
@@ -78,27 +75,11 @@ public class InvoiceService {
 
     public InvoiceDto findInvoiceDtoById(UUID id) {
         Invoice invoice = checkIfInvoiceExisting(id);
-        return mappingService.convertToDto(invoice);
+        return MappingService.convertToDto(invoice);
     }
 
     protected Optional<Invoice> findInvoiceById(UUID id) {
         return invoiceRepository.findById(id);
-    }
-
-    public List<InvoiceDto> findAllByCompanyId(String companyId) {
-        return invoiceRepository.findAllByCompanyId(companyId).stream().map(MappingService::convertToDto).collect(Collectors.toList());
-    }
-
-    public List<InvoiceDto> findAllByCompanyName(String companyName) {
-        return invoiceRepository.findAllByCompanyName(companyName).stream().map(MappingService::convertToDto).collect(Collectors.toList());
-    }
-
-    public List<InvoiceDto> findAllByTaxId(String taxId) {
-        return invoiceRepository.findAllByTaxId(taxId).stream().map(MappingService::convertToDto).collect(Collectors.toList());
-    }
-
-    public List<InvoiceDto> findAllUserInvoices(UUID userId) {
-        return invoiceRepository.findAllByUser(userId).stream().map(MappingService::convertToDto).collect(Collectors.toList());
     }
 
     public List<InvoiceDto> findAllInvoices() {

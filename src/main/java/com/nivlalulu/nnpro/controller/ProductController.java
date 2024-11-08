@@ -16,7 +16,7 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @PostMapping
+    @PostMapping(name = "/saveProduct")
     public ApiResponse<ProductDto> saveProduct(@RequestBody ProductDto productDto) {
         try {
             ProductDto product = productService.createProduct(productDto);
@@ -26,7 +26,7 @@ public class ProductController {
         }
     }
 
-    @PutMapping
+    @PutMapping(name = "/updateProduct")
     public ApiResponse<ProductDto> updateProduct(@RequestBody ProductDto productDto) {
         try {
             ProductDto updatedProduct = productService.updateProduct(productDto);
@@ -36,10 +36,10 @@ public class ProductController {
         }
     }
 
-    @DeleteMapping
-    public ApiResponse<ProductDto> deleteProduct(@PathVariable UUID productId) {
+    @DeleteMapping(name = "/{id}")
+    public ApiResponse<ProductDto> deleteProduct(@PathVariable UUID id) {
         try {
-            return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly deleted product", productService.deleteProduct(productId));
+            return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly deleted product", productService.deleteProduct(id));
         } catch (RuntimeException ex) {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
         }

@@ -35,7 +35,7 @@ public class ProductService {
         }
         validateProduct(productDto);
         Product product = new Product(productDto.getName(), productDto.getQuantity(), productDto.getPrice(), productDto.getTaxPrice(), productDto.getTotalPrice());
-        return mappingService.convertToDto(productRepository.save(product));
+        return MappingService.convertToDto(productRepository.save(product));
     }
 
     public ProductDto updateProduct(ProductDto productDto) {
@@ -51,7 +51,7 @@ public class ProductService {
         product.setTotalPrice(productDto.getTotalPrice());
         product.setQuantity(productDto.getQuantity());
 
-        return mappingService.convertToDto(productRepository.save(product));
+        return MappingService.convertToDto(productRepository.save(product));
     }
 
     public ProductDto deleteProduct(UUID id) {
@@ -64,7 +64,7 @@ public class ProductService {
         }
 
         productRepository.delete(product);
-        return mappingService.convertToDto(product);
+        return MappingService.convertToDto(product);
     }
 
     public List<ProductDto> findAllByPrice(BigDecimal price) {
