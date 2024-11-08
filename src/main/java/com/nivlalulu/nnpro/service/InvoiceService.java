@@ -2,6 +2,7 @@ package com.nivlalulu.nnpro.service;
 
 import com.nivlalulu.nnpro.dao.InvoiceRepository;
 import com.nivlalulu.nnpro.dto.InvoiceDto;
+import com.nivlalulu.nnpro.dto.ProductDto;
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.Product;
 import com.nivlalulu.nnpro.model.User;
@@ -63,6 +64,19 @@ public class InvoiceService {
         return mappingService.convertToDto(invoice);
     }
 
+    public void addProductToInvoice(UUID invoiceId, List<UUID> productsIds) {
+
+        for (UUID productId : productsIds) {
+            Optional<Product> existingProduct = productService.findProductById(productId);
+            if (existingProduct.isEmpty()) {
+                throw new RuntimeException(String.format("Product id %s can't be finded", productId));
+            }
+
+        }
+
+
+    }
+
     public InvoiceDto findInvoivceDtoById(UUID id) {
         return mappingService.convertToDto(invoiceRepository.findById(id).orElse(null));
     }
@@ -91,8 +105,38 @@ public class InvoiceService {
         return invoiceRepository.findAll().stream().map(MappingService::convertToDto).collect(Collectors.toList());
     }
 
-    public List<Invoice> findAllContainsProduct(Product product){
+    public List<Invoice> findAllContainsProduct(Product product) {
         return invoiceRepository.findAllByProductListContains(product);
+    }
+
+    public Optional<Invoice> checkIfInvoiceExisting(UUID invoiceId) {
+        Optional<Invoice> existingInvoice = findInvoiceById(invoiceId);
+        if (existingInvoice.isEmpty()) {
+            throw new RuntimeException(String.format("Invoice with id %s doens't exists", invoiceId));
+        } else {
+            return null;
+        }
+    }
+
+    public void validateInvoice(InvoiceDto invoiceDto) {
+        if (invoiceDto.getTaxId() == null) {
+            throw new RuntimeException("Tax id is null");
+        }
+        if (invoiceDto.getCreated() == null) {
+            throw new RuntimeException("Invoice creation is null");
+        }
+        if (invoiceDto.getExpiration() == null) {
+            throw new RuntimeException("Invoice expiration is null");
+        }
+        if (invoiceDto.getUser() == null) {
+            throw new RuntimeException("User is null");
+        }
+
+        if (!invoiceDto.getProducts().isEmpty()) {
+            for (ProductDto product : invoiceDto.getProducts()) {
+                productService.validateProduct(product);
+            }
+        }
     }
 
 }
