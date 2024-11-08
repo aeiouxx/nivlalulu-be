@@ -19,10 +19,12 @@ public class InvoiceController {
 
     @PostMapping
     public ApiResponse<InvoiceDto> saveInvoice(@RequestBody InvoiceDto invoiceDto) {
-        InvoiceDto invoice = invoiceService.createInvoice(invoiceDto);
-        return invoice != null ?
-                new ApiResponse<>(HttpStatus.OK.value(), "Successfuly added invoice", invoice) :
-                new ApiResponse<>(HttpStatus.OK.value(), "Already exisiting product", null);
+        try {
+            InvoiceDto invoice = invoiceService.createInvoice(invoiceDto);
+            return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly added invoice", invoice);
+        } catch (Exception ex) {
+            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Already exisiting product", null);
+        }
     }
 
     @PutMapping
@@ -31,7 +33,7 @@ public class InvoiceController {
             InvoiceDto updatedProduct = invoiceService.updateInvoice(invoiceDto);
             return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly updated product", updatedProduct);
         } catch (RuntimeException ex) {
-            return new ApiResponse<>(HttpStatus.OK.value(), "Product not found, can't be updated", null);
+            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Product not found, can't be updated", null);
         }
     }
 
@@ -40,7 +42,7 @@ public class InvoiceController {
         try {
             return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly deleted product", invoiceService.deleteInvoice(invoiceId));
         } catch (RuntimeException ex) {
-            return new ApiResponse<>(HttpStatus.OK.value(), "Product can't be deleted", null);
+            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Product can't be deleted", null);
         }
     }
 
