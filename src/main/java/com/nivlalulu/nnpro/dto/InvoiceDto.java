@@ -1,5 +1,7 @@
 package com.nivlalulu.nnpro.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.nivlalulu.nnpro.enums.PaymentMethod;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +13,7 @@ import java.util.UUID;
 @Setter
 public class InvoiceDto {
 
+    @JsonIgnore
     private UUID id;
 
     private String companyName;
@@ -25,7 +28,11 @@ public class InvoiceDto {
 
     private List<ProductDto> products;
 
-    private UUID user;
+    private PaymentMethod paymentMethod;
+
+    private UserDto customer;
+
+    private UserDto supplier;
 
 
 }

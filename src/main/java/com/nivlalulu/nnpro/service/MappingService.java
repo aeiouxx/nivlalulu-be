@@ -2,8 +2,10 @@ package com.nivlalulu.nnpro.service;
 
 import com.nivlalulu.nnpro.dto.InvoiceDto;
 import com.nivlalulu.nnpro.dto.ProductDto;
+import com.nivlalulu.nnpro.dto.UserDto;
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.Product;
+import com.nivlalulu.nnpro.model.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,10 @@ public class MappingService {
         return modelMapper.map(product, ProductDto.class);
     }
 
+    public static UserDto convertToDto(User user) {
+        return modelMapper.map(user, UserDto.class);
+    }
+
     public static InvoiceDto convertToDto(Invoice invoice) {
         return modelMapper.map(invoice, InvoiceDto.class);
     }
@@ -32,6 +38,10 @@ public class MappingService {
 
     public static Invoice convertToEntity(InvoiceDto invoiceDto) {
         return modelMapper.map(invoiceDto, Invoice.class);
+    }
+
+    public static User convertToEntity(UserDto userDto) {
+        return modelMapper.map(userDto, User.class);
     }
 
 

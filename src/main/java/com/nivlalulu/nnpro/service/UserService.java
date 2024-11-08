@@ -1,6 +1,7 @@
 package com.nivlalulu.nnpro.service;
 
 import com.nivlalulu.nnpro.dao.UserRepository;
+import com.nivlalulu.nnpro.dto.UserDto;
 import com.nivlalulu.nnpro.model.User;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -55,7 +56,30 @@ public class UserService implements UserDetailsService {
         return login.get();
     }
 
-    private void validateUser(){
-
+    public void validateUser(UserDto userDto) {
+        if (userDto.getCompanyId() == null) {
+            throw new RuntimeException("company id is null");
+        }
+        if (userDto.getCountry() == null) {
+            throw new RuntimeException("country is null");
+        }
+        if (userDto.getPhone() == null) {
+            throw new RuntimeException("country is null");
+        }
+        if (userDto.getAddress() == null) {
+            throw new RuntimeException("address is null");
+        }
+        if (userDto.getEmail() == null) {
+            throw new RuntimeException("email is null");
+        }
+        if (userDto.getFullname() == null) {
+            throw new RuntimeException("name is null");
+        }
+        if (userDto.getTaxId() == null) {
+            throw new RuntimeException("tax id is null");
+        }
+        if (userDto.getOrganizationName() == null) {
+            throw new RuntimeException("company id is null");
+        }
     }
 }

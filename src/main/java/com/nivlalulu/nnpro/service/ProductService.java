@@ -29,12 +29,12 @@ public class ProductService {
     private MappingService mappingService;
 
     public ProductDto createProduct(ProductDto productDto) {
-        boolean isProductExisting = productRepository.existsByNameAndPriceAndVisible(productDto.getName(),
-                productDto.getPrice(), true);
+        boolean isProductExisting = productRepository.existsByNameAndPrice(productDto.getName(), productDto.getPrice());
         if (isProductExisting) {
             throw new RuntimeException(String.format("Product with name %s and price %s exists", productDto.getName(), productDto.getPrice()));
         }
-        Product product = new Product(productDto.getName(), productDto.getQuantity(), productDto.getPrice());
+        validateProduct(productDto);
+        Product product = new Product(productDto.getName(), productDto.getQuantity(), productDto.getPrice(), productDto.getTaxPrice(), productDto.getTotalPrice());
         return mappingService.convertToDto(productRepository.save(product));
     }
 
@@ -43,8 +43,12 @@ public class ProductService {
                 .orElseThrow(() -> new RuntimeException(String.format("Product with id %s doesn't exist, can't be updated",
                         productDto.getId())));
 
+        validateProduct(productDto);
+
         product.setName(productDto.getName());
         product.setPrice(productDto.getPrice());
+        product.setTaxPrice(productDto.getTaxPrice());
+        product.setTotalPrice(productDto.getTotalPrice());
         product.setQuantity(productDto.getQuantity());
 
         return mappingService.convertToDto(productRepository.save(product));
@@ -89,6 +93,11 @@ public class ProductService {
         if (productDto.getPrice() == null || productDto.getPrice().compareTo(new BigDecimal(0)) <= 0) {
             throw new RuntimeException("Product price is null or negative");
         }
-
+        if (productDto.getTaxPrice() == null || productDto.getTaxPrice().compareTo(new BigDecimal(0)) <= 0) {
+            throw new RuntimeException("Product price is null or negative");
+        }
+        if (productDto.getTaxPrice().add(productDto.getPrice()).equals(productDto.getTotalPrice())) {
+            throw new RuntimeException("Raw price plus tax doens't match total price!");
+        }
     }
 }

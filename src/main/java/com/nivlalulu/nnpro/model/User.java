@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -25,10 +26,7 @@ public class User implements UserDetails {
     private String username;
 
     @Column(nullable = false)
-    private String firstName;
-
-    @Column(nullable = false)
-    private String lastName;
+    private String fullName;
 
     @Column(nullable = false)
     private String email;
@@ -36,17 +34,23 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @Column(columnDefinition = "VARCHAR(20) DEFAULT 'USER'")
-    private Role role;
+    @Column(nullable = false)
+    private String address;
+
+    @Column(nullable = false)
+    private BigInteger phone;
+
+    @Column(nullable = false)
+    private String companyId; //ičo
+
+    @Column(nullable = false)
+    private String taxId; //dič
 
     @Column(nullable = false)
     private String organizationName;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "invoice")
     private List<Invoice> invoiceList;
-
-
-    //TODO dořešit role bude nutný asi upravit trochu
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
