@@ -54,4 +54,8 @@ public class UserService implements UserDetailsService {
         }
         return login.get();
     }
+
+    private void validateUser(){
+
+    }
 }

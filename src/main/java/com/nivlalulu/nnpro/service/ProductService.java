@@ -79,4 +79,16 @@ public class ProductService {
         return productRepository.findById(id);
     }
 
+    public void validateProduct(ProductDto productDto) {
+        if (productDto.getName() == null) {
+            throw new RuntimeException("Product name is null or empty");
+        }
+        if (productDto.getQuantity() == null || productDto.getQuantity() <= 0) {
+            throw new RuntimeException("Product quantity is null or negative");
+        }
+        if (productDto.getPrice() == null || productDto.getPrice().compareTo(new BigDecimal(0)) <= 0) {
+            throw new RuntimeException("Product price is null or negative");
+        }
+
+    }
 }
