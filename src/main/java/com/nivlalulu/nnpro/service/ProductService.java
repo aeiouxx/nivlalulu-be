@@ -25,16 +25,17 @@ public class ProductService {
     @Autowired
     private InvoiceService invoiceService;
 
-    @Autowired
-    private MappingService mappingService;
-
     public ProductDto createProduct(ProductDto productDto) {
-        boolean isProductExisting = productRepository.existsByNameAndPrice(productDto.getName(), productDto.getPrice());
-        if (isProductExisting) {
-            throw new RuntimeException(String.format("Product with name %s and price %s exists", productDto.getName(), productDto.getPrice()));
-        }
         validateProduct(productDto);
-        Product product = new Product(productDto.getName(), productDto.getQuantity(), productDto.getPrice(), productDto.getTaxPrice(), productDto.getTotalPrice());
+        Optional<Product> isProductExisting = productRepository.findProductByNameAndPrice(productDto.getName(), productDto.getPrice());
+        if (isProductExisting.isPresent()) {
+            return duplicityCheck(isProductExisting.get(), productDto) ?
+                    MappingService.convertToDto(isProductExisting.get()) :
+                    MappingService.convertToDto(productRepository.save(isProductExisting.get()));
+        }
+
+        Product product = new Product(productDto.getName(), productDto.getQuantity(), productDto.getPrice(),
+                productDto.getTaxPrice(), productDto.getTotalPrice());
         return MappingService.convertToDto(productRepository.save(product));
     }
 
@@ -83,7 +84,14 @@ public class ProductService {
         return productRepository.findById(id);
     }
 
-    public void validateProduct(ProductDto productDto) {
+    protected boolean duplicityCheck(Product product, ProductDto productDto) {
+        boolean isNameMatching = product.getName().equals(productDto.getName());
+        boolean isNamePrice = product.getPrice().equals(productDto.getPrice());
+        return isNameMatching && isNamePrice;
+    }
+
+
+    protected void validateProduct(ProductDto productDto) {
         if (productDto.getName() == null) {
             throw new RuntimeException("Product name is null or empty");
         }

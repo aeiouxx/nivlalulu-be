@@ -40,6 +40,7 @@ public class InvoiceService {
 
         Invoice invoice = new Invoice(invoiceDto.getCompanyName(), invoiceDto.getCreated(), invoiceDto.getExpiration(),
                 invoiceDto.getPaymentMethod(), productList, customer, supplier);
+        productList.forEach(product -> productService.createProduct(MappingService.convertToDto(product)));
         return MappingService.convertToDto(invoiceRepository.save(invoice));
     }
 

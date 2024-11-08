@@ -20,4 +20,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     boolean existsByNameAndPrice(String name, BigDecimal price);
 
+    Optional<Product> findProductByNameAndPrice(String name, BigDecimal price);
+
 }
