@@ -4,7 +4,7 @@ public enum PaymentMethod {
     P("Převodem na účet"),
     D("Hotově při převzetí");
 
-    private String text;
+    private final String text;
 
     PaymentMethod(String text) {
         this.text = text;
