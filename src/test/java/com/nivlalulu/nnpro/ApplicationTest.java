@@ -14,7 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
-@SpringBootTest(classes = Application.class)
+@SpringBootTest
 @ActiveProfiles("test")
 public class ApplicationTest {
 
@@ -26,9 +26,7 @@ public class ApplicationTest {
 
     @Test
     public void contextLoads() {
-        System.out.println("Test context loaded successfully, good job me!");
-        Assert.isTrue(false, "This is a test failure message, " +
-                "testing report generation on failed tests.");
+
     }
 
     @Test

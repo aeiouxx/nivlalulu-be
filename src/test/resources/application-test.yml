@@ -1,13 +1,22 @@
-logging:
-  level:
-    root: off
-spring:
-  datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driverClassName: org.h2.Driver
-    username: sa
-    password:
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-  liquibase:
-    enabled: false
+#server:
+#  servlet:
+#    context-path: "/api"
+#
+#spring:
+#  liquibase:
+#    enabled: false
+#
+#jwt:
+#  secret: ${JWT_SECRET}
+#
+#mail:
+#  host: smtp.gmail.com
+#  port: 587
+#  username: ${MAIL_USERNAME}
+#  password: ${MAIL_PASSWORD}
+#  properties:
+#    mail:
+#      smtp:
+#        auth: true
+#        starttls:
+#          enable: true
