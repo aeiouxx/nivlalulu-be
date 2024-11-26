@@ -33,7 +33,6 @@ public class InvoiceService {
 
 
     public InvoiceDto createInvoice(InvoiceDto invoiceDto) {
-        validateInvoice(invoiceDto);
 
         List<Product> productList = invoiceDto.getProducts().stream().map(MappingService::convertToEntity).collect(Collectors.toList());
         User customer = MappingService.convertToEntity(invoiceDto.getCustomer());
@@ -47,7 +46,6 @@ public class InvoiceService {
 
     public InvoiceDto updateInvoice(InvoiceDto invoiceUpdated) {
         Invoice invoice = checkIfInvoiceExisting(invoiceUpdated.getId());
-        validateInvoice(invoiceUpdated);
 
         invoice.setProductList(invoiceUpdated.getProducts().stream().map(MappingService::convertToEntity).collect(Collectors.toList()));
         invoice.setExpiration(invoiceUpdated.getDueDate());
@@ -109,40 +107,6 @@ public class InvoiceService {
             throw new RuntimeException(String.format("Invoice with id %s doens't exists", invoiceId));
         } else {
             return existingInvoice.get();
-        }
-    }
-
-    public void validateInvoice(InvoiceDto invoiceDto) {
-        if (invoiceDto.getIssueDate() == null) {
-            throw new RuntimeException("Invoice creation is null");
-        }
-        if (invoiceDto.getDueDate() == null) {
-            throw new RuntimeException("Invoice expiration is null");
-        }
-        if (invoiceDto.getCustomer() == null) {
-            throw new RuntimeException("User is null");
-        }
-        if (invoiceDto.getRawValue() == null) {
-            throw new RuntimeException("Price without tax is null");
-        }
-        if (invoiceDto.getTaxValue() == null) {
-            throw new RuntimeException("Tax amount is null");
-        }
-        if (invoiceDto.getTotalValue() == null) {
-            throw new RuntimeException("Price is null");
-        }
-
-        if ((invoiceDto.getRawValue().add(invoiceDto.getTaxValue())).compareTo(invoiceDto.getTotalValue()) == 0) {
-            throw new RuntimeException("Prices doesn't matches");
-        }
-
-        userService.validateUser(invoiceDto.getSupplier());
-        userService.validateUser(invoiceDto.getCustomer());
-
-        if (!invoiceDto.getProducts().isEmpty()) {
-            for (ProductDto product : invoiceDto.getProducts()) {
-                productService.validateProduct(product);
-            }
         }
     }
 

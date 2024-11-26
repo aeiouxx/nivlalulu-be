@@ -26,7 +26,6 @@ public class ProductService {
     private InvoiceService invoiceService;
 
     public ProductDto createProduct(ProductDto productDto) {
-        validateProduct(productDto);
         Optional<Product> isProductExisting = productRepository.findProductByNameAndPrice(productDto.getName(), productDto.getPrice());
         if (isProductExisting.isPresent()) {
             return duplicityCheck(isProductExisting.get(), productDto) ?
@@ -43,8 +42,6 @@ public class ProductService {
         Product product = productRepository.findById(productDto.getId())
                 .orElseThrow(() -> new RuntimeException(String.format("Product with id %s doesn't exist, can't be updated",
                         productDto.getId())));
-
-        validateProduct(productDto);
 
         product.setName(productDto.getName());
         product.setPrice(productDto.getPrice());
@@ -88,24 +85,5 @@ public class ProductService {
         boolean isNameMatching = product.getName().equals(productDto.getName());
         boolean isNamePrice = product.getPrice().equals(productDto.getPrice());
         return isNameMatching && isNamePrice;
-    }
-
-
-    protected void validateProduct(ProductDto productDto) {
-        if (productDto.getName() == null) {
-            throw new RuntimeException("Product name is null or empty");
-        }
-        if (productDto.getQuantity() == null || productDto.getQuantity() <= 0) {
-            throw new RuntimeException("Product quantity is null or negative");
-        }
-        if (productDto.getPrice() == null || productDto.getPrice().compareTo(new BigDecimal(0)) <= 0) {
-            throw new RuntimeException("Product price is null or negative");
-        }
-        if (productDto.getTax() == null || productDto.getTax().compareTo(new BigDecimal(0)) <= 0) {
-            throw new RuntimeException("Product price is null or negative");
-        }
-        if (productDto.getTax().add(productDto.getPrice()).equals(productDto.getTotal())) {
-            throw new RuntimeException("Raw price plus tax doens't match total price!");
-        }
     }
 }
