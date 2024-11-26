@@ -52,7 +52,7 @@ jobs:
 
       # Runs only on master branch regardless of previous step outcome
       - name: Deploy report
-        if: ${{ github.ref == 'refs/heads/master' }} && always()
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }} && always()
 
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
