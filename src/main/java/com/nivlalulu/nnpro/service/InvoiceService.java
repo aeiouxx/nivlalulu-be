@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -120,6 +121,19 @@ public class InvoiceService {
         }
         if (invoiceDto.getCustomer() == null) {
             throw new RuntimeException("User is null");
+        }
+        if (invoiceDto.getRawValue() == null) {
+            throw new RuntimeException("Price without tax is null");
+        }
+        if (invoiceDto.getTaxValue() == null) {
+            throw new RuntimeException("Tax amount is null");
+        }
+        if (invoiceDto.getTotalValue() == null) {
+            throw new RuntimeException("Price is null");
+        }
+
+        if ((invoiceDto.getRawValue().add(invoiceDto.getTaxValue())).compareTo(invoiceDto.getTotalValue()) == 0) {
+            throw new RuntimeException("Prices doesn't matches");
         }
 
         userService.validateUser(invoiceDto.getSupplier());
