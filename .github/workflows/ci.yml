@@ -46,13 +46,13 @@ jobs:
       # If tests fail for a PR, the whole pipeline will fail, if we're on master branch, procceed  to reports generation
       - name: Test
         id: test_results
+        continue-on-error: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         run: |
           ./gradlew test
-        continue-on-error: ${{ github.ref == 'refs/heads/master' }}
 
       # Runs only on master branch regardless of previous step outcome
       - name: Deploy report
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }} && always()
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' && always() }}
 
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
