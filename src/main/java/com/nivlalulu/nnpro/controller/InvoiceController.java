@@ -6,24 +6,29 @@ import com.nivlalulu.nnpro.model.ApiResponse;
 import com.nivlalulu.nnpro.service.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/invoice")
+@Validated
 public class InvoiceController {
 
     @Autowired
     private InvoiceService invoiceService;
 
-    @GetMapping(name = "/readAll")
+    @GetMapping("/readAll")
     public ApiResponse<List<InvoiceDto>> getAllInvoices() {
         return new ApiResponse<>(HttpStatus.OK.value(), "All invoices", invoiceService.findAllInvoices());
     }
 
-    @GetMapping(name = "/{id}")
+    @GetMapping("/{id}")
     public ApiResponse<InvoiceDto> getInvoice(@PathVariable UUID id) {
         try {
             InvoiceDto invoiceDto = invoiceService.findInvoiceDtoById(id);
@@ -33,8 +38,8 @@ public class InvoiceController {
         }
     }
 
-    @PostMapping(name = "/saveInvoice")
-    public ApiResponse<InvoiceDto> saveInvoice(@RequestBody InvoiceDto invoiceDto) {
+    @PostMapping("/saveInvoice")
+    public ApiResponse<InvoiceDto> saveInvoice(@Valid @RequestBody InvoiceDto invoiceDto) {
         try {
             InvoiceDto invoice = invoiceService.createInvoice(invoiceDto);
             return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly added invoice", invoice);
@@ -43,8 +48,8 @@ public class InvoiceController {
         }
     }
 
-    @PutMapping(name = "/updateInvoice")
-    public ApiResponse<InvoiceDto> updateInvoice(@RequestBody InvoiceDto invoiceDto) {
+    @PutMapping("/updateInvoice")
+    public ApiResponse<InvoiceDto> updateInvoice(@Valid @RequestBody InvoiceDto invoiceDto) {
         try {
             InvoiceDto updatedProduct = invoiceService.updateInvoice(invoiceDto);
             return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly updated product", updatedProduct);
@@ -53,8 +58,8 @@ public class InvoiceController {
         }
     }
 
-    @PutMapping(name = "/addProducts/{id}")
-    public ApiResponse<InvoiceDto> addProductToInvoice(@PathVariable UUID id, @RequestBody List<ProductDto> productsIds) {
+    @PutMapping("/addProducts/{id}")
+    public ApiResponse<InvoiceDto> addProductToInvoice(@PathVariable UUID id, @RequestBody List<@Valid ProductDto> productsIds) {
         try {
             InvoiceDto updatedProduct = invoiceService.addProductToInvoice(id, productsIds);
             return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly add products to invoice", updatedProduct);
@@ -63,8 +68,8 @@ public class InvoiceController {
         }
     }
 
-    @PutMapping(name = "/removeProducts/{id}")
-    public ApiResponse<InvoiceDto> removeProductsFromInvoice(@PathVariable UUID id, @RequestBody List<ProductDto> productsIds) {
+    @PutMapping("/removeProducts/{id}")
+    public ApiResponse<InvoiceDto> removeProductsFromInvoice(@PathVariable UUID id, @RequestBody List<@Valid ProductDto> productsIds) {
         try {
             InvoiceDto updatedProduct = invoiceService.removeProductFromInvoice(id, productsIds);
             return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly removed products from invoice", updatedProduct);
@@ -73,13 +78,23 @@ public class InvoiceController {
         }
     }
 
-    @DeleteMapping(name = "/{id}")
+    @DeleteMapping("/{id}")
     public ApiResponse<InvoiceDto> deleteInvoice(@PathVariable UUID id) {
         try {
             return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly deleted product", invoiceService.deleteInvoice(id));
         } catch (RuntimeException ex) {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
         }
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ApiResponse<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        String errorMessage = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+        return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), errorMessage, null);
     }
 
 

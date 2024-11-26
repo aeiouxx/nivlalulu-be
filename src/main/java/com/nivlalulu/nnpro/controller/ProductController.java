@@ -5,19 +5,24 @@ import com.nivlalulu.nnpro.model.ApiResponse;
 import com.nivlalulu.nnpro.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/product")
+@Validated
 public class ProductController {
 
     @Autowired
     private ProductService productService;
 
-    @PostMapping(name = "/saveProduct")
-    public ApiResponse<ProductDto> saveProduct(@RequestBody ProductDto productDto) {
+    @PostMapping("/saveProduct")
+    public ApiResponse<ProductDto> saveProduct(@Valid @RequestBody ProductDto productDto) {
         try {
             ProductDto product = productService.createProduct(productDto);
             return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly added product", product);
@@ -26,8 +31,8 @@ public class ProductController {
         }
     }
 
-    @PutMapping(name = "/updateProduct")
-    public ApiResponse<ProductDto> updateProduct(@RequestBody ProductDto productDto) {
+    @PutMapping("/updateProduct")
+    public ApiResponse<ProductDto> updateProduct(@Valid @RequestBody ProductDto productDto) {
         try {
             ProductDto updatedProduct = productService.updateProduct(productDto);
             return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly updated product", updatedProduct);
@@ -36,13 +41,23 @@ public class ProductController {
         }
     }
 
-    @DeleteMapping(name = "/{id}")
+    @DeleteMapping("/{id}")
     public ApiResponse<ProductDto> deleteProduct(@PathVariable UUID id) {
         try {
             return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly deleted product", productService.deleteProduct(id));
         } catch (RuntimeException ex) {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
         }
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ApiResponse<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        String errorMessage = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .collect(Collectors.joining(", "));
+        return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), errorMessage, null);
     }
 
 }
