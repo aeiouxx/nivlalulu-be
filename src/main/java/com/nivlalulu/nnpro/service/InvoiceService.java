@@ -38,7 +38,7 @@ public class InvoiceService {
         User customer = MappingService.convertToEntity(invoiceDto.getCustomer());
         User supplier = MappingService.convertToEntity(invoiceDto.getSupplier());
 
-        Invoice invoice = new Invoice(invoiceDto.getCompanyName(), invoiceDto.getCreated(), invoiceDto.getExpiration(),
+        Invoice invoice = new Invoice(invoiceDto.getIssueDate(), invoiceDto.getDueDate(),
                 invoiceDto.getPaymentMethod(), productList, customer, supplier);
         productList.forEach(product -> productService.createProduct(MappingService.convertToDto(product)));
         return MappingService.convertToDto(invoiceRepository.save(invoice));
@@ -49,8 +49,7 @@ public class InvoiceService {
         validateInvoice(invoiceUpdated);
 
         invoice.setProductList(invoiceUpdated.getProducts().stream().map(MappingService::convertToEntity).collect(Collectors.toList()));
-        invoice.setCompanyName(invoiceUpdated.getCompanyName());
-        invoice.setExpiration(invoiceUpdated.getExpiration());
+        invoice.setExpiration(invoiceUpdated.getDueDate());
 
         return MappingService.convertToDto(invoiceRepository.save(invoice));
     }
@@ -113,13 +112,10 @@ public class InvoiceService {
     }
 
     public void validateInvoice(InvoiceDto invoiceDto) {
-        if (invoiceDto.getTaxId() == null) {
-            throw new RuntimeException("Tax id is null");
-        }
-        if (invoiceDto.getCreated() == null) {
+        if (invoiceDto.getIssueDate() == null) {
             throw new RuntimeException("Invoice creation is null");
         }
-        if (invoiceDto.getExpiration() == null) {
+        if (invoiceDto.getDueDate() == null) {
             throw new RuntimeException("Invoice expiration is null");
         }
         if (invoiceDto.getCustomer() == null) {

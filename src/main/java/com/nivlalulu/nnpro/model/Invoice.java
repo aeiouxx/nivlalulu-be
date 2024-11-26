@@ -26,10 +26,6 @@ public class Invoice {
     @Column(nullable = false)
     private UUID invoiceNumber;
 
-
-    @Column(nullable = false)
-    private String companyName;
-
     @Column(nullable = false)
     private Timestamp created;
 
@@ -50,8 +46,7 @@ public class Invoice {
     @JoinColumn(name = "user_id")
     private User supplier;
 
-    public Invoice(String companyName, Timestamp created, Timestamp expiration, PaymentMethod paymentMethod, List<Product> productList, User customer, User supplier) {
-        this.companyName = companyName;
+    public Invoice(Timestamp created, Timestamp expiration, PaymentMethod paymentMethod, List<Product> productList, User customer, User supplier) {
         this.created = created;
         this.expiration = expiration;
         this.paymentMethod = paymentMethod;
