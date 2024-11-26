@@ -1,6 +1,7 @@
 package com.nivlalulu.nnpro.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,21 +17,24 @@ public class UserDto {
     @JsonIgnore
     private UUID id;
 
+    private String type;
+
+    @JsonProperty("organization_name")
     private String organizationName;
 
-    private String fullname;
-
-    private String email;
+    @JsonProperty("contact_person")
+    private String contactPerson;
 
     private String address;
 
     private String country;
 
-    private BigInteger phone;
-
     private String companyId;
 
     private String taxId;
 
+    private BigInteger phone;
+
+    private String email;
 
 }

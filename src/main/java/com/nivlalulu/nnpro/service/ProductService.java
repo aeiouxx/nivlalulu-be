@@ -35,7 +35,7 @@ public class ProductService {
         }
 
         Product product = new Product(productDto.getName(), productDto.getQuantity(), productDto.getPrice(),
-                productDto.getTaxPrice(), productDto.getTotalPrice());
+                productDto.getTax(), productDto.getTotal());
         return MappingService.convertToDto(productRepository.save(product));
     }
 
@@ -48,8 +48,8 @@ public class ProductService {
 
         product.setName(productDto.getName());
         product.setPrice(productDto.getPrice());
-        product.setTaxPrice(productDto.getTaxPrice());
-        product.setTotalPrice(productDto.getTotalPrice());
+        product.setTaxPrice(productDto.getTax());
+        product.setTotalPrice(productDto.getTotal());
         product.setQuantity(productDto.getQuantity());
 
         return MappingService.convertToDto(productRepository.save(product));
@@ -101,10 +101,10 @@ public class ProductService {
         if (productDto.getPrice() == null || productDto.getPrice().compareTo(new BigDecimal(0)) <= 0) {
             throw new RuntimeException("Product price is null or negative");
         }
-        if (productDto.getTaxPrice() == null || productDto.getTaxPrice().compareTo(new BigDecimal(0)) <= 0) {
+        if (productDto.getTax() == null || productDto.getTax().compareTo(new BigDecimal(0)) <= 0) {
             throw new RuntimeException("Product price is null or negative");
         }
-        if (productDto.getTaxPrice().add(productDto.getPrice()).equals(productDto.getTotalPrice())) {
+        if (productDto.getTax().add(productDto.getPrice()).equals(productDto.getTotal())) {
             throw new RuntimeException("Raw price plus tax doens't match total price!");
         }
     }

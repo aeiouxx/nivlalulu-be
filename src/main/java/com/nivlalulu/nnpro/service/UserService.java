@@ -72,7 +72,7 @@ public class UserService implements UserDetailsService {
         if (userDto.getEmail() == null) {
             throw new RuntimeException("email is null");
         }
-        if (userDto.getFullname() == null) {
+        if (userDto.getContactPerson() == null) {
             throw new RuntimeException("name is null");
         }
         if (userDto.getTaxId() == null) {

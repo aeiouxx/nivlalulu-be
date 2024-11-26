@@ -20,7 +20,7 @@ public class ProductDto {
 
     private BigDecimal price; // raw price
 
-    private BigDecimal taxPrice; // tax
+    private BigDecimal tax; // tax
 
-    private BigDecimal totalPrice;
+    private BigDecimal total;
 }
