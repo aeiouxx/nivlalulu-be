@@ -1,10 +1,11 @@
 package com.nivlalulu.nnpro.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.*;
+
 import java.math.BigDecimal;
 import java.util.UUID;
 

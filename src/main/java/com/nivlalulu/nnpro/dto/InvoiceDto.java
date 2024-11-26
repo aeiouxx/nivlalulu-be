@@ -3,11 +3,13 @@ package com.nivlalulu.nnpro.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nivlalulu.nnpro.enums.PaymentMethod;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.validation.Valid;
-import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
