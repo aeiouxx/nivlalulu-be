@@ -76,6 +76,7 @@ public class JwtTokenProvider {
         return extractClaim(token, claims -> claims.get("jti", String.class));
     }
 
+
     public <T> T extractClaim(String token, Function<Claims, T> resolver) {
         final Claims claims = extractAllClaims(token);
         return resolver.apply(claims);
