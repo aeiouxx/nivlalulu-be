@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - ExampleIntegrationTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>ExampleIntegrationTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/com.nivlalulu.nnpro.example.html">com.nivlalulu.nnpro.example</a> &gt; ExampleIntegrationTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">1</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">2.125s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+<li>
+<a href="#tab2">Standard error</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">testBlacklist()</td>
+<td class="success">2.125s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>14:15:20.648 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.nivlalulu.nnpro.example.ExampleIntegrationTest]: ExampleIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+14:15:20.822 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.nivlalulu.nnpro.Application for test class com.nivlalulu.nnpro.example.ExampleIntegrationTest
+14:15:21.102 [Test worker] INFO org.testcontainers.images.PullPolicy -- Image pull policy will be performed by: DefaultPullPolicy()
+14:15:21.108 [Test worker] INFO org.testcontainers.utility.ImageNameSubstitutor -- Image name substitution will be performed by: DefaultImageNameSubstitutor (composite of 'ConfigurationFileImageNameSubstitutor' and 'PrefixingImageNameSubstitutor')
+14:15:21.965 [Test worker] INFO org.testcontainers.dockerclient.DockerClientProviderStrategy -- Found Docker environment with local Unix socket (unix:///var/run/docker.sock)
+14:15:21.972 [Test worker] INFO org.testcontainers.DockerClientFactory -- Docker host IP address is localhost
+14:15:21.994 [Test worker] INFO org.testcontainers.DockerClientFactory -- Connected to docker: 
+  Server Version: 26.1.3
+  API Version: 1.45
+  Operating System: Ubuntu 22.04.5 LTS
+  Total Memory: 15981 MB
+14:15:22.041 [Test worker] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling docker image: testcontainers/ryuk:0.6.0. Please be patient; this may take some time but only needs to be done once.
+14:15:22.350 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Starting to pull image
+14:15:22.393 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling image layers:  0 pending,  0 downloaded,  0 extracted, (0 bytes/0 bytes)
+14:15:22.510 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling image layers:  2 pending,  1 downloaded,  0 extracted, (341 KB/? MB)
+14:15:22.529 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling image layers:  1 pending,  2 downloaded,  0 extracted, (341 KB/? MB)
+14:15:22.543 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling image layers:  0 pending,  3 downloaded,  0 extracted, (341 KB/6 MB)
+14:15:22.654 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling image layers:  0 pending,  3 downloaded,  1 extracted, (3 MB/6 MB)
+14:15:22.844 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling image layers:  0 pending,  3 downloaded,  2 extracted, (3 MB/6 MB)
+14:15:22.894 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling image layers:  0 pending,  3 downloaded,  3 extracted, (6 MB/6 MB)
+14:15:22.901 [Test worker] INFO tc.testcontainers/ryuk:0.6.0 -- Image testcontainers/ryuk:0.6.0 pull took PT0.859686918S
+14:15:22.939 [Test worker] INFO tc.testcontainers/ryuk:0.6.0 -- Creating container for image: testcontainers/ryuk:0.6.0
+14:15:23.050 [Test worker] INFO tc.testcontainers/ryuk:0.6.0 -- Container testcontainers/ryuk:0.6.0 is starting: ce46ae40f646eaf3cfce536c71764570acc797105897a7484ea007a5205165c4
+14:15:23.636 [Test worker] INFO tc.testcontainers/ryuk:0.6.0 -- Container testcontainers/ryuk:0.6.0 started in PT0.697012338S
+14:15:23.640 [Test worker] INFO org.testcontainers.utility.RyukResourceReaper -- Ryuk started - will monitor and terminate Testcontainers containers on JVM exit
+14:15:23.641 [Test worker] INFO org.testcontainers.DockerClientFactory -- Checking the system...
+14:15:23.642 [Test worker] INFO org.testcontainers.DockerClientFactory -- ✔︎ Docker server version should be at least 1.6.0
+14:15:23.645 [Test worker] INFO tc.redis:latest -- Pulling docker image: redis:latest. Please be patient; this may take some time but only needs to be done once.
+14:15:23.874 [docker-java-stream-328759547] INFO tc.redis:latest -- Starting to pull image
+14:15:23.875 [docker-java-stream-328759547] INFO tc.redis:latest -- Pulling image layers:  0 pending,  0 downloaded,  0 extracted, (0 bytes/0 bytes)
+14:15:24.028 [docker-java-stream-328759547] INFO tc.redis:latest -- Pulling image layers:  7 pending,  1 downloaded,  0 extracted, (873 bytes/? MB)
+14:15:24.151 [docker-java-stream-328759547] INFO tc.redis:latest -- Pulling image layers:  6 pending,  2 downloaded,  0 extracted, (20 MB/? MB)
+14:15:24.174 [docker-java-stream-328759547] INFO tc.redis:latest -- Pulling image layers:  5 pending,  3 downloaded,  0 extracted, (20 MB/? MB)
+14:15:24.248 [docker-java-stream-328759547] INFO tc.redis:latest -- Pulling image layers:  4 pending,  4 downloaded,  0 extracted, (20 MB/? MB)
+14:15:24.252 [docker-java-stream-328759547] INFO tc.redis:latest -- Pulling image layers:  3 pending,  5 downloaded,  0 extracted, (20 MB/? MB)
+14:15:24.281 [docker-java-stream-328759547] INFO tc.redis:latest -- Pulling image layers:  2 pending,  6 downloaded,  0 extracted, (31 MB/? MB)
+14:15:24.360 [docker-java-stream-328759547] INFO tc.redis:latest -- Pulling image layers:  1 pending,  7 downloaded,  0 extracted, (31 MB/? MB)
+14:15:25.198 [docker-java-stream-328759547] INFO tc.redis:latest -- Pulling image layers:  1 pending,  7 downloaded,  1 extracted, (39 MB/? MB)
+14:15:25.355 [docker-java-stream-328759547] INFO tc.redis:latest -- Pulling image layers:  1 pending,  7 downloaded,  2 extracted, (39 MB/? MB)
+14:15:25.365 [docker-java-stream-328759547] INFO tc.redis:latest -- Pulling image layers:  1 pending,  7 downloaded,  3 extracted, (39 MB/? MB)
+14:15:25.407 [docker-java-stream-328759547] INFO tc.redis:latest -- Pulling image layers:  1 pending,  7 downloaded,  4 extracted, (39 MB/? MB)
+14:15:25.637 [docker-java-stream-328759547] INFO tc.redis:latest -- Pulling image layers:  1 pending,  7 downloaded,  5 extracted, (43 MB/? MB)
+14:15:25.646 [docker-java-stream-328759547] INFO tc.redis:latest -- Pulling image layers:  1 pending,  7 downloaded,  6 extracted, (43 MB/? MB)
+14:15:25.654 [docker-java-stream-328759547] INFO tc.redis:latest -- Pulling image layers:  1 pending,  7 downloaded,  7 extracted, (43 MB/? MB)
+14:15:25.663 [docker-java-stream-328759547] INFO tc.redis:latest -- Pulling image layers:  1 pending,  7 downloaded,  8 extracted, (43 MB/? MB)
+14:15:25.668 [docker-java-stream-328759547] INFO tc.redis:latest -- Pull complete. 8 layers, pulled in 1s (downloaded 43 MB at 43 MB/s)
+14:15:25.668 [Test worker] INFO tc.redis:latest -- Image redis:latest pull took PT2.02318521S
+14:15:25.672 [Test worker] INFO tc.redis:latest -- Creating container for image: redis:latest
+14:15:25.688 [Test worker] INFO tc.redis:latest -- Container redis:latest is starting: aa003bd36fe00d5db811dcfb03292006569f25954c83e048f8170a306484baa5
+14:15:26.006 [Test worker] INFO tc.redis:latest -- Container redis:latest started in PT0.334290941S
+14:15:26.009 [Test worker] INFO tc.postgres:latest -- Pulling docker image: postgres:latest. Please be patient; this may take some time but only needs to be done once.
+14:15:26.223 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Starting to pull image
+14:15:26.224 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending,  0 downloaded,  0 extracted, (0 bytes/0 bytes)
+14:15:26.385 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers: 13 pending,  1 downloaded,  0 extracted, (45 KB/? MB)
+14:15:26.401 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers: 13 pending,  1 downloaded,  1 extracted, (61 KB/? MB)
+14:15:26.419 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers: 12 pending,  2 downloaded,  1 extracted, (61 KB/? MB)
+14:15:26.421 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers: 11 pending,  3 downloaded,  1 extracted, (61 KB/? MB)
+14:15:26.534 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers: 10 pending,  4 downloaded,  1 extracted, (4 MB/? MB)
+14:15:26.536 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  9 pending,  5 downloaded,  1 extracted, (12 MB/? MB)
+14:15:26.555 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  8 pending,  6 downloaded,  1 extracted, (12 MB/? MB)
+14:15:26.621 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  7 pending,  7 downloaded,  1 extracted, (12 MB/? MB)
+14:15:26.625 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  7 pending,  7 downloaded,  2 extracted, (12 MB/? MB)
+14:15:26.635 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  6 pending,  8 downloaded,  2 extracted, (12 MB/? MB)
+14:15:26.680 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  6 pending,  8 downloaded,  3 extracted, (13 MB/? MB)
+14:15:26.708 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  5 pending,  9 downloaded,  3 extracted, (13 MB/? MB)
+14:15:26.739 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  4 pending, 10 downloaded,  3 extracted, (13 MB/? MB)
+14:15:26.799 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  3 pending, 11 downloaded,  3 extracted, (27 MB/? MB)
+14:15:26.829 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  2 pending, 12 downloaded,  3 extracted, (27 MB/? MB)
+14:15:27.032 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  2 pending, 12 downloaded,  4 extracted, (35 MB/? MB)
+14:15:27.094 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  2 pending, 12 downloaded,  5 extracted, (40 MB/? MB)
+14:15:27.103 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  2 pending, 12 downloaded,  6 extracted, (40 MB/? MB)
+14:15:27.112 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  2 pending, 12 downloaded,  7 extracted, (40 MB/? MB)
+14:15:28.041 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  1 pending, 13 downloaded,  7 extracted, (117 MB/? MB)
+14:15:30.975 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  1 pending, 13 downloaded,  8 extracted, (119 MB/? MB)
+14:15:30.987 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  1 pending, 13 downloaded,  9 extracted, (119 MB/? MB)
+14:15:31.000 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  1 pending, 13 downloaded, 10 extracted, (119 MB/? MB)
+14:15:31.009 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  1 pending, 13 downloaded, 11 extracted, (119 MB/? MB)
+14:15:31.018 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  1 pending, 13 downloaded, 12 extracted, (119 MB/? MB)
+14:15:31.027 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  1 pending, 13 downloaded, 13 extracted, (119 MB/? MB)
+14:15:31.033 [Test worker] INFO tc.postgres:latest -- Image postgres:latest pull took PT5.023358386S
+14:15:31.033 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pull complete. 14 layers, pulled in 4s (downloaded 119 MB at 29 MB/s)
+14:15:31.036 [Test worker] INFO tc.postgres:latest -- Creating container for image: postgres:latest
+14:15:31.050 [Test worker] INFO tc.postgres:latest -- Container postgres:latest is starting: 5203e53abde6db120d63842c3fd8ba0a9efc99d7081753fa0bd4e52a99b6e14e
+14:15:32.287 [Test worker] INFO tc.postgres:latest -- Container postgres:latest started in PT1.250450389S
+14:15:32.288 [Test worker] INFO tc.postgres:latest -- Container is started (JDBC URL: jdbc:postgresql://localhost:32770/test_db?loggerLevel=OFF)
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.4)
+
+2024-11-28T14:15:32.837Z  INFO 1980 --- [    Test worker] c.n.n.example.ExampleIntegrationTest     : Starting ExampleIntegrationTest using Java 21.0.5 with PID 1980 (started by runner in /home/runner/work/nivlalulu-be/nivlalulu-be)
+2024-11-28T14:15:32.838Z  INFO 1980 --- [    Test worker] c.n.n.example.ExampleIntegrationTest     : The following 1 profile is active: &quot;test&quot;
+2024-11-28T14:15:34.233Z  INFO 1980 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2024-11-28T14:15:34.238Z  INFO 1980 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-11-28T14:15:34.412Z  INFO 1980 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 163 ms. Found 1 JPA repository interface.
+2024-11-28T14:15:34.432Z  INFO 1980 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2024-11-28T14:15:34.437Z  INFO 1980 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2024-11-28T14:15:34.458Z  INFO 1980 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.nivlalulu.nnpro.repository.IUserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2024-11-28T14:15:34.458Z  INFO 1980 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 6 ms. Found 0 Redis repository interfaces.
+2024-11-28T14:15:35.311Z  INFO 1980 --- [    Test worker] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 0 (http)
+2024-11-28T14:15:35.331Z  INFO 1980 --- [    Test worker] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-11-28T14:15:35.332Z  INFO 1980 --- [    Test worker] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.19]
+2024-11-28T14:15:35.403Z  INFO 1980 --- [    Test worker] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2024-11-28T14:15:35.404Z  INFO 1980 --- [    Test worker] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2183 ms
+2024-11-28T14:15:35.944Z  INFO 1980 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-11-28T14:15:36.231Z  INFO 1980 --- [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@8f911ab
+2024-11-28T14:15:36.234Z  INFO 1980 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-11-28T14:15:36.447Z  INFO 1980 --- [    Test worker] liquibase.database                       : Set default schema name to public
+2024-11-28T14:15:37.235Z  INFO 1980 --- [    Test worker] liquibase.changelog                      : Creating database history table with name: public.databasechangelog
+2024-11-28T14:15:37.284Z  INFO 1980 --- [    Test worker] liquibase.changelog                      : Reading from public.databasechangelog
+2024-11-28T14:15:37.384Z  INFO 1980 --- [    Test worker] liquibase.lockservice                    : Successfully acquired change log lock
+2024-11-28T14:15:37.386Z  INFO 1980 --- [    Test worker] liquibase.command                        : Using deploymentId: 2803337386
+2024-11-28T14:15:37.388Z  INFO 1980 --- [    Test worker] liquibase.changelog                      : Reading from public.databasechangelog
+Running Changeset: db/changelog/changes/db.changelog-initial.xml::1732762339778-1::liquibase (generated)
+2024-11-28T14:15:37.423Z  INFO 1980 --- [    Test worker] liquibase.changelog                      : Table users created
+2024-11-28T14:15:37.425Z  INFO 1980 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changes/db.changelog-initial.xml::1732762339778-1::liquibase (generated) ran successfully in 11ms
+Running Changeset: db/changelog/changes/db.changelog-initial.xml::1732762339778-2::liquibase (generated)
+2024-11-28T14:15:37.438Z  INFO 1980 --- [    Test worker] liquibase.changelog                      : Unique constraint added to users(email)
+2024-11-28T14:15:37.438Z  INFO 1980 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changes/db.changelog-initial.xml::1732762339778-2::liquibase (generated) ran successfully in 4ms
+Running Changeset: db/changelog/changes/db.changelog-initial.xml::1732762339778-3::liquibase (generated)
+2024-11-28T14:15:37.446Z  INFO 1980 --- [    Test worker] liquibase.changelog                      : Unique constraint added to users(username)
+2024-11-28T14:15:37.447Z  INFO 1980 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/changes/db.changelog-initial.xml::1732762339778-3::liquibase (generated) ran successfully in 3ms
+2024-11-28T14:15:37.454Z  INFO 1980 --- [    Test worker] liquibase.util                           : UPDATE SUMMARY
+2024-11-28T14:15:37.454Z  INFO 1980 --- [    Test worker] liquibase.util                           : Run:                          3
+2024-11-28T14:15:37.454Z  INFO 1980 --- [    Test worker] liquibase.util                           : Previously run:               0
+2024-11-28T14:15:37.454Z  INFO 1980 --- [    Test worker] liquibase.util                           : Filtered out:                 0
+2024-11-28T14:15:37.454Z  INFO 1980 --- [    Test worker] liquibase.util                           : -------------------------------
+2024-11-28T14:15:37.454Z  INFO 1980 --- [    Test worker] liquibase.util                           : Total change sets:            3
+2024-11-28T14:15:37.454Z  INFO 1980 --- [    Test worker] liquibase.util                           : Update summary generated
+2024-11-28T14:15:37.457Z  INFO 1980 --- [    Test worker] liquibase.command                        : Update command completed successfully.
+Liquibase: Update has been successful. Rows affected: 3
+2024-11-28T14:15:37.460Z  INFO 1980 --- [    Test worker] liquibase.lockservice                    : Successfully released change log lock
+2024-11-28T14:15:37.460Z  INFO 1980 --- [    Test worker] liquibase.command                        : Command execution complete
+2024-11-28T14:15:37.576Z  INFO 1980 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-11-28T14:15:37.646Z  INFO 1980 --- [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-11-28T14:15:37.685Z  INFO 1980 --- [    Test worker] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2024-11-28T14:15:37.968Z  INFO 1980 --- [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-11-28T14:15:39.172Z  INFO 1980 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-11-28T14:15:39.175Z  INFO 1980 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-11-28T14:15:39.725Z  WARN 1980 --- [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-11-28T14:15:40.147Z  INFO 1980 --- [    Test worker] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@1509d911, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@6eeae20a, org.springframework.security.web.context.SecurityContextHolderFilter@2ab3e993, org.springframework.security.web.header.HeaderWriterFilter@116c0486, org.springframework.web.filter.CorsFilter@1405ff8b, org.springframework.security.web.authentication.logout.LogoutFilter@bb9834b, com.nivlalulu.nnpro.security.JwtAuthenticationFilter@520b2c83, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@3c3393ac, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@31cffb27, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@444fe2bd, org.springframework.security.web.session.SessionManagementFilter@79cc2c7d, org.springframework.security.web.access.ExceptionTranslationFilter@5ff270aa, org.springframework.security.web.access.intercept.AuthorizationFilter@5cd4f99b]
+2024-11-28T14:15:40.823Z  INFO 1980 --- [    Test worker] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 40301 (http) with context path '/api'
+2024-11-28T14:15:40.838Z  INFO 1980 --- [    Test worker] c.n.n.example.ExampleIntegrationTest     : Started ExampleIntegrationTest in 8.501 seconds (process running for 21.71)
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build what is described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build what is described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
+2024-11-28T14:15:43.270Z  INFO 1980 --- [xecutorLoop-1-1] i.l.core.protocol.ConnectionWatchdog     : Reconnecting, last destination was localhost/127.0.0.1:32769
+2024-11-28T14:15:43.278Z  WARN 1980 --- [ioEventLoop-4-2] i.l.core.protocol.ConnectionWatchdog     : Cannot reconnect to [localhost/&lt;unresolved&gt;:32769]: Connection refused: localhost/127.0.0.1:32769
+</pre>
+</span>
+</div>
+<div id="tab2" class="tab">
+<h2>Standard error</h2>
+<span class="code">
+<pre>WARNING: A Java agent has been loaded dynamically (/home/runner/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.14.12/be4984cb6fd1ef1d11f218a648889dfda44b8a15/byte-buddy-agent-1.14.12.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 8.9</a> at Nov 28, 2024, 2:15:43 PM</p>
+</div>
+</div>
+</body>
+</html>
