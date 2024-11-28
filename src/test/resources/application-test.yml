@@ -1,22 +1,20 @@
-#server:
-#  servlet:
-#    context-path: "/api"
-#
-#spring:
-#  liquibase:
-#    enabled: false
-#
-#jwt:
-#  secret: ${JWT_SECRET}
-#
-#mail:
-#  host: smtp.gmail.com
-#  port: 587
-#  username: ${MAIL_USERNAME}
-#  password: ${MAIL_PASSWORD}
-#  properties:
-#    mail:
-#      smtp:
-#        auth: true
-#        starttls:
-#          enable: true
+server:
+  servlet:
+    context-path: "/api"
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-test.yml
+
+jwt:
+  secret: 851410b69886c4afb0815c3c17ab14a38c57cb35a7a8727796d2df09aedeeadc34394fe52185dc89dcb80a6fba721ded8281053f9de9a483cbc2a5d6a95f5c394134d6c03ee8a2df7e725595a8443d6dabba555290f555c2942bb87dff052ceea5131d9824251a667b82ec47e81e1a21ef4fa7d465ea63f268f8e7676ecaf119863a50a8898b06f5f3fb8ac7fc6ceab4673d091371a7a140dcc30536bb5d9afd9beb429ff740a69db4d4f13422fedbfa54b907395680addfe78ba56fea5e15e50ef15b7812da7f346e2585d6c603ebdfe36dd0833ba8d6fe4050ac232a7f1ca3552431e3f89b049df58dd527a712ad67fff5f2f1311141bbe19997b0f4025140
