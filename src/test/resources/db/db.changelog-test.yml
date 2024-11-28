@@ -1,4 +1,4 @@
 databaseChangeLog:
   - include:
-      file: changes/db.changelog-initial.xml
+      file: changelog/changes/db.changelog-initial.xml
       relativeToChangelogFile: true
