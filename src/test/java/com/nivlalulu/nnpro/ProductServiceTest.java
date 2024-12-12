@@ -2,19 +2,27 @@ package com.nivlalulu.nnpro;
 
 import com.nivlalulu.nnpro.dao.ProductRepository;
 import com.nivlalulu.nnpro.dto.ProductDto;
-import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.Product;
+import com.nivlalulu.nnpro.service.MappingService;
 import com.nivlalulu.nnpro.service.ProductService;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Testcontainers
 public class ProductServiceTest {
 
     @Autowired
@@ -23,11 +31,26 @@ public class ProductServiceTest {
     @Autowired
     private ProductRepository productRepository;
 
-    @Test
-    void testCreateProduct_NewProduct() {
-        ProductDto productDto = new ProductDto(UUID.randomUUID(), "Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
+    @Container
+    static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:latest")
+            .withDatabaseName("test_db")
+            .withUsername("test_user")
+            .withPassword("test_pass")
+            .waitingFor(Wait.forListeningPort());
 
-        ProductDto createdProduct = productService.createProduct(productDto);
+    @DynamicPropertySource
+    static void registerDataSourceProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgresContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", postgresContainer::getUsername);
+        registry.add("spring.datasource.password", postgresContainer::getPassword);
+        registry.add("spring.datasource.driver-class-name", postgresContainer::getDriverClassName);
+    }
+
+
+    @Test
+    public void newProduct() {
+        Product productDto = new Product("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
+        ProductDto createdProduct = productService.createProduct(MappingService.convertToDto(productDto));
 
         assertNotNull(createdProduct);
         assertEquals(productDto.getName(), createdProduct.getName());
@@ -35,20 +58,21 @@ public class ProductServiceTest {
     }
 
     @Test
-    void testCreateProduct_ExistingProduct() {
-        Product existingProduct = new Product("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
-        productRepository.save(existingProduct);
+    public void duplicatedProduct() {
+        Product newProduct = new Product("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
+        ProductDto newProductDto = productService.createProduct(MappingService.convertToDto(newProduct));
 
-        ProductDto productDto = new ProductDto(existingProduct.getId(), "Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
-        ProductDto createdProduct = productService.createProduct(productDto);
+        Product duplicatedProduct = new Product("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
+        ProductDto existingProduct = productService.createProduct(MappingService.convertToDto(duplicatedProduct));
 
-        assertNotNull(createdProduct);
-        assertEquals(existingProduct.getName(), createdProduct.getName());
-        assertEquals(existingProduct.getPrice(), createdProduct.getPrice());
+        assertNotNull(newProductDto);
+        assertEquals(newProductDto.getId(), existingProduct.getId());
+        assertEquals(newProductDto.getName(), existingProduct.getName());
+        assertEquals(newProductDto.getPrice(), existingProduct.getPrice());
     }
 
     @Test
-    void testUpdateProduct() {
+    public void testUpdateProduct() {
         Product product = new Product("Old Product", 5, new BigDecimal("10.00"), new BigDecimal("1.00"), new BigDecimal("11.00"));
         productRepository.save(product);
 
@@ -61,7 +85,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    void testDeleteProduct_ProductExists() {
+    public void testDeleteProduct_ProductExists() {
         Product product = new Product("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
         productRepository.save(product);
 
@@ -73,19 +97,18 @@ public class ProductServiceTest {
     }
 
     @Test
-    void testDeleteProduct_ProductInInvoice() {
+    public void testDeleteProduct_ProductInInvoice() {
         Product product = new Product("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
         productRepository.save(product);
 
-//        Invoice invoice = new Invoice();
-//        invoiceService.save(invoice);
+        //TODO až budou invoice => čekám na vladosákovy usery
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> productService.deleteProduct(product.getId()));
         assertEquals(String.format("Product with id %s can't be deleted, is in invoices", product.getId()), exception.getMessage());
     }
 
     @Test
-    void testFindAllByPrice() {
+    public void testFindAllByPrice() {
         Product product1 = new Product("Product 1", 5, new BigDecimal("10.00"), new BigDecimal("1.00"), new BigDecimal("11.00"));
         Product product2 = new Product("Product 2", 3, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
 
