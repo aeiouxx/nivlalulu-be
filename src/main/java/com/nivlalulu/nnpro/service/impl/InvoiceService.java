@@ -1,6 +1,6 @@
 package com.nivlalulu.nnpro.service.impl;
 
-import com.nivlalulu.nnpro.repository.lInvoiceRepository;
+import com.nivlalulu.nnpro.repository.IInvoiceRepository;
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
 import com.nivlalulu.nnpro.dto.v1.ProductDto;
 
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class InvoiceService {
 
-    private final lInvoiceRepository lInvoiceRepository;
+    private final IInvoiceRepository invoiceRepository;
 
     private final ProductService productService;
 
@@ -30,7 +30,7 @@ public class InvoiceService {
         Invoice invoice = new Invoice(invoiceDto.getIssueDate(), invoiceDto.getDueDate(),
                 invoiceDto.getPaymentMethod(), productList, customer, supplier);
         productList.forEach(product -> productService.createProduct(MappingService.convertToDto(product)));
-        return MappingService.convertToDto(lInvoiceRepository.save(invoice));
+        return MappingService.convertToDto(invoiceRepository.save(invoice));
     }
 
     public InvoiceDto updateInvoice(InvoiceDto invoiceUpdated) {
@@ -39,12 +39,12 @@ public class InvoiceService {
         invoice.setProductList(invoiceUpdated.getProducts().stream().map(MappingService::convertToEntity).collect(Collectors.toSet()));
         invoice.setExpiration(invoiceUpdated.getDueDate());
 
-        return MappingService.convertToDto(lInvoiceRepository.save(invoice));
+        return MappingService.convertToDto(invoiceRepository.save(invoice));
     }
 
     public InvoiceDto deleteInvoice(UUID id) {
         Invoice invoice = checkIfInvoiceExisting(id);
-        lInvoiceRepository.delete(invoice);
+        invoiceRepository.delete(invoice);
         return MappingService.convertToDto(invoice);
     }
 
@@ -67,15 +67,19 @@ public class InvoiceService {
     }
 
     protected Optional<Invoice> findInvoiceById(UUID id) {
-        return lInvoiceRepository.findById(id);
+        return invoiceRepository.findById(id);
     }
 
     public List<InvoiceDto> findAllInvoices() {
-        return lInvoiceRepository.findAll().stream().map(MappingService::convertToDto).collect(Collectors.toList());
+        return invoiceRepository
+                .findAll()
+                .stream()
+                .map(MappingService::convertToDto)
+                .collect(Collectors.toList());
     }
 
     public List<Invoice> findAllContainsProduct(Product product) {
-        return lInvoiceRepository.findAllByProductListContains(product);
+        return invoiceRepository.findAllByProductListContains(product);
     }
 
     public List<Product> validateProductsForInvoice(List<ProductDto> productsIds) {
