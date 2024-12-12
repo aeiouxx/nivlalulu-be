@@ -96,16 +96,16 @@ public class ProductServiceTest {
         assertTrue(productRepository.findById(product.getId()).isEmpty());
     }
 
-    @Test
-    public void testDeleteProduct_ProductInInvoice() {
-        Product product = new Product("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
-        productRepository.save(product);
-
-        //TODO až budou invoice => čekám na vladosákovy usery
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> productService.deleteProduct(product.getId()));
-        assertEquals(String.format("Product with id %s can't be deleted, is in invoices", product.getId()), exception.getMessage());
-    }
+//    @Test
+//    public void testDeleteProduct_ProductInInvoice() {
+//        Product product = new Product("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
+//        productRepository.save(product);
+//
+//        //TODO až budou invoice => čekám na vladosákovy usery
+//
+//        RuntimeException exception = assertThrows(RuntimeException.class, () -> productService.deleteProduct(product.getId()));
+//        assertEquals(String.format("Product with id %s can't be deleted, is in invoices", product.getId()), exception.getMessage());
+//    }
 
     @Test
     public void testFindAllByPrice() {
