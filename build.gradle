@@ -63,6 +63,10 @@ dependencies {
 	//ModelMapper
 	implementation 'org.modelmapper:modelmapper:2.4.5'
 
+	//Mail sender
+	implementation group: 'org.simplejavamail', name: 'simple-java-mail', version: '4.1.1'
+
+
 	// Redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 }
