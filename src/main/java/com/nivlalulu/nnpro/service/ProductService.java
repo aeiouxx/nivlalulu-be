@@ -1,10 +1,10 @@
 package com.nivlalulu.nnpro.service;
 
+import com.nivlalulu.nnpro.dao.InvoiceRepository;
 import com.nivlalulu.nnpro.dao.ProductRepository;
 import com.nivlalulu.nnpro.dto.ProductDto;
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.Product;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +21,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    private final InvoiceService invoiceService;
+    private final InvoiceRepository invoiceRepository;
 
     public ProductDto createProduct(ProductDto productDto) {
         Optional<Product> isProductExisting = productRepository.findProductByNameAndPrice(productDto.getName(), productDto.getPrice());
@@ -54,7 +54,8 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException(String.format("Product with id %s doesn't exist, can't be deleted", id)));
 
-        List<Invoice> listWhichContainsProduct = invoiceService.findAllContainsProduct(product);
+        List<Invoice> listWhichContainsProduct = invoiceRepository.findAllByProductListContains(product);
+
         if (!listWhichContainsProduct.isEmpty()) {
             throw new RuntimeException(String.format("Product with id %s can't be deleted, is in invoices", id));
         }

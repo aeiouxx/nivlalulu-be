@@ -18,8 +18,8 @@ import java.util.UUID;
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", nullable = false, unique = true)
     private UUID id;
 
     @Column(nullable = false)
@@ -37,12 +37,7 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal totalPrice;
 
-    @ManyToMany
-    @JoinTable(
-            name = "products_invoice",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "invoice_id")
-    )
+    @ManyToMany(mappedBy = "productList")
     private Set<Invoice> invoice;
 
     public Product(String name, Integer quantity, BigDecimal price, BigDecimal taxPrice, BigDecimal totalPrice) {
