@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 
+@Deprecated
 @Service
 @RequiredArgsConstructor
 @Slf4j

@@ -3,11 +3,15 @@ package com.nivlalulu.nnpro.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -18,75 +22,141 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtTokenProvider {
     private final JwtKeyProvider jwtKeyProvider;
-    public static final int EXPIRATION = 15 * 60 * 1000;
-    public static final Duration EXPIRATION_TIME = Duration.ofMillis(EXPIRATION);
+    private final UserDetailsService userDetailsService;
+    private static final long ACCESS_EXPIRATION = 15 * 60 * 1000;
+    private static final long REFRESH_EXPIRATION = 7L * 24L * 60L * 60L * 1000L;
+    public static final Duration ACCESS_EXPIRATION_TIME = Duration.ofMillis(ACCESS_EXPIRATION);
+    public static final Duration REFRESH_EXPIRATION_TIME = Duration.ofMillis(REFRESH_EXPIRATION);
 
-    public String generate(UserDetails userDetails) {
-        return generate(userDetails.getUsername(), userDetails.getAuthorities());
+    private static final String CLAIM_AUTHORITIES = "authorities";
+    private static final String CLAIM_REFRESH_ID = "rtid";
+
+    private static final String COOKIE_REFRESH_KEY = "refresh_token";
+
+    // > Refresh
+    public void attachRefreshTokenToCookie(
+            HttpServletResponse response,
+            String refreshToken) {
+        Cookie cookie = new Cookie(COOKIE_REFRESH_KEY, refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setPath("/");
+        cookie.setMaxAge((int) REFRESH_EXPIRATION_TIME.toSeconds());
+        response.addCookie(cookie);
     }
 
+    public String extractRefreshTokenFromCookie(HttpServletRequest request) {
+        if (request.getCookies() == null) {
+            return null;
+        }
+        return Arrays.stream(request.getCookies())
+                .filter(cookie -> COOKIE_REFRESH_KEY.equals(cookie.getName()))
+                .map(Cookie::getValue)
+                .findFirst()
+                .orElse(null);
+    }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
+    public String generateRefreshToken(
+            UserDetails userDetails,
+            String refreshTokenId) {
+        final Map<String, Object> claims = new HashMap<>();
+        claims.put(CLAIM_REFRESH_ID, refreshTokenId);
+        return generateToken(
+                claims,
+                userDetails.getUsername(),
+                jwtKeyProvider.getKey(JwtTokenType.REFRESH),
+                REFRESH_EXPIRATION);
+    }
+    public String extractRefreshTokenId(String token) {
+        return extractSignedClaim(token, JwtTokenType.REFRESH, claims -> claims.get(CLAIM_REFRESH_ID, String.class));
+    }
+    // < Refresh
+    // > Access
+    public String generateAccessToken(UserDetails userDetails) {
+        return generateAccessToken(userDetails.getUsername(), userDetails.getAuthorities());
+    }
+    public String generateAccessToken(String username, Collection<? extends GrantedAuthority> authorities) {
+        final Map<String, Object> claims = new HashMap<>();
+        claims.put(CLAIM_AUTHORITIES,
+                authorities
+                        .stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toList())
+                );
+        return generateToken(
+                claims,
+                username,
+                jwtKeyProvider.getKey(JwtTokenType.ACCESS),
+                ACCESS_EXPIRATION);
+    }
+    // < Access
+    // > Common
+    public boolean isTokenValid(String token, JwtTokenType type) {
+        var user = extractUsername(token, type);
+        var details = userDetailsService.loadUserByUsername(user);
+        return isTokenValid(token, type, details);
+    }
+    public boolean isTokenValid(String token, JwtTokenType type, UserDetails userDetails) {
+        final SecretKey key = jwtKeyProvider.getKey(type);
+        return isTokenValid(token, key, userDetails);
+    }
+    public String extractUsername(String token, JwtTokenType type) {
+        return extractSignedClaim(token, type, Claims::getSubject);
+    }
+    private String generateToken(Map<String, Object> claims, String subject, SecretKey key, long expirationMillis) {
+        return Jwts.builder()
+                .claims(claims)
+                .subject(subject)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expirationMillis))
+                .signWith(key)
+                .compact();
+    }
+    public <T> T extractSignedClaim(String token, JwtTokenType type, Function<Claims, T> resolver) {
+        log.debug("Extracting claim from {} token: {}", type, token);
+        final SecretKey key = jwtKeyProvider.getKey(type);
+        final Claims claims = extractSignedClaims(token, key);
+        return resolver.apply(claims);
+    }
+
+    private boolean isTokenValid(String token, SecretKey key, UserDetails userDetails) {
+        if (userDetails == null) return false;
+        final String username = extractUsername(token, key);
         if (username == null) {
             return false;
         }
-        if (userDetails == null) {
-            return false;
-        }
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        final boolean notExpired = !isTokenExpired(token, key);
+        final boolean usernameMatches = username.equals(userDetails.getUsername());
+        return notExpired && usernameMatches;
     }
 
-    protected boolean isTokenExpired(String token) {
+    private String extractUsername(String token, SecretKey key) {
+        return extractSignedClaim(token, key, Claims::getSubject);
+    }
+
+    private boolean isTokenExpired(String token, SecretKey key) {
         try {
-            return extractClaim(token, Claims::getExpiration).before(new Date());
+            return extractSignedClaim(token, key, Claims::getExpiration).before(new Date());
         } catch (ExpiredJwtException e) {
+            log.debug("Token expired: {}", e.getMessage());
             return true;
         }
     }
 
-    public String generate(String username, Collection<? extends GrantedAuthority> authorities) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("jti", UUID.randomUUID().toString());
-        claims.put("authorities",
-                authorities
-                        .stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.toList()));
-        return createToken(claims, username);
-    }
-
-    private String createToken(Map<String, Object> claims, String username) {
-        return Jwts.builder()
-                .claims(claims)
-                .subject(username)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + EXPIRATION))
-                .signWith(jwtKeyProvider.getSecretKey())
-                .compact();
-    }
-
-    public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
-    }
-
-    public String extractJti(String token) {
-        return extractClaim(token, claims -> claims.get("jti", String.class));
-    }
-
-
-    public <T> T extractClaim(String token, Function<Claims, T> resolver) {
-        final Claims claims = extractAllClaims(token);
+    private <T> T extractSignedClaim(String token, SecretKey key, Function<Claims, T> resolver) {
+        final Claims claims = extractSignedClaims(token, key);
         return resolver.apply(claims);
     }
 
-    private Claims extractAllClaims(String token) {
+    private Claims extractSignedClaims(String token, SecretKey key) {
         return Jwts.parser()
-                .verifyWith(jwtKeyProvider.getSecretKey())
+                .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
     }
+    // < Common
 }

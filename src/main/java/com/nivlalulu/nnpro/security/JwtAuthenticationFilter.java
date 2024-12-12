@@ -1,6 +1,7 @@
 package com.nivlalulu.nnpro.security;
 
-import com.nivlalulu.nnpro.security.service.ITokenBlacklistService;
+import com.nivlalulu.nnpro.dto.v1.RefreshTokenResponseDto;
+import com.nivlalulu.nnpro.service.IJwtTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,11 +24,11 @@ import java.util.List;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
-    private final ITokenBlacklistService tokenBlacklistService;
     private final UserDetailsService userDetailsService;
+    private final IJwtTokenService jwtTokenService;
 
     private static final List<String> NO_AUTH_URLS = List.of(
-            "/api/auth"
+            "/api/public/"
     );
 
 
@@ -36,25 +37,48 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
-        if (isExcluded(request.getRequestURI())) {
+        var uri = request.getRequestURI();
+        log.debug("Request URI: {}", uri);
+        if (isExcluded(uri)) {
             filterChain.doFilter(request, response);
             return;
         }
-        final String token = extractToken(request);
-        if (token == null) {
+        final String accessToken = extractAccessToken(request);
+        if (accessToken == null) {
             filterChain.doFilter(request, response);
             return;
         }
-        final String jti = jwtTokenProvider.extractJti(token);
-        if (tokenBlacklistService.isBlacklisted(jti)) {
+        try {
+            final String username = jwtTokenProvider.extractUsername(accessToken, JwtTokenType.ACCESS);
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                setSecurityContext(request, accessToken, username);
+            }
+        } catch (Exception e) {
+            log.error("Error occurred while setting security context", e);
             setInvalidTokenResponse(response);
             return;
         }
-        final String username = jwtTokenProvider.extractUsername(token);
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            setSecurityContext(request, token, username);
-        }
         filterChain.doFilter(request, response);
+    }
+
+    /**
+     * @deprecated This method is deprecated and will be removed in the future, clients should attempt a silent
+     * refresh via the refresh token endpoint instead.
+     * @param request
+     * @param response
+     * @return
+     */
+    @Deprecated(forRemoval = true)
+    private boolean tryTokenRefresh(HttpServletRequest request, HttpServletResponse response) {
+        log.debug("Attempting to refresh token");
+        try {
+            RefreshTokenResponseDto refreshTokenResponse = jwtTokenService.refreshAndRotate(request, response);
+            response.setHeader("Authorization", "Bearer " + refreshTokenResponse.accessToken());
+            return true;
+        } catch (Exception e) {
+            log.error("Error occurred while refreshing token", e);
+            return false;
+        }
     }
 
     private void setInvalidTokenResponse(HttpServletResponse response) throws IOException {
@@ -67,17 +91,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-
     private boolean isExcluded(String uri) {
         for (String url : NO_AUTH_URLS) {
             if (uri.contains(url)) {
+                // shouldn't even be getting triggered if the configuration is correct
+                log.error("[WRONG CONFIGURATION!!!] Excluded URL: {}", uri);
                 return true;
             }
         }
         return false;
     }
 
-    private String extractToken(HttpServletRequest request) {
+    private String extractAccessToken(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             return null;
@@ -87,7 +112,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private void setSecurityContext(HttpServletRequest request, String token, String username) {
         UserDetails details = userDetailsService.loadUserByUsername(username);
-        if (!jwtTokenProvider.isTokenValid(token, details)) {
+        if (!jwtTokenProvider.isTokenValid(token, JwtTokenType.ACCESS, details)) {
             return;
         }
         UsernamePasswordAuthenticationToken authentication

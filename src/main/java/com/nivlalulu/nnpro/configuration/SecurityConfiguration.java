@@ -25,6 +25,7 @@ public class SecurityConfiguration {
     private static String[] NO_AUTH = new String[] {
             "/swagger-ui/**",
             "/v3/api-docs/**",
+            "/public/**",
     };
 
     @Bean
