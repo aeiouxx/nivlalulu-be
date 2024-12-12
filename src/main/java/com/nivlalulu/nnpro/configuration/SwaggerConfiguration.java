@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,5 +30,21 @@ public class SwaggerConfiguration {
                                         .type(SecurityScheme.Type.HTTP)
                                         .scheme("Bearer")
                                         .bearerFormat("JWT")));
+    }
+
+    @Bean
+    public GroupedOpenApi apiGroupV1() {
+        return GroupedOpenApi.builder()
+                .group("v1")
+                .pathsToMatch("/v1/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi publicGroupV1() {
+        return GroupedOpenApi.builder()
+                .group("public-v1")
+                .pathsToMatch("/public/v1/**")
+                .build();
     }
 }
