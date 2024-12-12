@@ -1,4 +1,4 @@
-package com.nivlalulu.nnpro.dao;
+package com.nivlalulu.nnpro.repository;
 
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.Product;
@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface InvoiceRepository extends JpaRepository<Invoice, UUID> {
+public interface lInvoiceRepository extends JpaRepository<Invoice, UUID> {
 
     Optional<Invoice> findById(UUID id);
 

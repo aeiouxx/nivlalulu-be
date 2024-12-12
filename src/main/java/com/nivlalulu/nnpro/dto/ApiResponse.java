@@ -1,4 +1,4 @@
-package com.nivlalulu.nnpro.model;
+package com.nivlalulu.nnpro.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

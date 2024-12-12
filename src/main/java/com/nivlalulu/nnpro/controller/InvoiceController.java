@@ -1,9 +1,9 @@
 package com.nivlalulu.nnpro.controller;
 
-import com.nivlalulu.nnpro.dto.InvoiceDto;
-import com.nivlalulu.nnpro.dto.ProductDto;
-import com.nivlalulu.nnpro.model.ApiResponse;
-import com.nivlalulu.nnpro.service.InvoiceService;
+import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
+import com.nivlalulu.nnpro.dto.v1.ProductDto;
+import com.nivlalulu.nnpro.dto.ApiResponse;
+import com.nivlalulu.nnpro.service.impl.InvoiceService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

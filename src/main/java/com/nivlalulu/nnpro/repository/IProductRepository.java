@@ -1,4 +1,4 @@
-package com.nivlalulu.nnpro.dao;
+package com.nivlalulu.nnpro.repository;
 
 import com.nivlalulu.nnpro.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, UUID> {
+public interface IProductRepository extends JpaRepository<Product, UUID> {
 
     Optional<Product> findById(UUID id);
 

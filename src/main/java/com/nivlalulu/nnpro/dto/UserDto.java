@@ -10,6 +10,7 @@ import java.math.BigInteger;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+// todo: Party dto
 public class UserDto {
 
     @JsonIgnore

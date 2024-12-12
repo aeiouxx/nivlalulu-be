@@ -1,4 +1,4 @@
-package com.nivlalulu.nnpro.service;
+package com.nivlalulu.nnpro.service.impl;
 
 
 import org.simplejavamail.api.email.Email;

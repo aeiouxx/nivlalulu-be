@@ -1,13 +1,13 @@
 //package com.nivlalulu.nnpro;
 //
-//import com.nivlalulu.nnpro.dao.InvoiceRepository;
-//import com.nivlalulu.nnpro.dto.InvoiceDto;
-//import com.nivlalulu.nnpro.dto.ProductDto;
+//import com.nivlalulu.nnpro.repository.InvoiceRepository;
+//import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
+//import com.nivlalulu.nnpro.dto.v1.ProductDto;
 //import com.nivlalulu.nnpro.model.Invoice;
 //import com.nivlalulu.nnpro.model.Product;
 //import com.nivlalulu.nnpro.model.User;
-//import com.nivlalulu.nnpro.service.InvoiceService;
-//import com.nivlalulu.nnpro.service.ProductService;
+//import com.nivlalulu.nnpro.service.impl.InvoiceService;
+//import com.nivlalulu.nnpro.service.impl.ProductService;
 //import com.nivlalulu.nnpro.service.UserService;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;

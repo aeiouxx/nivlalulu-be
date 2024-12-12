@@ -1,8 +1,8 @@
-package com.nivlalulu.nnpro.service;
+package com.nivlalulu.nnpro.service.impl;
 
-import com.nivlalulu.nnpro.dao.InvoiceRepository;
-import com.nivlalulu.nnpro.dao.ProductRepository;
-import com.nivlalulu.nnpro.dto.ProductDto;
+import com.nivlalulu.nnpro.repository.lInvoiceRepository;
+import com.nivlalulu.nnpro.repository.IProductRepository;
+import com.nivlalulu.nnpro.dto.v1.ProductDto;
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.Product;
 import lombok.RequiredArgsConstructor;
@@ -19,25 +19,25 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductService {
 
-    private final ProductRepository productRepository;
+    private final IProductRepository IProductRepository;
 
-    private final InvoiceRepository invoiceRepository;
+    private final lInvoiceRepository lInvoiceRepository;
 
     public ProductDto createProduct(ProductDto productDto) {
-        Optional<Product> isProductExisting = productRepository.findProductByNameAndPrice(productDto.getName(), productDto.getPrice());
+        Optional<Product> isProductExisting = IProductRepository.findProductByNameAndPrice(productDto.getName(), productDto.getPrice());
         if (isProductExisting.isPresent()) {
             return duplicityCheck(isProductExisting.get(), productDto) ?
                     MappingService.convertToDto(isProductExisting.get()) :
-                    MappingService.convertToDto(productRepository.save(isProductExisting.get()));
+                    MappingService.convertToDto(IProductRepository.save(isProductExisting.get()));
         }
 
         Product product = new Product(productDto.getName(), productDto.getQuantity(), productDto.getPrice(),
                 productDto.getTax(), productDto.getTotal());
-        return MappingService.convertToDto(productRepository.save(product));
+        return MappingService.convertToDto(IProductRepository.save(product));
     }
 
     public ProductDto updateProduct(ProductDto productDto) {
-        Product product = productRepository.findById(productDto.getId())
+        Product product = IProductRepository.findById(productDto.getId())
                 .orElseThrow(() -> new RuntimeException(String.format("Product with id %s doesn't exist, can't be updated",
                         productDto.getId())));
 
@@ -47,37 +47,37 @@ public class ProductService {
         product.setTotalPrice(productDto.getTotal());
         product.setQuantity(productDto.getQuantity());
 
-        return MappingService.convertToDto(productRepository.save(product));
+        return MappingService.convertToDto(IProductRepository.save(product));
     }
 
     public ProductDto deleteProduct(UUID id) {
-        Product product = productRepository.findById(id)
+        Product product = IProductRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException(String.format("Product with id %s doesn't exist, can't be deleted", id)));
 
-        List<Invoice> listWhichContainsProduct = invoiceRepository.findAllByProductListContains(product);
+        List<Invoice> listWhichContainsProduct = lInvoiceRepository.findAllByProductListContains(product);
 
         if (!listWhichContainsProduct.isEmpty()) {
             throw new RuntimeException(String.format("Product with id %s can't be deleted, is in invoices", id));
         }
 
-        productRepository.delete(product);
+        IProductRepository.delete(product);
         return MappingService.convertToDto(product);
     }
 
     public List<ProductDto> findAllByPrice(BigDecimal price) {
-        return productRepository.findAllByPrice(price).stream().map(MappingService::convertToDto).collect(Collectors.toList());
+        return IProductRepository.findAllByPrice(price).stream().map(MappingService::convertToDto).collect(Collectors.toList());
     }
 
     public List<ProductDto> findAllByNameContaining(String name) {
-        return productRepository.findAllByNameContaining(name).stream().map(MappingService::convertToDto).collect(Collectors.toList());
+        return IProductRepository.findAllByNameContaining(name).stream().map(MappingService::convertToDto).collect(Collectors.toList());
     }
 
     public List<Product> findProductsByIds(List<UUID> ids) {
-        return productRepository.findByIdIn(ids);
+        return IProductRepository.findByIdIn(ids);
     }
 
     public Optional<Product> findProductById(UUID id) {
-        return productRepository.findById(id);
+        return IProductRepository.findById(id);
     }
 
     protected boolean duplicityCheck(Product product, ProductDto productDto) {
