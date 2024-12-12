@@ -31,6 +31,12 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal price;
 
+    @Column(nullable = false)
+    private BigDecimal taxPrice;
+
+    @Column(nullable = false)
+    private BigDecimal totalPrice;
+
     @ManyToMany
     @JoinTable(
             name = "products_invoice",
@@ -39,15 +45,11 @@ public class Product {
     )
     private Set<Invoice> invoice;
 
-    public Product(String name, Integer quantity, BigDecimal price) {
+    public Product(String name, Integer quantity, BigDecimal price, BigDecimal taxPrice, BigDecimal totalPrice) {
         this.name = name;
         this.quantity = quantity;
         this.price = price;
-    }
-
-    public Product(String name, Integer quantity, BigDecimal price, Invoice invoice) {
-        this.name = name;
-        this.quantity = quantity;
-        this.price = price;
+        this.taxPrice = taxPrice;
+        this.totalPrice = totalPrice;
     }
 }

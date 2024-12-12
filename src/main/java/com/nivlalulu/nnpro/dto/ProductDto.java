@@ -1,5 +1,6 @@
 package com.nivlalulu.nnpro.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,11 +11,16 @@ import java.util.UUID;
 @Setter
 public class ProductDto {
 
+    @JsonIgnore
     private UUID id;
 
     private String name;
 
     private Integer quantity;
 
-    private BigDecimal price;
+    private BigDecimal price; // raw price
+
+    private BigDecimal taxPrice; // tax
+
+    private BigDecimal totalPrice;
 }

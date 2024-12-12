@@ -1,5 +1,6 @@
 package com.nivlalulu.nnpro.model;
 
+import com.nivlalulu.nnpro.enums.PaymentMethod;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,14 +22,13 @@ public class Invoice {
     @Column(name = "id", nullable = false)
     private UUID id;
 
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(nullable = false)
+    private UUID invoiceNumber;
+
+
     @Column(nullable = false)
     private String companyName;
-
-    @Column(nullable = false)
-    private String companyId; //ičo
-
-    @Column(nullable = false)
-    private String taxId; //dič
 
     @Column(nullable = false)
     private Timestamp created;
@@ -36,20 +36,27 @@ public class Invoice {
     @Column(nullable = false)
     private Timestamp expiration;
 
+    @Column(nullable = false)
+    private PaymentMethod paymentMethod;
+
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
     private List<Product> productList;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private User customer;
 
-    public Invoice(String companyName, String companyId, String taxId, Timestamp created, Timestamp expiration, List<Product> productList, User user) {
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User supplier;
+
+    public Invoice(String companyName, Timestamp created, Timestamp expiration, PaymentMethod paymentMethod, List<Product> productList, User customer, User supplier) {
         this.companyName = companyName;
-        this.companyId = companyId;
-        this.taxId = taxId;
         this.created = created;
         this.expiration = expiration;
+        this.paymentMethod = paymentMethod;
         this.productList = productList;
-        this.user = user;
+        this.customer = customer;
+        this.supplier = supplier;
     }
 }
