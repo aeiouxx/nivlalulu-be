@@ -7,16 +7,10 @@ import com.nivlalulu.nnpro.dto.ProductDto;
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.Product;
 import com.nivlalulu.nnpro.model.User;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -27,12 +21,9 @@ public class InvoiceService {
 
     private final ProductService productService;
 
-    private final UserService userService;
-
-
     public InvoiceDto createInvoice(InvoiceDto invoiceDto) {
 
-        List<Product> productList = invoiceDto.getProducts().stream().map(MappingService::convertToEntity).collect(Collectors.toList());
+        Set<Product> productList = invoiceDto.getProducts().stream().map(MappingService::convertToEntity).collect(Collectors.toSet());
         User customer = MappingService.convertToEntity(invoiceDto.getCustomer());
         User supplier = MappingService.convertToEntity(invoiceDto.getSupplier());
 
@@ -45,7 +36,7 @@ public class InvoiceService {
     public InvoiceDto updateInvoice(InvoiceDto invoiceUpdated) {
         Invoice invoice = checkIfInvoiceExisting(invoiceUpdated.getId());
 
-        invoice.setProductList(invoiceUpdated.getProducts().stream().map(MappingService::convertToEntity).collect(Collectors.toList()));
+        invoice.setProductList(invoiceUpdated.getProducts().stream().map(MappingService::convertToEntity).collect(Collectors.toSet()));
         invoice.setExpiration(invoiceUpdated.getDueDate());
 
         return MappingService.convertToDto(invoiceRepository.save(invoice));
