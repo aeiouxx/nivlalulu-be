@@ -1,7 +1,7 @@
-package com.nivlalulu.nnpro.service;
+package com.nivlalulu.nnpro.service.impl;
 
-import com.nivlalulu.nnpro.dto.InvoiceDto;
-import com.nivlalulu.nnpro.dto.ProductDto;
+import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
+import com.nivlalulu.nnpro.dto.v1.ProductDto;
 import com.nivlalulu.nnpro.dto.UserDto;
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.Product;

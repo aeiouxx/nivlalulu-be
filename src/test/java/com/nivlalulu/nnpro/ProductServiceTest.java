@@ -1,10 +1,10 @@
 package com.nivlalulu.nnpro;
 
-import com.nivlalulu.nnpro.dao.ProductRepository;
-import com.nivlalulu.nnpro.dto.ProductDto;
+import com.nivlalulu.nnpro.repository.IProductRepository;
+import com.nivlalulu.nnpro.dto.v1.ProductDto;
 import com.nivlalulu.nnpro.model.Product;
-import com.nivlalulu.nnpro.service.MappingService;
-import com.nivlalulu.nnpro.service.ProductService;
+import com.nivlalulu.nnpro.service.impl.MappingService;
+import com.nivlalulu.nnpro.service.impl.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,7 +29,7 @@ public class ProductServiceTest {
     private ProductService productService;
 
     @Autowired
-    private ProductRepository productRepository;
+    private IProductRepository IProductRepository;
 
     @Container
     static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:latest")
@@ -74,7 +74,7 @@ public class ProductServiceTest {
     @Test
     public void testUpdateProduct() {
         Product product = new Product("Old Product", 5, new BigDecimal("10.00"), new BigDecimal("1.00"), new BigDecimal("11.00"));
-        productRepository.save(product);
+        IProductRepository.save(product);
 
         ProductDto updateDto = new ProductDto(product.getId(), "Updated Product", 7, new BigDecimal("15.00"), new BigDecimal("1.50"), new BigDecimal("16.50"));
         ProductDto updatedProduct = productService.updateProduct(updateDto);
@@ -87,13 +87,13 @@ public class ProductServiceTest {
     @Test
     public void testDeleteProduct_ProductExists() {
         Product product = new Product("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
-        productRepository.save(product);
+        IProductRepository.save(product);
 
         ProductDto deletedProduct = productService.deleteProduct(product.getId());
 
         assertNotNull(deletedProduct);
         assertEquals(product.getName(), deletedProduct.getName());
-        assertTrue(productRepository.findById(product.getId()).isEmpty());
+        assertTrue(IProductRepository.findById(product.getId()).isEmpty());
     }
 
 //    @Test
@@ -112,8 +112,8 @@ public class ProductServiceTest {
         Product product1 = new Product("Product 1", 5, new BigDecimal("10.00"), new BigDecimal("1.00"), new BigDecimal("11.00"));
         Product product2 = new Product("Product 2", 3, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
 
-        productRepository.save(product1);
-        productRepository.save(product2);
+        IProductRepository.save(product1);
+        IProductRepository.save(product2);
 
         List<ProductDto> products = productService.findAllByPrice(new BigDecimal("10.00"));
 
