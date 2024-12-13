@@ -1,4 +1,4 @@
-package com.nivlalulu.nnpro.controller;
+package com.nivlalulu.nnpro.controller.v1;
 
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
 import com.nivlalulu.nnpro.dto.v1.ProductDto;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/invoice")
 @Validated
-public class InvoiceController {
+public class InvoiceControllerV1 {
 
     @Autowired
     private InvoiceService invoiceService;

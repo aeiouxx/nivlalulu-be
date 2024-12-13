@@ -1,4 +1,4 @@
-package com.nivlalulu.nnpro.controller;
+package com.nivlalulu.nnpro.controller.v1;
 
 import com.nivlalulu.nnpro.dto.v1.ProductDto;
 import com.nivlalulu.nnpro.dto.ApiResponse;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/product")
 @Validated
-public class ProductController {
+public class ProductControllerV1 {
 
     @Autowired
     private ProductService productService;
