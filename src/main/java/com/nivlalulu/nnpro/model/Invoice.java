@@ -34,12 +34,7 @@ public class Invoice {
     @Column(nullable = false)
     private PaymentMethod paymentMethod;
 
-    @ManyToMany
-    @JoinTable(
-            name = "invoices_products",
-            joinColumns = @JoinColumn(name = "invoice_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<InvoiceItem> invoiceItemList;
 
 

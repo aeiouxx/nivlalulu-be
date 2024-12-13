@@ -37,8 +37,9 @@ public class InvoiceItem {
     @Column(nullable = false)
     private BigDecimal totalPrice;
 
-    @ManyToMany(mappedBy = "invoiceItemList")
-    private Set<Invoice> invoice;
+    @ManyToOne
+    @JoinColumn(name = "invoice_id", referencedColumnName = "id", nullable = false)
+    private Invoice invoice;
 
     public InvoiceItem(String name, Integer quantity, BigDecimal unitPrice, BigDecimal taxPrice, BigDecimal totalPrice) {
         this.name = name;
