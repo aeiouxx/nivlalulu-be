@@ -1,6 +1,6 @@
 package com.nivlalulu.nnpro.repository;
 
-import com.nivlalulu.nnpro.model.Product;
+import com.nivlalulu.nnpro.model.InvoiceItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,18 +10,16 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface IProductRepository extends JpaRepository<Product, UUID> {
+public interface IProductRepository extends JpaRepository<InvoiceItem, UUID> {
 
-    Optional<Product> findById(UUID id);
+    Optional<InvoiceItem> findById(UUID id);
 
-    List<Product> findAllByPrice(BigDecimal price);
+    List<InvoiceItem> findAllByUnitPrice(BigDecimal price);
 
-    List<Product> findAllByNameContaining(String name);
+    List<InvoiceItem> findAllByNameContaining(String name);
 
-    List<Product> findByIdIn(List<UUID> productLists);
+    List<InvoiceItem> findByIdIn(List<UUID> productLists);
 
-    boolean existsByNameAndPrice(String name, BigDecimal price);
-
-    Optional<Product> findProductByNameAndPrice(String name, BigDecimal price);
+    Optional<InvoiceItem> findProductByNameAndUnitPrice(String name, BigDecimal price);
 
 }

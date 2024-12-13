@@ -1,7 +1,7 @@
 package com.nivlalulu.nnpro.repository;
 
 import com.nivlalulu.nnpro.model.Invoice;
-import com.nivlalulu.nnpro.model.Product;
+import com.nivlalulu.nnpro.model.InvoiceItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +14,6 @@ public interface lInvoiceRepository extends JpaRepository<Invoice, UUID> {
 
     Optional<Invoice> findById(UUID id);
 
-    List<Invoice> findAllByProductListContains(Product product);
+    List<Invoice> findAllByProductListContains(InvoiceItem invoiceItem);
 
 }

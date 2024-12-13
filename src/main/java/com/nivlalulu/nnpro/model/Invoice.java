@@ -40,7 +40,7 @@ public class Invoice {
             joinColumns = @JoinColumn(name = "invoice_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
-    private Set<Product> productList;
+    private Set<InvoiceItem> invoiceItemList;
 
 
     @ManyToOne
@@ -84,11 +84,11 @@ public class Invoice {
     @Column
     private String supplierTaxId;
 
-    public Invoice(Timestamp created, Timestamp expiration, PaymentMethod paymentMethod, Set<Product> productList, User customer, User supplier) {
+    public Invoice(Timestamp created, Timestamp expiration, PaymentMethod paymentMethod, Set<InvoiceItem> invoiceItemList, User customer, User supplier) {
         this.created = created;
         this.expiration = expiration;
         this.paymentMethod = paymentMethod;
-        this.productList = productList;
+        this.invoiceItemList = invoiceItemList;
         this.customer = customer;
         this.supplier = supplier;
     }

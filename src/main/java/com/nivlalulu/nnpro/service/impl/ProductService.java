@@ -1,10 +1,10 @@
 package com.nivlalulu.nnpro.service.impl;
 
+import com.nivlalulu.nnpro.model.InvoiceItem;
 import com.nivlalulu.nnpro.repository.lInvoiceRepository;
 import com.nivlalulu.nnpro.repository.IProductRepository;
 import com.nivlalulu.nnpro.dto.v1.ProductDto;
 import com.nivlalulu.nnpro.model.Invoice;
-import com.nivlalulu.nnpro.model.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,44 +24,44 @@ public class ProductService {
     private final lInvoiceRepository lInvoiceRepository;
 
     public ProductDto createProduct(ProductDto productDto) {
-        Optional<Product> isProductExisting = IProductRepository.findProductByNameAndPrice(productDto.getName(), productDto.getPrice());
+        Optional<InvoiceItem> isProductExisting = IProductRepository.findProductByNameAndPrice(productDto.getName(), productDto.getPrice());
         if (isProductExisting.isPresent()) {
             return duplicityCheck(isProductExisting.get(), productDto) ?
                     MappingService.convertToDto(isProductExisting.get()) :
                     MappingService.convertToDto(IProductRepository.save(isProductExisting.get()));
         }
 
-        Product product = new Product(productDto.getName(), productDto.getQuantity(), productDto.getPrice(),
+        InvoiceItem invoiceItem = new InvoiceItem(productDto.getName(), productDto.getQuantity(), productDto.getPrice(),
                 productDto.getTax(), productDto.getTotal());
-        return MappingService.convertToDto(IProductRepository.save(product));
+        return MappingService.convertToDto(IProductRepository.save(invoiceItem));
     }
 
     public ProductDto updateProduct(ProductDto productDto) {
-        Product product = IProductRepository.findById(productDto.getId())
+        InvoiceItem invoiceItem = IProductRepository.findById(productDto.getId())
                 .orElseThrow(() -> new RuntimeException(String.format("Product with id %s doesn't exist, can't be updated",
                         productDto.getId())));
 
-        product.setName(productDto.getName());
-        product.setPrice(productDto.getPrice());
-        product.setTaxPrice(productDto.getTax());
-        product.setTotalPrice(productDto.getTotal());
-        product.setQuantity(productDto.getQuantity());
+        invoiceItem.setName(productDto.getName());
+        invoiceItem.setUnitPrice(productDto.getPrice());
+        invoiceItem.setTaxPrice(productDto.getTax());
+        invoiceItem.setTotalPrice(productDto.getTotal());
+        invoiceItem.setQuantity(productDto.getQuantity());
 
-        return MappingService.convertToDto(IProductRepository.save(product));
+        return MappingService.convertToDto(IProductRepository.save(invoiceItem));
     }
 
     public ProductDto deleteProduct(UUID id) {
-        Product product = IProductRepository.findById(id)
+        InvoiceItem invoiceItem = IProductRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException(String.format("Product with id %s doesn't exist, can't be deleted", id)));
 
-        List<Invoice> listWhichContainsProduct = lInvoiceRepository.findAllByProductListContains(product);
+        List<Invoice> listWhichContainsProduct = lInvoiceRepository.findAllByProductListContains(invoiceItem);
 
         if (!listWhichContainsProduct.isEmpty()) {
             throw new RuntimeException(String.format("Product with id %s can't be deleted, is in invoices", id));
         }
 
-        IProductRepository.delete(product);
-        return MappingService.convertToDto(product);
+        IProductRepository.delete(invoiceItem);
+        return MappingService.convertToDto(invoiceItem);
     }
 
     public List<ProductDto> findAllByPrice(BigDecimal price) {
@@ -72,17 +72,17 @@ public class ProductService {
         return IProductRepository.findAllByNameContaining(name).stream().map(MappingService::convertToDto).collect(Collectors.toList());
     }
 
-    public List<Product> findProductsByIds(List<UUID> ids) {
+    public List<InvoiceItem> findProductsByIds(List<UUID> ids) {
         return IProductRepository.findByIdIn(ids);
     }
 
-    public Optional<Product> findProductById(UUID id) {
+    public Optional<InvoiceItem> findProductById(UUID id) {
         return IProductRepository.findById(id);
     }
 
-    protected boolean duplicityCheck(Product product, ProductDto productDto) {
-        boolean isNameMatching = product.getName().equals(productDto.getName());
-        boolean isNamePrice = product.getPrice().equals(productDto.getPrice());
+    protected boolean duplicityCheck(InvoiceItem invoiceItem, ProductDto productDto) {
+        boolean isNameMatching = invoiceItem.getName().equals(productDto.getName());
+        boolean isNamePrice = invoiceItem.getUnitPrice().equals(productDto.getPrice());
         return isNameMatching && isNamePrice;
     }
 }

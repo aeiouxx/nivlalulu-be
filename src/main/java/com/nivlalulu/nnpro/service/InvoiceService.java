@@ -5,7 +5,7 @@ import com.nivlalulu.nnpro.dto.InvoiceDto;
 import com.nivlalulu.nnpro.dto.ProductDto;
 
 import com.nivlalulu.nnpro.model.Invoice;
-import com.nivlalulu.nnpro.model.Product;
+import com.nivlalulu.nnpro.model.InvoiceItem;
 import com.nivlalulu.nnpro.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,20 +23,20 @@ public class InvoiceService {
 
     public InvoiceDto createInvoice(InvoiceDto invoiceDto) {
 
-        Set<Product> productList = invoiceDto.getProducts().stream().map(MappingService::convertToEntity).collect(Collectors.toSet());
+        Set<InvoiceItem> invoiceItemList = invoiceDto.getProducts().stream().map(MappingService::convertToEntity).collect(Collectors.toSet());
         User customer = MappingService.convertToEntity(invoiceDto.getCustomer());
         User supplier = MappingService.convertToEntity(invoiceDto.getSupplier());
 
         Invoice invoice = new Invoice(invoiceDto.getIssueDate(), invoiceDto.getDueDate(),
-                invoiceDto.getPaymentMethod(), productList, customer, supplier);
-        productList.forEach(product -> productService.createProduct(MappingService.convertToDto(product)));
+                invoiceDto.getPaymentMethod(), invoiceItemList, customer, supplier);
+        invoiceItemList.forEach(product -> productService.createProduct(MappingService.convertToDto(product)));
         return MappingService.convertToDto(invoiceRepository.save(invoice));
     }
 
     public InvoiceDto updateInvoice(InvoiceDto invoiceUpdated) {
         Invoice invoice = checkIfInvoiceExisting(invoiceUpdated.getId());
 
-        invoice.setProductList(invoiceUpdated.getProducts().stream().map(MappingService::convertToEntity).collect(Collectors.toSet()));
+        invoice.setInvoiceItemList(invoiceUpdated.getProducts().stream().map(MappingService::convertToEntity).collect(Collectors.toSet()));
         invoice.setExpiration(invoiceUpdated.getDueDate());
 
         return MappingService.convertToDto(invoiceRepository.save(invoice));
@@ -50,13 +50,13 @@ public class InvoiceService {
 
     public InvoiceDto addProductToInvoice(UUID invoiceId, List<ProductDto> productsIds) {
         Invoice existingInvoice = checkIfInvoiceExisting(invoiceId);
-        existingInvoice.getProductList().addAll(validateProductsForInvoice(productsIds));
+        existingInvoice.getInvoiceItemList().addAll(validateProductsForInvoice(productsIds));
         return updateInvoice(MappingService.convertToDto(existingInvoice));
     }
 
     public InvoiceDto removeProductFromInvoice(UUID invoiceId, List<ProductDto> productsIds) {
         Invoice existingInvoice = checkIfInvoiceExisting(invoiceId);
-        existingInvoice.getProductList().removeAll(validateProductsForInvoice(productsIds));
+        existingInvoice.getInvoiceItemList().removeAll(validateProductsForInvoice(productsIds));
         return updateInvoice(MappingService.convertToDto(existingInvoice));
     }
 
@@ -74,20 +74,20 @@ public class InvoiceService {
         return invoiceRepository.findAll().stream().map(MappingService::convertToDto).collect(Collectors.toList());
     }
 
-    public List<Invoice> findAllContainsProduct(Product product) {
-        return invoiceRepository.findAllByProductListContains(product);
+    public List<Invoice> findAllContainsProduct(InvoiceItem invoiceItem) {
+        return invoiceRepository.findAllByProductListContains(invoiceItem);
     }
 
-    public List<Product> validateProductsForInvoice(List<ProductDto> productsIds) {
-        List<Product> products = new ArrayList<>();
+    public List<InvoiceItem> validateProductsForInvoice(List<ProductDto> productsIds) {
+        List<InvoiceItem> invoiceItems = new ArrayList<>();
         for (ProductDto productId : productsIds) {
-            Optional<Product> existingProduct = productService.findProductById(productId.getId());
+            Optional<InvoiceItem> existingProduct = productService.findProductById(productId.getId());
             if (existingProduct.isEmpty()) {
                 throw new RuntimeException(String.format("Product id %s can't be finded", productId));
             }
-            products.add(existingProduct.get());
+            invoiceItems.add(existingProduct.get());
         }
-        return products;
+        return invoiceItems;
     }
 
     public Invoice checkIfInvoiceExisting(UUID invoiceId) {
