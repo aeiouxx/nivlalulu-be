@@ -24,7 +24,7 @@ public class ProductService {
     private final lInvoiceRepository lInvoiceRepository;
 
     public ProductDto createProduct(ProductDto productDto) {
-        Optional<InvoiceItem> isProductExisting = IProductRepository.findProductByNameAndPrice(productDto.getName(), productDto.getPrice());
+        Optional<InvoiceItem> isProductExisting = IProductRepository.findProductByNameAndUnitPrice(productDto.getName(), productDto.getPrice());
         if (isProductExisting.isPresent()) {
             return duplicityCheck(isProductExisting.get(), productDto) ?
                     MappingService.convertToDto(isProductExisting.get()) :
@@ -65,7 +65,7 @@ public class ProductService {
     }
 
     public List<ProductDto> findAllByPrice(BigDecimal price) {
-        return IProductRepository.findAllByPrice(price).stream().map(MappingService::convertToDto).collect(Collectors.toList());
+        return IProductRepository.findAllByUnitPrice(price).stream().map(MappingService::convertToDto).collect(Collectors.toList());
     }
 
     public List<ProductDto> findAllByNameContaining(String name) {
