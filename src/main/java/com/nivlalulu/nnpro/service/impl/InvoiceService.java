@@ -4,10 +4,9 @@ import com.nivlalulu.nnpro.model.InvoiceItem;
 import com.nivlalulu.nnpro.model.Party;
 import com.nivlalulu.nnpro.repository.lInvoiceRepository;
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
-import com.nivlalulu.nnpro.dto.v1.ProductDto;
+import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
 
 import com.nivlalulu.nnpro.model.Invoice;
-import com.nivlalulu.nnpro.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -49,13 +48,13 @@ public class InvoiceService {
         return MappingService.convertToDto(invoice);
     }
 
-    public InvoiceDto addProductToInvoice(UUID invoiceId, List<ProductDto> productsIds) {
+    public InvoiceDto addProductToInvoice(UUID invoiceId, List<InvoiceItemDto> productsIds) {
         Invoice existingInvoice = checkIfInvoiceExisting(invoiceId);
         existingInvoice.getInvoiceItemList().addAll(validateProductsForInvoice(productsIds));
         return updateInvoice(MappingService.convertToDto(existingInvoice));
     }
 
-    public InvoiceDto removeProductFromInvoice(UUID invoiceId, List<ProductDto> productsIds) {
+    public InvoiceDto removeProductFromInvoice(UUID invoiceId, List<InvoiceItemDto> productsIds) {
         Invoice existingInvoice = checkIfInvoiceExisting(invoiceId);
         existingInvoice.getInvoiceItemList().removeAll(validateProductsForInvoice(productsIds));
         return updateInvoice(MappingService.convertToDto(existingInvoice));
@@ -79,9 +78,9 @@ public class InvoiceService {
         return lInvoiceRepository.findAllByProductListContains(invoiceItem);
     }
 
-    public List<InvoiceItem> validateProductsForInvoice(List<ProductDto> productsIds) {
+    public List<InvoiceItem> validateProductsForInvoice(List<InvoiceItemDto> productsIds) {
         List<InvoiceItem> invoiceItems = new ArrayList<>();
-        for (ProductDto productId : productsIds) {
+        for (InvoiceItemDto productId : productsIds) {
             Optional<InvoiceItem> existingProduct = productService.findProductById(productId.getId());
             if (existingProduct.isEmpty()) {
                 throw new RuntimeException(String.format("Product id %s can't be finded", productId));

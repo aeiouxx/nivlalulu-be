@@ -1,7 +1,7 @@
 package com.nivlalulu.nnpro.controller.v1;
 
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
-import com.nivlalulu.nnpro.dto.v1.ProductDto;
+import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
 import com.nivlalulu.nnpro.dto.ApiResponse;
 import com.nivlalulu.nnpro.service.impl.InvoiceService;
 import jakarta.validation.Valid;
@@ -59,7 +59,7 @@ public class InvoiceControllerV1 {
     }
 
     @PutMapping("/addProducts/{id}")
-    public ApiResponse<InvoiceDto> addProductToInvoice(@PathVariable UUID id, @RequestBody List<@Valid ProductDto> productsIds) {
+    public ApiResponse<InvoiceDto> addProductToInvoice(@PathVariable UUID id, @RequestBody List<@Valid InvoiceItemDto> productsIds) {
         try {
             InvoiceDto updatedProduct = invoiceService.addProductToInvoice(id, productsIds);
             return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly add products to invoice", updatedProduct);
@@ -69,7 +69,7 @@ public class InvoiceControllerV1 {
     }
 
     @PutMapping("/removeProducts/{id}")
-    public ApiResponse<InvoiceDto> removeProductsFromInvoice(@PathVariable UUID id, @RequestBody List<@Valid ProductDto> productsIds) {
+    public ApiResponse<InvoiceDto> removeProductsFromInvoice(@PathVariable UUID id, @RequestBody List<@Valid InvoiceItemDto> productsIds) {
         try {
             InvoiceDto updatedProduct = invoiceService.removeProductFromInvoice(id, productsIds);
             return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly removed products from invoice", updatedProduct);

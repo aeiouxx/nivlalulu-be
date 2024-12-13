@@ -47,9 +47,34 @@ public class Party {
     private String email;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-    private List<Invoice> customerInvoices = new ArrayList<>();
+    private List<Invoice> customerInvoices;
 
     @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL)
-    private List<Invoice> supplierInvoices = new ArrayList<>();
+    private List<Invoice> supplierInvoices;
 
+    public Party(String organizationName, String personName, String address, String country, String companyId, String taxId, String telephone, String email, List<Invoice> customerInvoices, List<Invoice> supplierInvoices) {
+        this.organizationName = organizationName;
+        this.personName = personName;
+        this.address = address;
+        this.country = country;
+        this.companyId = companyId;
+        this.taxId = taxId;
+        this.telephone = telephone;
+        this.email = email;
+        this.customerInvoices = customerInvoices;
+        this.supplierInvoices = supplierInvoices;
+    }
+
+    public Party(String organizationName, String personName, String address, String country, String companyId, String taxId, String telephone, String email) {
+        this.organizationName = organizationName;
+        this.personName = personName;
+        this.address = address;
+        this.country = country;
+        this.companyId = companyId;
+        this.taxId = taxId;
+        this.telephone = telephone;
+        this.email = email;
+        this.customerInvoices = new ArrayList<>();
+        this.supplierInvoices = new ArrayList<>();
+    }
 }

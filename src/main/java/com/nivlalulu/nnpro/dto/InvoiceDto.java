@@ -37,7 +37,7 @@ public class InvoiceDto {
 
     @NotNull(message = "Products cannot be null")
     @NotEmpty(message = "Products cannot be empty")
-    private List<@Valid ProductDto> products;
+    private List<@Valid InvoiceItemDto> products;
 
     @NotNull(message = "Payment method cannot be null")
     private PaymentMethod paymentMethod;

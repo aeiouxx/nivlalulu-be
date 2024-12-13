@@ -1,7 +1,7 @@
 package com.nivlalulu.nnpro.service.impl;
 
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
-import com.nivlalulu.nnpro.dto.v1.ProductDto;
+import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
 import com.nivlalulu.nnpro.dto.PartyDto;
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.InvoiceItem;
@@ -21,8 +21,8 @@ public class MappingService {
         this.modelMapper = modelMapper;
     }
 
-    public static ProductDto convertToDto(InvoiceItem invoiceItem) {
-        return modelMapper.map(invoiceItem, ProductDto.class);
+    public static InvoiceItemDto convertToDto(InvoiceItem invoiceItem) {
+        return modelMapper.map(invoiceItem, InvoiceItemDto.class);
     }
 
     public static PartyDto convertToDto(User user) {
@@ -33,8 +33,8 @@ public class MappingService {
         return modelMapper.map(invoice, InvoiceDto.class);
     }
 
-    public static InvoiceItem convertToEntity(ProductDto productDto) {
-        return modelMapper.map(productDto, InvoiceItem.class);
+    public static InvoiceItem convertToEntity(InvoiceItemDto invoiceItemDto) {
+        return modelMapper.map(invoiceItemDto, InvoiceItem.class);
     }
 
     public static Invoice convertToEntity(InvoiceDto invoiceDto) {

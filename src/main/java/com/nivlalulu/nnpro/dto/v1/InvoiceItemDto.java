@@ -1,4 +1,4 @@
-package com.nivlalulu.nnpro.dto;
+package com.nivlalulu.nnpro.dto.v1;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.*;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDto {
+public class InvoiceItemDto {
 
     @JsonIgnore
     private UUID id;

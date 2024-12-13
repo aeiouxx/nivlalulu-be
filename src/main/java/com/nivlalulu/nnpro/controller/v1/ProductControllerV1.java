@@ -1,6 +1,6 @@
 package com.nivlalulu.nnpro.controller.v1;
 
-import com.nivlalulu.nnpro.dto.v1.ProductDto;
+import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
 import com.nivlalulu.nnpro.dto.ApiResponse;
 import com.nivlalulu.nnpro.service.impl.ProductService;
 import jakarta.validation.Valid;
@@ -22,9 +22,9 @@ public class ProductControllerV1 {
     private ProductService productService;
 
     @PostMapping("/saveProduct")
-    public ApiResponse<ProductDto> saveProduct(@Valid @RequestBody ProductDto productDto) {
+    public ApiResponse<InvoiceItemDto> saveProduct(@Valid @RequestBody InvoiceItemDto invoiceItemDto) {
         try {
-            ProductDto product = productService.createProduct(productDto);
+            InvoiceItemDto product = productService.createProduct(invoiceItemDto);
             return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly added product", product);
         } catch (RuntimeException ex) {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
@@ -32,9 +32,9 @@ public class ProductControllerV1 {
     }
 
     @PutMapping("/updateProduct")
-    public ApiResponse<ProductDto> updateProduct(@Valid @RequestBody ProductDto productDto) {
+    public ApiResponse<InvoiceItemDto> updateProduct(@Valid @RequestBody InvoiceItemDto invoiceItemDto) {
         try {
-            ProductDto updatedProduct = productService.updateProduct(productDto);
+            InvoiceItemDto updatedProduct = productService.updateProduct(invoiceItemDto);
             return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly updated product", updatedProduct);
         } catch (RuntimeException ex) {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
@@ -42,7 +42,7 @@ public class ProductControllerV1 {
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<ProductDto> deleteProduct(@PathVariable UUID id) {
+    public ApiResponse<InvoiceItemDto> deleteProduct(@PathVariable UUID id) {
         try {
             return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly deleted product", productService.deleteProduct(id));
         } catch (RuntimeException ex) {
