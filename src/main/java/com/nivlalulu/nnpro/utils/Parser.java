@@ -3,7 +3,7 @@ package com.nivlalulu.nnpro.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.nivlalulu.nnpro.dto.InvoiceDto;
+import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
 
 public class Parser {
 
