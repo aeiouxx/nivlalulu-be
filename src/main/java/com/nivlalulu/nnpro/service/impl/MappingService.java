@@ -25,8 +25,8 @@ public class MappingService {
         return modelMapper.map(invoiceItem, InvoiceItemDto.class);
     }
 
-    public static PartyDto convertToDto(User user) {
-        return modelMapper.map(user, PartyDto.class);
+    public static PartyDto convertToDto(Party party) {
+        return modelMapper.map(party, PartyDto.class);
     }
 
     public static InvoiceDto convertToDto(Invoice invoice) {
