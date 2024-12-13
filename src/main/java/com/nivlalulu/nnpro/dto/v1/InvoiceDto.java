@@ -2,7 +2,7 @@ package com.nivlalulu.nnpro.dto.v1;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.nivlalulu.nnpro.dto.UserDto;
+import com.nivlalulu.nnpro.dto.PartyDto;
 import com.nivlalulu.nnpro.enums.PaymentMethod;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
@@ -42,13 +42,15 @@ public class InvoiceDto {
     @NotNull(message = "Payment method cannot be null")
     private PaymentMethod paymentMethod;
 
+    private String variableSymbol;
+
     @NotNull(message = "Customer cannot be null")
     @Valid
-    private UserDto customer;
+    private PartyDto customer;
 
     @NotNull(message = "Supplier cannot be null")
     @Valid
-    private UserDto supplier;
+    private PartyDto supplier;
 
     @JsonProperty("raw_value")
     @NotNull(message = "Raw value cannot be null")

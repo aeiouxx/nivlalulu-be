@@ -1,6 +1,7 @@
 package com.nivlalulu.nnpro.service.impl;
 
 import com.nivlalulu.nnpro.model.InvoiceItem;
+import com.nivlalulu.nnpro.model.Party;
 import com.nivlalulu.nnpro.repository.lInvoiceRepository;
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
 import com.nivlalulu.nnpro.dto.v1.ProductDto;
@@ -24,11 +25,11 @@ public class InvoiceService {
     public InvoiceDto createInvoice(InvoiceDto invoiceDto) {
 
         Set<InvoiceItem> invoiceItemList = invoiceDto.getProducts().stream().map(MappingService::convertToEntity).collect(Collectors.toSet());
-        User customer = MappingService.convertToEntity(invoiceDto.getCustomer());
-        User supplier = MappingService.convertToEntity(invoiceDto.getSupplier());
+        Party customer = MappingService.convertToEntity(invoiceDto.getCustomer());
+        Party supplier = MappingService.convertToEntity(invoiceDto.getSupplier());
 
         Invoice invoice = new Invoice(invoiceDto.getIssueDate(), invoiceDto.getDueDate(),
-                invoiceDto.getPaymentMethod(), invoiceItemList, customer, supplier);
+                invoiceDto.getPaymentMethod(), invoiceDto.getVariableSymbol(), invoiceItemList, customer, supplier);
         invoiceItemList.forEach(product -> productService.createProduct(MappingService.convertToDto(product)));
         return MappingService.convertToDto(lInvoiceRepository.save(invoice));
     }

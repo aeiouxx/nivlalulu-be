@@ -34,55 +34,28 @@ public class Invoice {
     @Column(nullable = false)
     private PaymentMethod paymentMethod;
 
+    @Column(nullable = false)
+    private String variableSymbol;
+
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<InvoiceItem> invoiceItemList;
 
-
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
-    private User customer;
-
-    @Column
-    private String customerOrganizationName;
-
-    @Column
-    private String customerAddress;
-
-    @Column
-    private String customerCountry;
-
-    @Column
-    private String customerCompanyId;
-
-    @Column
-    private String customerTaxId;
+    private Party customer;
 
     @ManyToOne
     @JoinColumn(name = "supplier_id", referencedColumnName = "id")
-    private User supplier;
-
-    @Column
-    private String supplierOrganizationName;
-
-    @Column
-    private String supplierAddress;
-
-    @Column
-    private String supplierCountry;
+    private Party supplier;
 
     @Column
     private String contactPerson;
 
-    @Column
-    private String supplierCompanyId;
-
-    @Column
-    private String supplierTaxId;
-
-    public Invoice(Timestamp created, Timestamp expiration, PaymentMethod paymentMethod, Set<InvoiceItem> invoiceItemList, User customer, User supplier) {
+    public Invoice(Timestamp created, Timestamp expiration, PaymentMethod paymentMethod, String variableSymbol, Set<InvoiceItem> invoiceItemList, Party customer, Party supplier) {
         this.created = created;
         this.expiration = expiration;
         this.paymentMethod = paymentMethod;
+        this.variableSymbol = variableSymbol;
         this.invoiceItemList = invoiceItemList;
         this.customer = customer;
         this.supplier = supplier;

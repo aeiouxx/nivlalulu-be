@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
@@ -41,13 +42,15 @@ public class InvoiceDto {
     @NotNull(message = "Payment method cannot be null")
     private PaymentMethod paymentMethod;
 
+    private String variableSymbol;
+
     @NotNull(message = "Customer cannot be null")
     @Valid
-    private UserDto customer;
+    private PartyDto customer;
 
     @NotNull(message = "Supplier cannot be null")
     @Valid
-    private UserDto supplier;
+    private PartyDto supplier;
 
     @JsonProperty("raw_value")
     @NotNull(message = "Raw value cannot be null")
