@@ -1,4 +1,4 @@
-package com.nivlalulu.nnpro.controller.global;
+package com.nivlalulu.nnpro.common.controller;
 
 import com.nivlalulu.nnpro.common.exceptions.*;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 @Slf4j
-public class GlobalExceptionHandler {
+public class GlobalControllerAdvice {
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<?> handleBadRequestException(BadRequestException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
