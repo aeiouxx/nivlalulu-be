@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface IProductRepository extends JpaRepository<InvoiceItem, UUID> {
+public interface IInvoiceItemRepository extends JpaRepository<InvoiceItem, UUID> {
 
     Optional<InvoiceItem> findById(UUID id);
 

@@ -1,21 +1,18 @@
 package com.nivlalulu.nnpro;
 
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
-import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
 import com.nivlalulu.nnpro.enums.PaymentMethod;
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.InvoiceItem;
 import com.nivlalulu.nnpro.model.Party;
-import com.nivlalulu.nnpro.model.User;
 import com.nivlalulu.nnpro.service.impl.InvoiceService;
 import com.nivlalulu.nnpro.service.impl.MappingService;
-import com.nivlalulu.nnpro.service.impl.ProductService;
+import com.nivlalulu.nnpro.service.impl.InvoiceItemService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class InvoiceServiceTest {
 
     private InvoiceService invoiceService;
-    private ProductService productService;
+    private InvoiceItemService invoiceItemService;
 
 
     @Test

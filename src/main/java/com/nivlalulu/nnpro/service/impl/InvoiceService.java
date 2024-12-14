@@ -19,7 +19,7 @@ public class InvoiceService {
 
     private final lInvoiceRepository lInvoiceRepository;
 
-    private final ProductService productService;
+    private final InvoiceItemService invoiceItemService;
 
     public InvoiceDto createInvoice(InvoiceDto invoiceDto) {
 
@@ -29,7 +29,7 @@ public class InvoiceService {
 
         Invoice invoice = new Invoice(invoiceDto.getIssueDate(), invoiceDto.getDueDate(),
                 invoiceDto.getPaymentMethod(), invoiceDto.getVariableSymbol(), invoiceItemList, customer, supplier);
-        invoiceItemList.forEach(product -> productService.createProduct(MappingService.convertToDto(product)));
+        invoiceItemList.forEach(product -> invoiceItemService.createInvoiceItem(MappingService.convertToDto(product)));
         return MappingService.convertToDto(lInvoiceRepository.save(invoice));
     }
 
@@ -81,11 +81,8 @@ public class InvoiceService {
     public List<InvoiceItem> validateProductsForInvoice(List<InvoiceItemDto> productsIds) {
         List<InvoiceItem> invoiceItems = new ArrayList<>();
         for (InvoiceItemDto productId : productsIds) {
-            Optional<InvoiceItem> existingProduct = productService.findProductById(productId.getId());
-            if (existingProduct.isEmpty()) {
-                throw new RuntimeException(String.format("Product id %s can't be finded", productId));
-            }
-            invoiceItems.add(existingProduct.get());
+            InvoiceItem existingProduct = invoiceItemService.findProductById(productId.getId());
+            invoiceItems.add(existingProduct);
         }
         return invoiceItems;
     }
