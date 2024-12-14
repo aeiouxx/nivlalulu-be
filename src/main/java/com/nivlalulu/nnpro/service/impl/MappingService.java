@@ -2,11 +2,10 @@ package com.nivlalulu.nnpro.service.impl;
 
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
 import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
-import com.nivlalulu.nnpro.dto.PartyDto;
+import com.nivlalulu.nnpro.dto.v1.PartyDto;
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.InvoiceItem;
 import com.nivlalulu.nnpro.model.Party;
-import com.nivlalulu.nnpro.model.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

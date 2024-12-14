@@ -1,6 +1,6 @@
 package com.nivlalulu.nnpro.controller.v1;
 
-import com.nivlalulu.nnpro.dto.PartyDto;
+import com.nivlalulu.nnpro.dto.v1.PartyDto;
 import com.nivlalulu.nnpro.model.ApiResponse;
 import com.nivlalulu.nnpro.service.impl.PartyService;
 import jakarta.validation.Valid;

@@ -1,7 +1,7 @@
 package com.nivlalulu.nnpro.service.impl;
 
+import com.nivlalulu.nnpro.common.exceptions.NotFoundException;
 import com.nivlalulu.nnpro.model.InvoiceItem;
-import com.nivlalulu.nnpro.model.Party;
 import com.nivlalulu.nnpro.repository.lInvoiceRepository;
 import com.nivlalulu.nnpro.repository.IInvoiceItemRepository;
 import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -39,8 +38,7 @@ public class InvoiceItemService {
 
     public InvoiceItemDto updateInvoiceItem(InvoiceItemDto invoiceItemDto) {
         InvoiceItem invoiceItem = IInvoiceItemRepository.findById(invoiceItemDto.getId())
-                .orElseThrow(() -> new RuntimeException(String.format("Product with id %s doesn't exist, can't be updated",
-                        invoiceItemDto.getId())));
+                .orElseThrow(() -> new NotFoundException("Product", "id", invoiceItemDto.getId().toString()));
 
         invoiceItem.setName(invoiceItemDto.getName());
         invoiceItem.setUnitPrice(invoiceItemDto.getPrice());
@@ -53,7 +51,7 @@ public class InvoiceItemService {
 
     public InvoiceItemDto deleteInvoiceItem(UUID id) {
         InvoiceItem invoiceItem = IInvoiceItemRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException(String.format("Product with id %s doesn't exist, can't be deleted", id)));
+                .orElseThrow(() -> new NotFoundException("Product", "id", id.toString()));
 
         List<Invoice> listWhichContainsProduct = lInvoiceRepository.findAllByProductListContains(invoiceItem);
 
@@ -94,7 +92,7 @@ public class InvoiceItemService {
     public InvoiceItem checkIfInvoiceItemExisting(UUID invoiceItemId) {
         Optional<InvoiceItem> existingInvoiceItem = IInvoiceItemRepository.findById(invoiceItemId);
         if (existingInvoiceItem.isEmpty()) {
-            throw new RuntimeException(String.format("Invoice item with id %s doens't exists", invoiceItemId));
+            throw new NotFoundException("Invoice item", "id", invoiceItemId.toString());
         } else {
             return existingInvoiceItem.get();
         }

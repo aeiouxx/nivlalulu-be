@@ -1,14 +1,13 @@
 package com.nivlalulu.nnpro.service.impl;
 
-import com.nivlalulu.nnpro.dto.PartyDto;
-import com.nivlalulu.nnpro.model.Invoice;
+import com.nivlalulu.nnpro.common.exceptions.NotFoundException;
+import com.nivlalulu.nnpro.dto.v1.PartyDto;
 import com.nivlalulu.nnpro.model.Party;
 import com.nivlalulu.nnpro.repository.IPartyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -34,8 +33,7 @@ public class PartyService {
 
     public PartyDto updateParty(PartyDto partyDto) {
         Party party = IPartyRepository.findById(partyDto.getId())
-                .orElseThrow(() -> new RuntimeException(
-                        String.format("Party with id %s doesn't exist, can't be updated", partyDto.getId())));
+                .orElseThrow(() -> new NotFoundException("Party", "id", partyDto.getId().toString()));
 
         party.setOrganizationName(partyDto.getOrganizationName());
         party.setPersonName(partyDto.getPersonName());
@@ -52,8 +50,7 @@ public class PartyService {
 
     public PartyDto deleteParty(UUID id) {
         Party party = IPartyRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException(
-                        String.format("Party with id %s doesn't exist, can't be updated", id)));
+                .orElseThrow(() -> new NotFoundException("Party", "id", id.toString()));
 
         if (!party.getCustomerInvoices().isEmpty()) {
             throw new RuntimeException("Can't delete party because is in some Invoice as customer!");
@@ -99,6 +96,4 @@ public class PartyService {
             return existingParty.get();
         }
     }
-
-
 }

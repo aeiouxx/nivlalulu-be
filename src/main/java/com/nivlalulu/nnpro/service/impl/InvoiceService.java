@@ -1,5 +1,6 @@
 package com.nivlalulu.nnpro.service.impl;
 
+import com.nivlalulu.nnpro.common.exceptions.NotFoundException;
 import com.nivlalulu.nnpro.model.InvoiceItem;
 import com.nivlalulu.nnpro.model.Party;
 import com.nivlalulu.nnpro.repository.lInvoiceRepository;
@@ -50,13 +51,13 @@ public class InvoiceService {
 
     public InvoiceDto addProductToInvoice(UUID invoiceId, List<InvoiceItemDto> productsIds) {
         Invoice existingInvoice = checkIfInvoiceExisting(invoiceId);
-        existingInvoice.getInvoiceItemList().addAll(validateProductsForInvoice(productsIds));
+        existingInvoice.getInvoiceItemList().addAll(validateInvoiceItemForInvoice(productsIds));
         return updateInvoice(MappingService.convertToDto(existingInvoice));
     }
 
     public InvoiceDto removeProductFromInvoice(UUID invoiceId, List<InvoiceItemDto> productsIds) {
         Invoice existingInvoice = checkIfInvoiceExisting(invoiceId);
-        existingInvoice.getInvoiceItemList().removeAll(validateProductsForInvoice(productsIds));
+        existingInvoice.getInvoiceItemList().removeAll(validateInvoiceItemForInvoice(productsIds));
         return updateInvoice(MappingService.convertToDto(existingInvoice));
     }
 
@@ -74,11 +75,7 @@ public class InvoiceService {
         return lInvoiceRepository.findAll().stream().map(MappingService::convertToDto).collect(Collectors.toList());
     }
 
-    public List<Invoice> findAllContainsProduct(InvoiceItem invoiceItem) {
-        return lInvoiceRepository.findAllByProductListContains(invoiceItem);
-    }
-
-    public List<InvoiceItem> validateProductsForInvoice(List<InvoiceItemDto> productsIds) {
+    public List<InvoiceItem> validateInvoiceItemForInvoice(List<InvoiceItemDto> productsIds) {
         List<InvoiceItem> invoiceItems = new ArrayList<>();
         for (InvoiceItemDto productId : productsIds) {
             InvoiceItem existingProduct = invoiceItemService.findProductById(productId.getId());
@@ -90,7 +87,7 @@ public class InvoiceService {
     public Invoice checkIfInvoiceExisting(UUID invoiceId) {
         Optional<Invoice> existingInvoice = findInvoiceById(invoiceId);
         if (existingInvoice.isEmpty()) {
-            throw new RuntimeException(String.format("Invoice with id %s doens't exists", invoiceId));
+            throw new NotFoundException("Invoice", "id", invoiceId.toString());
         } else {
             return existingInvoice.get();
         }

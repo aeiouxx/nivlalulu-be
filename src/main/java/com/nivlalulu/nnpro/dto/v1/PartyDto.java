@@ -1,4 +1,4 @@
-package com.nivlalulu.nnpro.dto;
+package com.nivlalulu.nnpro.dto.v1;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;

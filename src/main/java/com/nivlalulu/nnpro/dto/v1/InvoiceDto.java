@@ -2,7 +2,6 @@ package com.nivlalulu.nnpro.dto.v1;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.nivlalulu.nnpro.dto.PartyDto;
 import com.nivlalulu.nnpro.enums.PaymentMethod;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
