@@ -57,7 +57,7 @@ public class InvoiceService {
 
     public InvoiceDto removeProductFromInvoice(UUID invoiceId, List<InvoiceItemDto> productsIds) {
         Invoice existingInvoice = checkIfInvoiceExisting(invoiceId);
-        existingInvoice.getInvoiceItemList().removeAll(validateInvoiceItemForInvoice(productsIds));
+        validateInvoiceItemForInvoice(productsIds).forEach(existingInvoice.getInvoiceItemList()::remove);
         return updateInvoice(MappingService.convertToDto(existingInvoice));
     }
 

@@ -70,12 +70,12 @@ public class PartyService {
 
     public Optional<PartyDto> findByTaxId(String taxId) {
         Optional<Party> party = IPartyRepository.findByTaxId(taxId);
-        return party.isPresent() ? Optional.of(MappingService.convertToDto(party.get())) : null;
+        return party.map(value -> Optional.of(MappingService.convertToDto(value))).orElse(null);
     }
 
     public Optional<PartyDto> findByCompanyId(String companyId) {
         Optional<Party> party = IPartyRepository.findByCompanyId(companyId);
-        return party.isPresent() ? Optional.of(MappingService.convertToDto(party.get())) : null;
+        return party.map(value -> Optional.of(MappingService.convertToDto(value))).orElse(null);
     }
 
     public List<PartyDto> findAllParties() {

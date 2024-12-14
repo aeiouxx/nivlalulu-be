@@ -1,13 +1,10 @@
-package com.nivlalulu.nnpro;
+package com.nivlalulu.nnpro.service.impl;
 
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
 import com.nivlalulu.nnpro.enums.PaymentMethod;
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.InvoiceItem;
 import com.nivlalulu.nnpro.model.Party;
-import com.nivlalulu.nnpro.service.impl.InvoiceService;
-import com.nivlalulu.nnpro.service.impl.MappingService;
-import com.nivlalulu.nnpro.service.impl.InvoiceItemService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testcontainers.junit.jupiter.Testcontainers;
