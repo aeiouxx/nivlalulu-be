@@ -1,14 +1,17 @@
 package com.nivlalulu.nnpro.service.impl;
 
 import com.nivlalulu.nnpro.dto.PartyDto;
+import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.Party;
 import com.nivlalulu.nnpro.repository.IPartyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -63,9 +66,9 @@ public class PartyService {
         return MappingService.convertToDto(party);
     }
 
-    public Optional<PartyDto> findById(UUID id) {
-        Optional<Party> party = IPartyRepository.findById(id);
-        return party.isPresent() ? Optional.of(MappingService.convertToDto(party.get())) : null;
+    public PartyDto findById(UUID id) {
+        Party party = checkIfInvoiceExisting(id);
+        return MappingService.convertToDto(party);
     }
 
     public Optional<PartyDto> findByTaxId(String taxId) {
@@ -78,10 +81,23 @@ public class PartyService {
         return party.isPresent() ? Optional.of(MappingService.convertToDto(party.get())) : null;
     }
 
+    public List<PartyDto> findAllParties() {
+        return IPartyRepository.findAll().stream().map(MappingService::convertToDto).collect(Collectors.toList());
+    }
+
     private boolean duplicityCheck(PartyDto partyDto, Party party) {
         boolean isTaxIdMatching = partyDto.getTaxId().equals(party.getTaxId());
         boolean isCompanyIdMatching = partyDto.getCompanyId().equals(party.getCompanyId());
         return isTaxIdMatching && isCompanyIdMatching;
+    }
+
+    public Party checkIfInvoiceExisting(UUID partyId) {
+        Optional<Party> existingParty = IPartyRepository.findById(partyId);
+        if (existingParty.isEmpty()) {
+            throw new RuntimeException(String.format("Party with id %s doens't exists", partyId));
+        } else {
+            return existingParty.get();
+        }
     }
 
 
