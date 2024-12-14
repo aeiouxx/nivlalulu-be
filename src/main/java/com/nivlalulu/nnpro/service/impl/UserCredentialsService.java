@@ -1,9 +1,11 @@
 package com.nivlalulu.nnpro.service.impl;
 
 import com.nivlalulu.nnpro.common.email.IMailSender;
+import com.nivlalulu.nnpro.common.exceptions.ConflictException;
 import com.nivlalulu.nnpro.common.exceptions.NotFoundException;
 import com.nivlalulu.nnpro.common.exceptions.UnauthorizedException;
 import com.nivlalulu.nnpro.common.hashing.IHashProvider;
+import com.nivlalulu.nnpro.common.mapping.IGenericMapper;
 import com.nivlalulu.nnpro.model.PasswordResetToken;
 import com.nivlalulu.nnpro.repository.IPasswordResetTokenRepository;
 import com.nivlalulu.nnpro.repository.IUserRepository;
@@ -28,11 +30,12 @@ public class UserCredentialsService implements IUserCredentialsService {
     private final PasswordEncoder passwordEncoder;
     private final IMailSender mailSender;
     private final IHashProvider hashProvider;
+    private final IGenericMapper mapper;
 
     @Override
     @Transactional
     // Existing token is implicitly invalidated as we can't resend it anyway and have a OneToOne relationship
-    public void createPasswordResetToken(String username) {
+    public void createAndSendPasswordResetToken(String username) {
         var now = Instant.now();
         var user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException("User", "username", username));
@@ -75,7 +78,7 @@ public class UserCredentialsService implements IUserCredentialsService {
                 .orElseThrow(() -> new NotFoundException("User", "username", username));
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
             log.info("Old password is incorrect for user {}", username);
-            throw new UnauthorizedException("Old password is incorrect");
+            throw new UnauthorizedException("Password is incorrect");
         }
         var newHash = passwordEncoder.encode(newPassword);
         user.setPassword(newHash);
@@ -83,6 +86,35 @@ public class UserCredentialsService implements IUserCredentialsService {
         userRepository.save(user);
     }
 
+    @Override
+    @Transactional
+    public String changeUsername(String username, String newUsername) {
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("User", "username", username));
+        if (userRepository.existsByUsername(newUsername)) {
+            log.info("Username {} already exists", newUsername);
+            throw new ConflictException("User", "username", username);
+        }
+        user.setUsername(newUsername);
+        var saved = userRepository.save(user);
+        log.debug("Username changed for user {} to {}", username, saved.getUsername());
+        return saved.getUsername();
+    }
+
+    @Override
+    @Transactional
+    public String changeEmail(String username, String newEmail) {
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("User", "username", username));
+        if (userRepository.existsByEmail(newEmail)) {
+            log.info("Email {} already exists", newEmail);
+            throw new ConflictException("User", "email", newEmail);
+        }
+        user.setEmail(newEmail);
+        var saved = userRepository.save(user);
+        log.debug("Email changed for user {} to {}", username, saved.getEmail());
+        return saved.getEmail();
+    }
 
 
     private record TokenData(String token, String hash, Instant expiration) {}

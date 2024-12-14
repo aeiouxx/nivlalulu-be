@@ -45,6 +45,22 @@ public class JwtTokenService implements IJwtTokenService {
         return new RefreshTokenResponseDto(newAccessToken);
     }
 
+    @Override
+    @Transactional
+    public String refreshAndRotate(String username,
+                                   HttpServletRequest request,
+                                   HttpServletResponse response) {
+        log.debug("Refreshing token for user with changed username: {}", username);
+        var token = jwtTokenProvider.extractRefreshTokenFromCookie(request);
+        String tokenId = jwtTokenProvider.extractRefreshTokenId(token);
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("User", "username", username));
+        invalidateRefreshToken(tokenId);
+        var newRefreshTokenData = generateNewRefreshToken(user);
+        jwtTokenProvider.attachRefreshTokenToCookie(response, newRefreshTokenData);
+        return jwtTokenProvider.generateAccessToken(user);
+    }
+
     private record TokenData(String tokenId, User user) { }
     private TokenData extractTokenData(HttpServletRequest request) {
         String refreshToken = jwtTokenProvider.extractRefreshTokenFromCookie(request);

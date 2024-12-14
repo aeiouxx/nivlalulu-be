@@ -16,6 +16,8 @@ import org.springframework.context.annotation.Profile;
 @ConditionalOnExpression("${swagger.enabled:true}")
 @Profile("dev")
 public class SwaggerConfiguration {
+    private static final String SECURITY_SCHEME_KEY = "bearerAuth";
+
     @Bean
     public OpenAPI apiInfo() {
         return new OpenAPI()
@@ -23,9 +25,8 @@ public class SwaggerConfiguration {
                         .title("Nivlalulu API")
                         .description("API for Nivlalulu project")
                         .version("1.0"))
-                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .components(new Components()
-                        .addSecuritySchemes("bearerAuth",
+                        .addSecuritySchemes(SECURITY_SCHEME_KEY,
                                 new SecurityScheme()
                                         .type(SecurityScheme.Type.HTTP)
                                         .scheme("Bearer")
@@ -36,7 +37,12 @@ public class SwaggerConfiguration {
     public GroupedOpenApi apiGroupV1() {
         return GroupedOpenApi.builder()
                 .group("v1")
+                .displayName("API v1")
                 .pathsToMatch("/v1/**")
+                .addOperationCustomizer((operation, handlerMethod) -> {
+                    operation.addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_KEY));
+                    return operation;
+                })
                 .build();
     }
 
@@ -45,6 +51,7 @@ public class SwaggerConfiguration {
         return GroupedOpenApi.builder()
                 .group("public-v1")
                 .pathsToMatch("/public/v1/**")
+                .displayName("Public API v1")
                 .build();
     }
 }

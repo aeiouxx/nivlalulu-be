@@ -1,7 +1,7 @@
 package com.nivlalulu.nnpro.service.impl;
 
 import com.nivlalulu.nnpro.common.email.IMailSender;
-import com.nivlalulu.nnpro.dto.v1.ChangePasswordRequestDto;
+import com.nivlalulu.nnpro.common.hashing.IHashProvider;
 import com.nivlalulu.nnpro.dto.v1.CreatePasswordResetTokenDto;
 import com.nivlalulu.nnpro.model.User;
 import com.nivlalulu.nnpro.repository.IPasswordResetTokenRepository;
@@ -23,6 +23,9 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 public class UserCredentialsIntegrationTest {
@@ -34,8 +37,6 @@ public class UserCredentialsIntegrationTest {
     private IPasswordResetTokenRepository passwordResetTokenRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-
     @MockBean
     private IMailSender mailSender;
 
@@ -62,12 +63,14 @@ public class UserCredentialsIntegrationTest {
         user.setEmail("test@example.com");
         user.setPassword(passwordEncoder.encode("oldPass"));
         userRepository.save(user);
+
+        doNothing().when(mailSender)
+                .sendResetCode(anyString(), anyString());
     }
 
     @Test
     void testRequestPasswordResetToken() {
         CreatePasswordResetTokenDto dto = new CreatePasswordResetTokenDto("testuser");
-
         ResponseEntity<Void> response = restTemplate.postForEntity("/public/v1/password-reset/request",
                 dto,
                 Void.class);

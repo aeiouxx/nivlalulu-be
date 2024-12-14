@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/public/v1/password-reset")
 @RequiredArgsConstructor
-@Tag(name = "Password reset", description = "Enpoint for password reset operations")
 public class PasswordResetControllerV1 {
     private final IUserCredentialsService userCredentialsService;
     private final IGenericMapper mapper;
@@ -32,7 +31,7 @@ public class PasswordResetControllerV1 {
     })
     @PostMapping("/request")
     public void createPasswordResetToken(@Valid @RequestBody CreatePasswordResetTokenDto request) {
-        userCredentialsService.createPasswordResetToken(request.username());
+        userCredentialsService.createAndSendPasswordResetToken(request.username());
     }
 
     @Operation(
