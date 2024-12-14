@@ -38,21 +38,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
         var uri = request.getRequestURI();
-        log.debug("Request URI: {}", uri);
         if (isExcluded(uri)) {
+            log.debug("Excluded URL: {}", uri);
             filterChain.doFilter(request, response);
             return;
         }
+        log.debug("Secured URL: '{}', verifying token", uri);
         final String accessToken = extractAccessToken(request);
         if (accessToken == null) {
+            log.debug("Access token is missing, rejecting request");
             filterChain.doFilter(request, response);
             return;
         }
         try {
             final String username = jwtTokenProvider.extractUsername(accessToken, JwtTokenType.ACCESS);
+            log.debug("Extracted username: '{}'", username);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 setSecurityContext(request, accessToken, username);
             }
+            log.debug("Security context set, proceeding with request: {}", uri);
         } catch (Exception e) {
             log.error("Error occurred while setting security context", e);
             setInvalidTokenResponse(response);
