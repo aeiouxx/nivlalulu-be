@@ -3,7 +3,7 @@ package com.nivlalulu.nnpro;
 import com.nivlalulu.nnpro.repository.IProductRepository;
 import com.nivlalulu.nnpro.dto.v1.ProductDto;
 import com.nivlalulu.nnpro.model.Product;
-import com.nivlalulu.nnpro.service.impl.MappingService;
+import com.nivlalulu.nnpro.common.mapping.impl.GenericModelMapper;
 import com.nivlalulu.nnpro.service.impl.ProductService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +27,10 @@ public class ProductServiceTest {
 
     @Autowired
     private ProductService productService;
-
     @Autowired
     private IProductRepository IProductRepository;
+    @Autowired
+    private GenericModelMapper mapper;
 
     @Container
     static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:latest")
@@ -50,7 +51,7 @@ public class ProductServiceTest {
     @Test
     public void newProduct() {
         Product productDto = new Product("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
-        ProductDto createdProduct = productService.createProduct(MappingService.convertToDto(productDto));
+        ProductDto createdProduct = productService.createProduct(mapper.convertToDto(productDto));
 
         assertNotNull(createdProduct);
         assertEquals(productDto.getName(), createdProduct.getName());
@@ -60,10 +61,10 @@ public class ProductServiceTest {
     @Test
     public void duplicatedProduct() {
         Product newProduct = new Product("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
-        ProductDto newProductDto = productService.createProduct(MappingService.convertToDto(newProduct));
+        ProductDto newProductDto = productService.createProduct(mapper.convertToDto(newProduct));
 
         Product duplicatedProduct = new Product("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
-        ProductDto existingProduct = productService.createProduct(MappingService.convertToDto(duplicatedProduct));
+        ProductDto existingProduct = productService.createProduct(mapper.convertToDto(duplicatedProduct));
 
         assertNotNull(newProductDto);
         assertEquals(newProductDto.getId(), existingProduct.getId());
