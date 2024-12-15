@@ -16,16 +16,15 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity(name = "parties")
 public class Party {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
 
-    @Column(nullable = true)
+    @Column(name = "organization_name", nullable = true)
     private String organizationName;
 
-    @Column(nullable = true)
+    @Column(name = "person_name", nullable = true)
     private String personName;
 
     @Column(nullable = false)
@@ -34,10 +33,10 @@ public class Party {
     @Column(nullable = false)
     private String country;
 
-    @Column(nullable = true, unique = true)
+    @Column(name = "company_id", nullable = true, unique = true)
     private String companyId;
 
-    @Column(nullable = true, unique = true)
+    @Column(name = "tax_id", nullable = true, unique = true)
     private String taxId;
 
     @Column(nullable = false)
@@ -56,7 +55,16 @@ public class Party {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    public Party(String organizationName, String personName, String address, String country, String companyId, String taxId, String telephone, String email, List<Invoice> customerInvoices, List<Invoice> supplierInvoices) {
+    public Party(String organizationName,
+                 String personName,
+                 String address,
+                 String country,
+                 String companyId,
+                 String taxId,
+                 String telephone,
+                 String email,
+                 List<Invoice> customerInvoices,
+                 List<Invoice> supplierInvoices) {
         this.organizationName = organizationName;
         this.personName = personName;
         this.address = address;
@@ -69,7 +77,14 @@ public class Party {
         this.supplierInvoices = supplierInvoices;
     }
 
-    public Party(String organizationName, String personName, String address, String country, String companyId, String taxId, String telephone, String email) {
+    public Party(String organizationName,
+                 String personName,
+                 String address,
+                 String country,
+                 String companyId,
+                 String taxId,
+                 String telephone,
+                 String email) {
         this.organizationName = organizationName;
         this.personName = personName;
         this.address = address;
