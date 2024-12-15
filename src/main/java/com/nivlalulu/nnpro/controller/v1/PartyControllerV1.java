@@ -4,6 +4,7 @@ import com.nivlalulu.nnpro.dto.ApiResponse;
 import com.nivlalulu.nnpro.dto.v1.PartyDto;
 import com.nivlalulu.nnpro.service.impl.PartyService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -13,11 +14,10 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/party")
+@RequestMapping("/v1/party")
+@RequiredArgsConstructor
 @Validated
 public class PartyControllerV1 {
-
-    @Autowired
     private PartyService partyService;
 
     @GetMapping("/all")
