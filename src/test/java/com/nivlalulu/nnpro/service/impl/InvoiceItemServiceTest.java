@@ -51,7 +51,8 @@ public class InvoiceItemServiceTest {
 
     @Test
     public void newProduct() {
-        InvoiceItem invoiceItemDto = new InvoiceItem("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
+        InvoiceItem invoiceItemDto = new InvoiceItem("Test Product", 10,
+                new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
         InvoiceItemDto createdProduct = invoiceItemService.createInvoiceItem(mapper.convertToDto(invoiceItemDto));
 
         assertNotNull(createdProduct);
@@ -61,11 +62,15 @@ public class InvoiceItemServiceTest {
 
     @Test
     public void duplicatedProduct() {
-        InvoiceItem newInvoiceItem = new InvoiceItem("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
-        InvoiceItemDto newInvoiceItemDto = invoiceItemService.createInvoiceItem(mapper.convertToDto(newInvoiceItem));
+        InvoiceItem newInvoiceItem = new InvoiceItem("Test Product", 10,
+                new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
+        InvoiceItemDto newInvoiceItemDto =
+                invoiceItemService.createInvoiceItem(mapper.convertToDto(newInvoiceItem));
 
-        InvoiceItem duplicatedInvoiceItem = new InvoiceItem("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
-        InvoiceItemDto existingProduct = invoiceItemService.createInvoiceItem(mapper.convertToDto(duplicatedInvoiceItem));
+        InvoiceItem duplicatedInvoiceItem = new InvoiceItem("Test Product", 10,
+                new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
+        InvoiceItemDto existingProduct =
+                invoiceItemService.createInvoiceItem(mapper.convertToDto(duplicatedInvoiceItem));
 
         assertNotNull(newInvoiceItemDto);
         assertEquals(newInvoiceItemDto.getId(), existingProduct.getId());
@@ -75,10 +80,12 @@ public class InvoiceItemServiceTest {
 
     @Test
     public void testUpdateProduct() {
-        InvoiceItem invoiceItem = new InvoiceItem("Old Product", 5, new BigDecimal("10.00"), new BigDecimal("1.00"), new BigDecimal("11.00"));
+        InvoiceItem invoiceItem = new InvoiceItem("Old Product", 5, new BigDecimal("10.00"),
+                new BigDecimal("1.00"), new BigDecimal("11.00"));
         IInvoiceItemRepository.save(invoiceItem);
 
-        InvoiceItemDto updateDto = new InvoiceItemDto(invoiceItem.getId(), "Updated Product", 7, new BigDecimal("15.00"), new BigDecimal("1.50"), new BigDecimal("16.50"), null);
+        InvoiceItemDto updateDto = new InvoiceItemDto(invoiceItem.getId(), "Updated Product", 7,
+                new BigDecimal("15.00"), new BigDecimal("1.50"), new BigDecimal("16.50"), null);
         InvoiceItemDto updatedProduct = invoiceItemService.updateInvoiceItem(updateDto);
 
         assertNotNull(updatedProduct);
@@ -88,7 +95,8 @@ public class InvoiceItemServiceTest {
 
     @Test
     public void testDeleteProduct_ProductExists() {
-        InvoiceItem invoiceItem = new InvoiceItem("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
+        InvoiceItem invoiceItem = new InvoiceItem("Test Product", 10, new BigDecimal("20.00"),
+                new BigDecimal("2.00"), new BigDecimal("22.00"));
         IInvoiceItemRepository.save(invoiceItem);
 
         InvoiceItemDto deletedProduct = invoiceItemService.deleteInvoiceItem(invoiceItem.getId());
@@ -98,21 +106,12 @@ public class InvoiceItemServiceTest {
         assertTrue(IInvoiceItemRepository.findById(invoiceItem.getId()).isEmpty());
     }
 
-//    @Test
-//    public void testDeleteProduct_ProductInInvoice() {
-//        Product product = new Product("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
-//        productRepository.save(product);
-//
-//        //TODO až budou invoice => čekám na vladosákovy usery
-//
-//        RuntimeException exception = assertThrows(RuntimeException.class, () -> productService.deleteProduct(product.getId()));
-//        assertEquals(String.format("Product with id %s can't be deleted, is in invoices", product.getId()), exception.getMessage());
-//    }
-
     @Test
     public void testFindAllByPrice() {
-        InvoiceItem invoiceItem1 = new InvoiceItem("Product 1", 5, new BigDecimal("10.00"), new BigDecimal("1.00"), new BigDecimal("11.00"));
-        InvoiceItem invoiceItem2 = new InvoiceItem("Product 2", 3, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
+        InvoiceItem invoiceItem1 = new InvoiceItem("Product 1", 5, new BigDecimal("10.00"),
+                new BigDecimal("1.00"), new BigDecimal("11.00"));
+        InvoiceItem invoiceItem2 = new InvoiceItem("Product 2", 3, new BigDecimal("20.00"),
+                new BigDecimal("2.00"), new BigDecimal("22.00"));
 
         IInvoiceItemRepository.save(invoiceItem1);
         IInvoiceItemRepository.save(invoiceItem2);
