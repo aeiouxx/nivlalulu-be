@@ -2,10 +2,9 @@ package com.nivlalulu.nnpro.controller.v1;
 
 import com.nivlalulu.nnpro.dto.ApiResponse;
 import com.nivlalulu.nnpro.dto.v1.PartyDto;
-import com.nivlalulu.nnpro.service.impl.PartyService;
+import com.nivlalulu.nnpro.service.IPartyService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +17,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Validated
 public class PartyControllerV1 {
-    private PartyService partyService;
+    private final IPartyService partyService;
 
     @GetMapping("/all")
     public ApiResponse<List<PartyDto>> getParties() {
