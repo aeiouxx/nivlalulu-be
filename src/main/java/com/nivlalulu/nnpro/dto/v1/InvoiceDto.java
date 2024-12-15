@@ -13,13 +13,13 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
 @Getter
 @Setter
 public class InvoiceDto {
-
     @JsonIgnore
     private UUID id;
 
@@ -29,11 +29,11 @@ public class InvoiceDto {
 
     @JsonProperty("issue_date")
     @NotNull(message = "Issue date cannot be null")
-    private Timestamp issueDate;
+    private Instant issueDate;
 
     @JsonProperty("due_date")
     @NotNull(message = "Due date cannot be null")
-    private Timestamp dueDate;
+    private Instant dueDate;
 
     @NotNull(message = "Products cannot be null")
     @NotEmpty(message = "Products cannot be empty")
@@ -42,6 +42,7 @@ public class InvoiceDto {
     @NotNull(message = "Payment method cannot be null")
     private PaymentMethod paymentMethod;
 
+    @JsonProperty("variable_symbol")
     private String variableSymbol;
 
     @NotNull(message = "Customer cannot be null")

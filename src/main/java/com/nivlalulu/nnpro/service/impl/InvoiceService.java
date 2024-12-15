@@ -13,6 +13,7 @@ import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.service.IInvoiceService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -20,16 +21,15 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class InvoiceService implements IInvoiceService {
     private final IInvoiceRepository invoiceRepository;
     private final InvoiceItemService invoiceItemService;
     private final GenericModelMapper mapper;
     private final IUserRepository IUserRepository;
-
     private final UserService userService;
 
     public InvoiceDto createInvoice(InvoiceDto invoiceDto) {
-
         Set<InvoiceItem> invoiceItemList = invoiceDto.getProducts().stream().map(mapper::convertToEntity).collect(Collectors.toSet());
         Party customer = mapper.convertToEntity(invoiceDto.getCustomer());
         Party supplier = mapper.convertToEntity(invoiceDto.getSupplier());
@@ -47,7 +47,7 @@ public class InvoiceService implements IInvoiceService {
         Invoice invoice = checkIfInvoiceExisting(invoiceUpdated.getId());
 
         invoice.setInvoiceItemList(invoiceUpdated.getProducts().stream().map(mapper::convertToEntity).collect(Collectors.toSet()));
-        invoice.setExpiration(invoiceUpdated.getDueDate());
+        invoice.setExpiresAt(invoiceUpdated.getDueDate());
 
         return mapper.convertToDto(invoiceRepository.save(invoice));
     }
