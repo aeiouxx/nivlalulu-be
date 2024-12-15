@@ -17,7 +17,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/invoice")
+@RequestMapping("/v1/invoice")
 @RequiredArgsConstructor
 @Validated
 public class InvoiceControllerV1 {
