@@ -7,7 +7,9 @@ import com.nivlalulu.nnpro.model.Party;
 import com.nivlalulu.nnpro.model.User;
 import com.nivlalulu.nnpro.repository.IPartyRepository;
 import com.nivlalulu.nnpro.repository.IUserRepository;
+import com.nivlalulu.nnpro.service.IPartyService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,37 +18,44 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
-public class PartyService {
-
-    private final IPartyRepository IPartyRepository;
-
-    private final IUserRepository IUserRepository;
-
+public class PartyService implements IPartyService {
+    private final IPartyRepository partyRepository;
+    private final IUserRepository userRepository;
     private final UserService userService;
-
     private final GenericModelMapper mapper;
 
+    @Override
     public PartyDto createParty(PartyDto partyDto) {
-        Optional<Party> existingParty = IPartyRepository.findByTaxIdOrCompanyId(partyDto.getTaxId(), partyDto.getCompanyId());
+        Optional<Party> existingParty = partyRepository.findByTaxIdOrCompanyId(partyDto.getTaxId(),
+                partyDto.getCompanyId());
         if (existingParty.isPresent()) {
             if (!duplicityCheck(partyDto, existingParty.get())) {
                 User user = userService.findUserById(existingParty.get().getUser().getId());
                 user.getParties().add(existingParty.get());
-                IUserRepository.save(user);
-                mapper.convertToDto(IPartyRepository.save(existingParty.get()));
+                userRepository.save(user);
+                mapper.convertToDto(partyRepository.save(existingParty.get()));
             } else {
                 return mapper.convertToDto(existingParty.get());
             }
         }
 
-        Party party = new Party(partyDto.getOrganizationName(), partyDto.getPersonName(), partyDto.getAddress(),
-                partyDto.getCountry(), partyDto.getCompanyId(), partyDto.getTaxId(), partyDto.getTelephone(), partyDto.getEmail());
-        return mapper.convertToDto(IPartyRepository.save(party));
+        Party party = new Party(
+                partyDto.getOrganizationName(),
+                partyDto.getPersonName(),
+                partyDto.getAddress(),
+                partyDto.getCountry(),
+                partyDto.getCompanyId(),
+                partyDto.getTaxId(),
+                partyDto.getTelephone(),
+                partyDto.getEmail());
+        return mapper.convertToDto(partyRepository.save(party));
     }
 
+    @Override
     public PartyDto updateParty(PartyDto partyDto) {
-        Party party = IPartyRepository.findById(partyDto.getId())
+        Party party = partyRepository.findById(partyDto.getId())
                 .orElseThrow(() -> new NotFoundException("Party", "id", partyDto.getId().toString()));
 
         party.setOrganizationName(partyDto.getOrganizationName());
@@ -59,11 +68,12 @@ public class PartyService {
         party.setEmail(partyDto.getEmail());
 
         //TODO atdy možná může být problem tou vazbou v Party entita
-        return mapper.convertToDto(IPartyRepository.save(party));
+        return mapper.convertToDto(partyRepository.save(party));
     }
 
+    @Override
     public PartyDto deleteParty(UUID id) {
-        Party party = IPartyRepository.findById(id)
+        Party party = partyRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Party", "id", id.toString()));
 
         if (!party.getCustomerInvoices().isEmpty()) {
@@ -75,29 +85,36 @@ public class PartyService {
 
         User user = userService.findUserById(party.getUser().getId());
         user.getInvoiceItems().remove(user);
-        IUserRepository.save(user);
+        userRepository.save(user);
 
-        IPartyRepository.delete(party);
+        partyRepository.delete(party);
         return mapper.convertToDto(party);
     }
 
+    @Override
     public PartyDto findById(UUID id) {
         Party party = checkIfInvoiceExisting(id);
         return mapper.convertToDto(party);
     }
 
+    @Override
     public Optional<PartyDto> findByTaxId(String taxId) {
-        Optional<Party> party = IPartyRepository.findByTaxId(taxId);
+        Optional<Party> party = partyRepository.findByTaxId(taxId);
         return party.map(value -> Optional.of(mapper.convertToDto(value))).orElse(null);
     }
 
+    @Override
     public Optional<PartyDto> findByCompanyId(String companyId) {
-        Optional<Party> party = IPartyRepository.findByCompanyId(companyId);
+        Optional<Party> party = partyRepository.findByCompanyId(companyId);
         return party.map(value -> Optional.of(mapper.convertToDto(value))).orElse(null);
     }
 
+    @Override
     public List<PartyDto> findAllParties() {
-        return IPartyRepository.findAll().stream().map(mapper::convertToDto).collect(Collectors.toList());
+        return partyRepository.findAll()
+                .stream()
+                .map(mapper::convertToDto)
+                .collect(Collectors.toList());
     }
 
     private boolean duplicityCheck(PartyDto partyDto, Party party) {
@@ -106,12 +123,13 @@ public class PartyService {
         return isTaxIdMatching && isCompanyIdMatching;
     }
 
+    @Override
     public Party checkIfInvoiceExisting(UUID partyId) {
-        Optional<Party> existingParty = IPartyRepository.findById(partyId);
-        if (existingParty.isEmpty()) {
-            throw new RuntimeException(String.format("Party with id %s doens't exists", partyId));
-        } else {
-            return existingParty.get();
-        }
+        Optional<Party> existingParty = partyRepository.findById(partyId);
+        return partyRepository.findById(partyId)
+                .orElseThrow(() -> {
+                    log.error("Party with id {} doesn't exist.", partyId);
+                    return new NotFoundException(Party.class);
+                });
     }
 }
