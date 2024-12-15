@@ -30,22 +30,22 @@ public class InvoiceItemDto {
 
     @NotNull(message = "Price cannot be null")
     @DecimalMin(value = "0.01", inclusive = true, message = "Price must be greater than zero")
-    private BigDecimal price;
+    private BigDecimal unitPrice;
 
     @NotNull(message = "Tax cannot be null")
     @DecimalMin(value = "0.01", inclusive = true, message = "Tax must be greater than zero")
-    private BigDecimal tax;
+    private BigDecimal taxPrice;
 
     @NotNull(message = "Total cannot be null")
     @DecimalMin(value = "0.01", inclusive = true, message = "Total must be greater than zero")
-    private BigDecimal total;
+    private BigDecimal totalPrice;
 
     private Long userId;
 
     // Custom validation logic
     @AssertTrue(message = "Raw price plus tax must match total price")
     public boolean isTotalValid() {
-        return price != null && tax != null && total != null
-                && price.add(tax).compareTo(total) == 0;
+        return unitPrice != null && taxPrice != null && totalPrice != null
+                && unitPrice.add(taxPrice).compareTo(totalPrice) == 0;
     }
 }

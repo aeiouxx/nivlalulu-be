@@ -1,6 +1,7 @@
 package com.nivlalulu.nnpro.service.impl;
 
 import com.nivlalulu.nnpro.common.exceptions.NotFoundException;
+import com.nivlalulu.nnpro.common.mapping.impl.GenericModelMapper;
 import com.nivlalulu.nnpro.dto.v1.PartyDto;
 import com.nivlalulu.nnpro.model.Party;
 import com.nivlalulu.nnpro.model.User;
@@ -24,6 +25,8 @@ public class PartyService {
 
     private final UserService userService;
 
+    private final GenericModelMapper mapper;
+
     public PartyDto createParty(PartyDto partyDto) {
         Optional<Party> existingParty = IPartyRepository.findByTaxIdOrCompanyId(partyDto.getTaxId(), partyDto.getCompanyId());
         if (existingParty.isPresent()) {
@@ -31,15 +34,15 @@ public class PartyService {
                 User user = userService.findUserById(existingParty.get().getUser().getId());
                 user.getParties().add(existingParty.get());
                 IUserRepository.save(user);
-                MappingService.convertToDto(IPartyRepository.save(existingParty.get()));
+                mapper.convertToDto(IPartyRepository.save(existingParty.get()));
             } else {
-                return MappingService.convertToDto(existingParty.get());
+                return mapper.convertToDto(existingParty.get());
             }
         }
 
         Party party = new Party(partyDto.getOrganizationName(), partyDto.getPersonName(), partyDto.getAddress(),
                 partyDto.getCountry(), partyDto.getCompanyId(), partyDto.getTaxId(), partyDto.getTelephone(), partyDto.getEmail());
-        return MappingService.convertToDto(IPartyRepository.save(party));
+        return mapper.convertToDto(IPartyRepository.save(party));
     }
 
     public PartyDto updateParty(PartyDto partyDto) {
@@ -56,7 +59,7 @@ public class PartyService {
         party.setEmail(partyDto.getEmail());
 
         //TODO atdy možná může být problem tou vazbou v Party entita
-        return MappingService.convertToDto(IPartyRepository.save(party));
+        return mapper.convertToDto(IPartyRepository.save(party));
     }
 
     public PartyDto deleteParty(UUID id) {
@@ -75,26 +78,26 @@ public class PartyService {
         IUserRepository.save(user);
 
         IPartyRepository.delete(party);
-        return MappingService.convertToDto(party);
+        return mapper.convertToDto(party);
     }
 
     public PartyDto findById(UUID id) {
         Party party = checkIfInvoiceExisting(id);
-        return MappingService.convertToDto(party);
+        return mapper.convertToDto(party);
     }
 
     public Optional<PartyDto> findByTaxId(String taxId) {
         Optional<Party> party = IPartyRepository.findByTaxId(taxId);
-        return party.map(value -> Optional.of(MappingService.convertToDto(value))).orElse(null);
+        return party.map(value -> Optional.of(mapper.convertToDto(value))).orElse(null);
     }
 
     public Optional<PartyDto> findByCompanyId(String companyId) {
         Optional<Party> party = IPartyRepository.findByCompanyId(companyId);
-        return party.map(value -> Optional.of(MappingService.convertToDto(value))).orElse(null);
+        return party.map(value -> Optional.of(mapper.convertToDto(value))).orElse(null);
     }
 
     public List<PartyDto> findAllParties() {
-        return IPartyRepository.findAll().stream().map(MappingService::convertToDto).collect(Collectors.toList());
+        return IPartyRepository.findAll().stream().map(mapper::convertToDto).collect(Collectors.toList());
     }
 
     private boolean duplicityCheck(PartyDto partyDto, Party party) {

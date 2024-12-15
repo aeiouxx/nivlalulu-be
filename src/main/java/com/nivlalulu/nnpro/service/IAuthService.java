@@ -12,7 +12,7 @@ public interface IAuthService {
      * @param response
      * @return
      */
-    public AuthenticationResponseDto login(LoginRequestDto login, HttpServletResponse response);
+    AuthenticationResponseDto login(LoginRequestDto login, HttpServletResponse response);
 
     /**
      * Registers a new user
@@ -20,5 +20,5 @@ public interface IAuthService {
      * @param response
      * @return
      */
-    public AuthenticationResponseDto register(RegistrationRequestDto registration, HttpServletResponse response);
+    AuthenticationResponseDto register(RegistrationRequestDto registration, HttpServletResponse response);
 }

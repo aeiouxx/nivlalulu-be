@@ -1,5 +1,6 @@
 package com.nivlalulu.nnpro.service.impl;
 
+import com.nivlalulu.nnpro.common.mapping.impl.GenericModelMapper;
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
 import com.nivlalulu.nnpro.enums.PaymentMethod;
 import com.nivlalulu.nnpro.model.Invoice;
@@ -21,6 +22,8 @@ public class InvoiceServiceTest {
     private InvoiceService invoiceService;
     private InvoiceItemService invoiceItemService;
 
+    private GenericModelMapper mapper;
+
 
     @Test
     void testCreateInvoice() {
@@ -31,7 +34,7 @@ public class InvoiceServiceTest {
 //        Invoice invoiceDto = new Invoice(null, LocalDate.now().plusDays(30), "Bank Transfer", new HashSet<>(Arrays.asList(productDto)), customer, supplier);
         Invoice invoiceDto = new Invoice(null, null, PaymentMethod.P, "45", new HashSet<>(Arrays.asList(productDto)), customer, supplier);
 
-        InvoiceDto createdInvoice = invoiceService.createInvoice(MappingService.convertToDto(invoiceDto));
+        InvoiceDto createdInvoice = invoiceService.createInvoice(mapper.convertToDto(invoiceDto));
 
         assertNotNull(createdInvoice);
         assertEquals(1, createdInvoice.getProducts().size());
@@ -64,7 +67,7 @@ public class InvoiceServiceTest {
 
         Invoice invoice = new Invoice(null, null, PaymentMethod.P, "45", new HashSet<>(Arrays.asList(invoiceItem)), customer, supplier);
 
-        InvoiceDto createdInvoice = invoiceService.createInvoice(MappingService.convertToDto(invoice));
+        InvoiceDto createdInvoice = invoiceService.createInvoice(mapper.convertToDto(invoice));
 
         InvoiceDto deletedInvoice = invoiceService.deleteInvoice(invoice.getId());
 
@@ -80,11 +83,11 @@ public class InvoiceServiceTest {
 
         Invoice invoice = new Invoice(null, null, PaymentMethod.P, "45", new HashSet<>(), customer, supplier);
 
-        InvoiceDto createdInvoice = invoiceService.createInvoice(MappingService.convertToDto(invoice));
+        InvoiceDto createdInvoice = invoiceService.createInvoice(mapper.convertToDto(invoice));
 
         InvoiceItem invoiceItem = new InvoiceItem("Test Product", 2, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
 
-        InvoiceDto updatedInvoice = invoiceService.addProductToInvoice(invoice.getId(), List.of(MappingService.convertToDto(invoiceItem)));
+        InvoiceDto updatedInvoice = invoiceService.addProductToInvoice(invoice.getId(), List.of(mapper.convertToDto(invoiceItem)));
 
         assertNotNull(updatedInvoice);
         assertEquals(1, updatedInvoice.getProducts().size());
@@ -99,9 +102,9 @@ public class InvoiceServiceTest {
 
         Invoice invoice = new Invoice(null, null, PaymentMethod.P, "45", new HashSet<>(), customer, supplier);
 
-        InvoiceDto createdInvoice = invoiceService.createInvoice(MappingService.convertToDto(invoice));
+        InvoiceDto createdInvoice = invoiceService.createInvoice(mapper.convertToDto(invoice));
 
-        InvoiceDto updatedInvoice = invoiceService.removeProductFromInvoice(invoice.getId(), List.of(MappingService.convertToDto(invoiceItem)));
+        InvoiceDto updatedInvoice = invoiceService.removeProductFromInvoice(invoice.getId(), List.of(mapper.convertToDto(invoiceItem)));
 
         assertNotNull(updatedInvoice);
         assertTrue(updatedInvoice.getProducts().isEmpty());
@@ -118,8 +121,8 @@ public class InvoiceServiceTest {
         Invoice invoice_1 = new Invoice(null, null, PaymentMethod.P, "45", new HashSet<>(Arrays.asList(invoiceItem)), customer, supplier);
         Invoice invoice_2 = new Invoice(null, null, PaymentMethod.P, "45", new HashSet<>(Arrays.asList(invoiceItem_2)), customer, supplier_2);
 
-        InvoiceDto createdInvoice_1 = invoiceService.createInvoice(MappingService.convertToDto(invoice_1));
-        InvoiceDto createdInvoice_2 = invoiceService.createInvoice(MappingService.convertToDto(invoice_2));
+        InvoiceDto createdInvoice_1 = invoiceService.createInvoice(mapper.convertToDto(invoice_1));
+        InvoiceDto createdInvoice_2 = invoiceService.createInvoice(mapper.convertToDto(invoice_2));
 
         List<InvoiceDto> invoices = invoiceService.findAllInvoices();
 

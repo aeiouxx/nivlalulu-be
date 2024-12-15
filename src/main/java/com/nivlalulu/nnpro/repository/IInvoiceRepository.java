@@ -10,10 +10,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface lInvoiceRepository extends JpaRepository<Invoice, UUID> {
+public interface IInvoiceRepository extends JpaRepository<Invoice, UUID> {
 
     Optional<Invoice> findById(UUID id);
 
-    List<Invoice> findAllByProductListContains(InvoiceItem invoiceItem);
-
+    List<Invoice> findAllByInvoiceItemListContains(InvoiceItem invoiceItem);
 }

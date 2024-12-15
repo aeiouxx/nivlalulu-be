@@ -28,6 +28,7 @@ jwt:
 mail:
   host: smtp.gmail.com
   port: 587
+  debug: true
   username: ${MAIL_USERNAME}
   password: ${MAIL_PASSWORD}
   properties:

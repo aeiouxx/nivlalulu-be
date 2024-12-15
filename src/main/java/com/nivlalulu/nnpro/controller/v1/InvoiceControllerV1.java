@@ -87,15 +87,4 @@ public class InvoiceControllerV1 {
         }
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ApiResponse<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        String errorMessage = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                .collect(Collectors.joining(", "));
-        return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), errorMessage, null);
-    }
-
-
 }

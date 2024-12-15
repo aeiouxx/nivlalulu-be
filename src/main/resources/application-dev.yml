@@ -1,3 +1,5 @@
+# Values with CHANGE_ME should be replaced with the actual values
+
 server:
   servlet:
     context-path: "/api"
@@ -28,8 +30,9 @@ jwt:
 mail:
   host: smtp.gmail.com
   port: 587
-  username: ${MAIL_USERNAME}
-  password: ${MAIL_PASSWORD}
+  debug: true
+  username: CHANGE_ME
+  password: CHANGE_ME
   properties:
     mail:
       smtp:

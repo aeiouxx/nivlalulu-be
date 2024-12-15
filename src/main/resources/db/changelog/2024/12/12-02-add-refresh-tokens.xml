@@ -31,6 +31,6 @@
 
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="refresh_tokens"
                                  constraintName="FK_REFRESH_TOKENS_ON_USER" referencedColumnNames="id"
-                                 referencedTableName="users"/>
+                                 referencedTableName="users" onDelete="CASCADE" onUpdate="CASCADE"/>
     </changeSet>
 </databaseChangeLog>
