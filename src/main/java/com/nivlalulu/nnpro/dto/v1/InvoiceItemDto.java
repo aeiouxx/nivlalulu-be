@@ -40,6 +40,8 @@ public class InvoiceItemDto {
     @DecimalMin(value = "0.01", inclusive = true, message = "Total must be greater than zero")
     private BigDecimal total;
 
+    private Long userId;
+
     // Custom validation logic
     @AssertTrue(message = "Raw price plus tax must match total price")
     public boolean isTotalValid() {

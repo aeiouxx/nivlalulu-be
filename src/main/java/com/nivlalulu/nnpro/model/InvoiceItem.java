@@ -41,6 +41,10 @@ public class InvoiceItem {
     @JoinColumn(name = "invoice_id", referencedColumnName = "id", nullable = false)
     private Invoice invoice;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
     public InvoiceItem(String name, Integer quantity, BigDecimal unitPrice, BigDecimal taxPrice, BigDecimal totalPrice) {
         this.name = name;
         this.quantity = quantity;

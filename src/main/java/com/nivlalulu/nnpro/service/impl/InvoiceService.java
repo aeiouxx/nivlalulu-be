@@ -1,8 +1,11 @@
 package com.nivlalulu.nnpro.service.impl;
 
 import com.nivlalulu.nnpro.common.exceptions.NotFoundException;
+import com.nivlalulu.nnpro.dto.v1.UserDto;
 import com.nivlalulu.nnpro.model.InvoiceItem;
 import com.nivlalulu.nnpro.model.Party;
+import com.nivlalulu.nnpro.model.User;
+import com.nivlalulu.nnpro.repository.IUserRepository;
 import com.nivlalulu.nnpro.repository.lInvoiceRepository;
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
 import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
@@ -22,15 +25,22 @@ public class InvoiceService {
 
     private final InvoiceItemService invoiceItemService;
 
+    private final IUserRepository IUserRepository;
+
+    private final UserService userService;
+
     public InvoiceDto createInvoice(InvoiceDto invoiceDto) {
 
         Set<InvoiceItem> invoiceItemList = invoiceDto.getProducts().stream().map(MappingService::convertToEntity).collect(Collectors.toSet());
         Party customer = MappingService.convertToEntity(invoiceDto.getCustomer());
         Party supplier = MappingService.convertToEntity(invoiceDto.getSupplier());
+        User user = userService.findUserById(invoiceDto.getUserId());
 
         Invoice invoice = new Invoice(invoiceDto.getIssueDate(), invoiceDto.getDueDate(),
                 invoiceDto.getPaymentMethod(), invoiceDto.getVariableSymbol(), invoiceItemList, customer, supplier);
         invoiceItemList.forEach(product -> invoiceItemService.createInvoiceItem(MappingService.convertToDto(product)));
+        user.getInvoices().add(invoice);
+        IUserRepository.save(user);
         return MappingService.convertToDto(lInvoiceRepository.save(invoice));
     }
 
@@ -45,6 +55,9 @@ public class InvoiceService {
 
     public InvoiceDto deleteInvoice(UUID id) {
         Invoice invoice = checkIfInvoiceExisting(id);
+        User user = userService.findUserById(invoice.getUser().getId());
+        user.getInvoices().remove(invoice);
+        IUserRepository.save(user);
         lInvoiceRepository.delete(invoice);
         return MappingService.convertToDto(invoice);
     }

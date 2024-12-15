@@ -34,6 +34,15 @@ public class User implements UserDetails {
     @ToString.Exclude
     private String password;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Party> parties;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Invoice> invoices;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<InvoiceItem> invoiceItems;
+
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;

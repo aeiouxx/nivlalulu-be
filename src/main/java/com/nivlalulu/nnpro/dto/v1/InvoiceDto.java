@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
@@ -65,6 +66,8 @@ public class InvoiceDto {
     @NotNull(message = "Total value cannot be null")
     @DecimalMin(value = "0.01", inclusive = true, message = "Total value must be greater than zero")
     private BigDecimal totalValue;
+
+    private Long userId;
 
     // Custom validation logic
     @AssertTrue(message = "Raw value plus tax value must match total value")

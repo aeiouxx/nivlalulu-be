@@ -74,7 +74,7 @@ public class InvoiceItemServiceTest {
         InvoiceItem invoiceItem = new InvoiceItem("Old Product", 5, new BigDecimal("10.00"), new BigDecimal("1.00"), new BigDecimal("11.00"));
         IInvoiceItemRepository.save(invoiceItem);
 
-        InvoiceItemDto updateDto = new InvoiceItemDto(invoiceItem.getId(), "Updated Product", 7, new BigDecimal("15.00"), new BigDecimal("1.50"), new BigDecimal("16.50"));
+        InvoiceItemDto updateDto = new InvoiceItemDto(invoiceItem.getId(), "Updated Product", 7, new BigDecimal("15.00"), new BigDecimal("1.50"), new BigDecimal("16.50"), null);
         InvoiceItemDto updatedProduct = invoiceItemService.updateInvoiceItem(updateDto);
 
         assertNotNull(updatedProduct);

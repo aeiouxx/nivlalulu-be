@@ -52,6 +52,10 @@ public class Party {
     @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL)
     private List<Invoice> supplierInvoices;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
     public Party(String organizationName, String personName, String address, String country, String companyId, String taxId, String telephone, String email, List<Invoice> customerInvoices, List<Invoice> supplierInvoices) {
         this.organizationName = organizationName;
         this.personName = personName;

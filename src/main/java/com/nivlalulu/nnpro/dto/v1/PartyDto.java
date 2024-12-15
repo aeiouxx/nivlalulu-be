@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -29,5 +30,7 @@ public class PartyDto {
     private String telephone;
 
     private String email;
+
+    private Long userId;
 
 }

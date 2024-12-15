@@ -3,7 +3,9 @@ package com.nivlalulu.nnpro.service.impl;
 import com.nivlalulu.nnpro.common.exceptions.NotFoundException;
 import com.nivlalulu.nnpro.dto.v1.PartyDto;
 import com.nivlalulu.nnpro.model.Party;
+import com.nivlalulu.nnpro.model.User;
 import com.nivlalulu.nnpro.repository.IPartyRepository;
+import com.nivlalulu.nnpro.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +20,21 @@ public class PartyService {
 
     private final IPartyRepository IPartyRepository;
 
+    private final IUserRepository IUserRepository;
+
+    private final UserService userService;
+
     public PartyDto createParty(PartyDto partyDto) {
         Optional<Party> existingParty = IPartyRepository.findByTaxIdOrCompanyId(partyDto.getTaxId(), partyDto.getCompanyId());
         if (existingParty.isPresent()) {
-            return duplicityCheck(partyDto, existingParty.get()) ?
-                    MappingService.convertToDto(existingParty.get()) :
-                    MappingService.convertToDto(IPartyRepository.save(existingParty.get()));
+            if (!duplicityCheck(partyDto, existingParty.get())) {
+                User user = userService.findUserById(existingParty.get().getUser().getId());
+                user.getParties().add(existingParty.get());
+                IUserRepository.save(user);
+                MappingService.convertToDto(IPartyRepository.save(existingParty.get()));
+            } else {
+                return MappingService.convertToDto(existingParty.get());
+            }
         }
 
         Party party = new Party(partyDto.getOrganizationName(), partyDto.getPersonName(), partyDto.getAddress(),
@@ -58,6 +69,10 @@ public class PartyService {
         if (!party.getSupplierInvoices().isEmpty()) {
             throw new RuntimeException("Can't delete party because is in some Invoice as supplier!");
         }
+
+        User user = userService.findUserById(party.getUser().getId());
+        user.getInvoiceItems().remove(user);
+        IUserRepository.save(user);
 
         IPartyRepository.delete(party);
         return MappingService.convertToDto(party);
