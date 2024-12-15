@@ -1,4 +1,4 @@
-package com.nivlalulu.nnpro.controller.v1;
+package com.nivlalulu.nnpro.controller.v1.exposed;
 
 import com.nivlalulu.nnpro.dto.v1.AuthenticationResponseDto;
 import com.nivlalulu.nnpro.dto.v1.LoginRequestDto;
@@ -10,10 +10,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/public/v1/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authentication", description = "Endpoint for authentication operations")
 public class AuthControllerV1 {
     private final IAuthService authService;
     private final IJwtTokenService refreshTokenService;

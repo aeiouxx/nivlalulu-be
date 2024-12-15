@@ -1,10 +1,11 @@
-package com.nivlalulu.nnpro.controller;
+package com.nivlalulu.nnpro.controller.v1;
 
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
 import com.nivlalulu.nnpro.dto.v1.ProductDto;
 import com.nivlalulu.nnpro.dto.ApiResponse;
 import com.nivlalulu.nnpro.service.impl.InvoiceService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -16,11 +17,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/invoice")
+@RequestMapping("/v1/invoice")
+@RequiredArgsConstructor
 @Validated
 public class InvoiceController {
-
-    @Autowired
     private InvoiceService invoiceService;
 
     @GetMapping("/readAll")
@@ -86,16 +86,5 @@ public class InvoiceController {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
         }
     }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ApiResponse<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        String errorMessage = ex.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                .collect(Collectors.joining(", "));
-        return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), errorMessage, null);
-    }
-
 
 }

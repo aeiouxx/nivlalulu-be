@@ -1,7 +1,6 @@
-package com.nivlalulu.nnpro.controller.v1;
+package com.nivlalulu.nnpro.controller.v1.exposed;
 
 import com.nivlalulu.nnpro.dto.v1.RefreshTokenResponseDto;
-import com.nivlalulu.nnpro.security.JwtTokenProvider;
 import com.nivlalulu.nnpro.service.IJwtTokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -10,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/public/v1/token")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Token", description = "Endpoint for token operations")
 public class TokenControllerV1 {
     private final IJwtTokenService refreshTokenService;
 
