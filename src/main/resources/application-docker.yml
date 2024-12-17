@@ -20,7 +20,6 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.yml
-    liquibase-schema: liquibase_docker
 jwt:
   access-secret: ${JWT_ACCESS_SECRET}
   refresh-secret: ${JWT_REFRESH_SECRET}
