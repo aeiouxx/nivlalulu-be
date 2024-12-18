@@ -2,7 +2,6 @@ package com.nivlalulu.nnpro.dto.v1;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.nivlalulu.nnpro.dto.UserDto;
 import com.nivlalulu.nnpro.enums.PaymentMethod;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
@@ -11,15 +10,16 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
 @Getter
 @Setter
 public class InvoiceDto {
-
     @JsonIgnore
     private UUID id;
 
@@ -29,26 +29,29 @@ public class InvoiceDto {
 
     @JsonProperty("issue_date")
     @NotNull(message = "Issue date cannot be null")
-    private Timestamp issueDate;
+    private Instant issueDate;
 
     @JsonProperty("due_date")
     @NotNull(message = "Due date cannot be null")
-    private Timestamp dueDate;
+    private Instant dueDate;
 
     @NotNull(message = "Products cannot be null")
     @NotEmpty(message = "Products cannot be empty")
-    private List<@Valid ProductDto> products;
+    private List<@Valid InvoiceItemDto> products;
 
     @NotNull(message = "Payment method cannot be null")
     private PaymentMethod paymentMethod;
 
+    @JsonProperty("variable_symbol")
+    private String variableSymbol;
+
     @NotNull(message = "Customer cannot be null")
     @Valid
-    private UserDto customer;
+    private PartyDto customer;
 
     @NotNull(message = "Supplier cannot be null")
     @Valid
-    private UserDto supplier;
+    private PartyDto supplier;
 
     @JsonProperty("raw_value")
     @NotNull(message = "Raw value cannot be null")
@@ -64,6 +67,8 @@ public class InvoiceDto {
     @NotNull(message = "Total value cannot be null")
     @DecimalMin(value = "0.01", inclusive = true, message = "Total value must be greater than zero")
     private BigDecimal totalValue;
+
+    private Long userId;
 
     // Custom validation logic
     @AssertTrue(message = "Raw value plus tax value must match total value")

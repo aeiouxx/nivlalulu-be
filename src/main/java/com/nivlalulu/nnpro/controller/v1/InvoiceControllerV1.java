@@ -1,7 +1,7 @@
 package com.nivlalulu.nnpro.controller.v1;
 
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
-import com.nivlalulu.nnpro.dto.v1.ProductDto;
+import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
 import com.nivlalulu.nnpro.dto.ApiResponse;
 import com.nivlalulu.nnpro.service.impl.InvoiceService;
 import jakarta.validation.Valid;
@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/v1/invoice")
 @RequiredArgsConstructor
 @Validated
-public class InvoiceController {
-    private InvoiceService invoiceService;
+public class InvoiceControllerV1 {
+    private final InvoiceService invoiceService;
 
     @GetMapping("/readAll")
     public ApiResponse<List<InvoiceDto>> getAllInvoices() {
@@ -59,20 +59,24 @@ public class InvoiceController {
     }
 
     @PutMapping("/addProducts/{id}")
-    public ApiResponse<InvoiceDto> addProductToInvoice(@PathVariable UUID id, @RequestBody List<@Valid ProductDto> productsIds) {
+    public ApiResponse<InvoiceDto> addProductToInvoice(@PathVariable UUID id,
+                                                       @RequestBody List<@Valid InvoiceItemDto> productsIds) {
         try {
             InvoiceDto updatedProduct = invoiceService.addProductToInvoice(id, productsIds);
-            return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly add products to invoice", updatedProduct);
+            return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly add products to invoice",
+                    updatedProduct);
         } catch (RuntimeException ex) {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
         }
     }
 
     @PutMapping("/removeProducts/{id}")
-    public ApiResponse<InvoiceDto> removeProductsFromInvoice(@PathVariable UUID id, @RequestBody List<@Valid ProductDto> productsIds) {
+    public ApiResponse<InvoiceDto> removeProductsFromInvoice(@PathVariable UUID id,
+                                                             @RequestBody List<@Valid InvoiceItemDto> productsIds) {
         try {
             InvoiceDto updatedProduct = invoiceService.removeProductFromInvoice(id, productsIds);
-            return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly removed products from invoice", updatedProduct);
+            return new ApiResponse<>(HttpStatus.OK.value(),
+                    "Successfuly removed products from invoice", updatedProduct);
         } catch (RuntimeException ex) {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
         }
@@ -81,7 +85,8 @@ public class InvoiceController {
     @DeleteMapping("/{id}")
     public ApiResponse<InvoiceDto> deleteInvoice(@PathVariable UUID id) {
         try {
-            return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly deleted product", invoiceService.deleteInvoice(id));
+            return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly deleted product",
+                    invoiceService.deleteInvoice(id));
         } catch (RuntimeException ex) {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
         }
