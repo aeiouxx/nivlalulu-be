@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InvoiceControllerV1.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.controller.v1</a> &gt; <span class="el_source">InvoiceControllerV1.java</span></div><h1>InvoiceControllerV1.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.controller.v1;
+
+import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
+import com.nivlalulu.nnpro.dto.v1.ProductDto;
+import com.nivlalulu.nnpro.dto.ApiResponse;
+import com.nivlalulu.nnpro.service.IInvoiceService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+@RestController
+@RequestMapping(&quot;/v1/invoice&quot;)
+<span class="fc" id="L21">@RequiredArgsConstructor</span>
+@Validated
+public class InvoiceControllerV1 {
+    private final IInvoiceService invoiceService;
+
+    @GetMapping(&quot;/readAll&quot;)
+    public ApiResponse&lt;List&lt;InvoiceDto&gt;&gt; getAllInvoices() {
+<span class="nc" id="L28">        return new ApiResponse&lt;&gt;(HttpStatus.OK.value(), &quot;All invoices&quot;, invoiceService.findAllInvoices());</span>
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public ApiResponse&lt;InvoiceDto&gt; getInvoice(@PathVariable UUID id) {
+        try {
+<span class="nc" id="L34">            InvoiceDto invoiceDto = invoiceService.findInvoiceDtoById(id);</span>
+<span class="nc" id="L35">            return new ApiResponse&lt;&gt;(HttpStatus.OK.value(), String.format(&quot;Invoice id %s found&quot;, id), invoiceDto);</span>
+<span class="nc" id="L36">        } catch (RuntimeException ex) {</span>
+<span class="nc" id="L37">            return new ApiResponse&lt;&gt;(HttpStatus.NOT_FOUND.value(), ex.getMessage(), null);</span>
+        }
+    }
+
+    @PostMapping(&quot;/saveInvoice&quot;)
+    @Operation(
+            summary = &quot;Save the invoice&quot;,
+            description = &quot;Changes the password for the specified user.&quot;,
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = &quot;The old and new password&quot;,
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = InvoiceDto.class))
+            )
+    )
+    public ApiResponse&lt;InvoiceDto&gt; saveInvoice(@Valid @RequestBody InvoiceDto invoiceDto) {
+        try {
+<span class="nc" id="L53">            InvoiceDto invoice = invoiceService.createInvoice(invoiceDto);</span>
+<span class="nc" id="L54">            return new ApiResponse&lt;&gt;(HttpStatus.OK.value(), &quot;Successfuly added invoice&quot;, invoice);</span>
+<span class="nc" id="L55">        } catch (Exception ex) {</span>
+<span class="nc" id="L56">            return new ApiResponse&lt;&gt;(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);</span>
+        }
+    }
+
+    @PutMapping(&quot;/updateInvoice&quot;)
+    public ApiResponse&lt;InvoiceDto&gt; updateInvoice(@Valid @RequestBody InvoiceDto invoiceDto) {
+        try {
+<span class="nc" id="L63">            InvoiceDto updatedProduct = invoiceService.updateInvoice(invoiceDto);</span>
+<span class="nc" id="L64">            return new ApiResponse&lt;&gt;(HttpStatus.OK.value(), &quot;Successfuly updated product&quot;, updatedProduct);</span>
+<span class="nc" id="L65">        } catch (RuntimeException ex) {</span>
+<span class="nc" id="L66">            return new ApiResponse&lt;&gt;(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);</span>
+        }
+    }
+
+    @PutMapping(&quot;/addProducts/{id}&quot;)
+    public ApiResponse&lt;InvoiceDto&gt; addProductToInvoice(@PathVariable UUID id, @RequestBody List&lt;@Valid ProductDto&gt; productsIds) {
+        try {
+<span class="nc" id="L73">            InvoiceDto updatedProduct = invoiceService.addProductToInvoice(id, productsIds);</span>
+<span class="nc" id="L74">            return new ApiResponse&lt;&gt;(HttpStatus.OK.value(), &quot;Successfuly add products to invoice&quot;, updatedProduct);</span>
+<span class="nc" id="L75">        } catch (RuntimeException ex) {</span>
+<span class="nc" id="L76">            return new ApiResponse&lt;&gt;(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);</span>
+        }
+    }
+
+    @PutMapping(&quot;/removeProducts/{id}&quot;)
+    public ApiResponse&lt;InvoiceDto&gt; removeProductsFromInvoice(@PathVariable UUID id, @RequestBody List&lt;@Valid ProductDto&gt; productsIds) {
+        try {
+<span class="nc" id="L83">            InvoiceDto updatedProduct = invoiceService.removeProductFromInvoice(id, productsIds);</span>
+<span class="nc" id="L84">            return new ApiResponse&lt;&gt;(HttpStatus.OK.value(), &quot;Successfuly removed products from invoice&quot;, updatedProduct);</span>
+<span class="nc" id="L85">        } catch (RuntimeException ex) {</span>
+<span class="nc" id="L86">            return new ApiResponse&lt;&gt;(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);</span>
+        }
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ApiResponse&lt;InvoiceDto&gt; deleteInvoice(@PathVariable UUID id) {
+        try {
+<span class="nc" id="L93">            return new ApiResponse&lt;&gt;(HttpStatus.OK.value(), &quot;Successfuly deleted product&quot;, invoiceService.deleteInvoice(id));</span>
+<span class="nc" id="L94">        } catch (RuntimeException ex) {</span>
+<span class="nc" id="L95">            return new ApiResponse&lt;&gt;(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);</span>
+        }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
