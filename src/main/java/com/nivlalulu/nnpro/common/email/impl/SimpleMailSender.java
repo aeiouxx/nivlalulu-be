@@ -3,16 +3,18 @@ package com.nivlalulu.nnpro.common.email.impl;
 
 import com.nivlalulu.nnpro.common.email.IMailSender;
 import com.nivlalulu.nnpro.common.email.IMailTemplateEngine;
-import lombok.RequiredArgsConstructor;
+import com.nivlalulu.nnpro.configuration.AsyncConfiguration;
 import org.simplejavamail.api.email.Email;
 import org.simplejavamail.api.mailer.Mailer;
 import org.simplejavamail.api.mailer.config.TransportStrategy;
 import org.simplejavamail.mailer.MailerBuilder;
 import org.simplejavamail.email.EmailBuilder;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
+@Async
 public class SimpleMailSender implements IMailSender {
     private final String from;
     private final Mailer mailer;
@@ -44,6 +46,7 @@ public class SimpleMailSender implements IMailSender {
 
 
     @Override
+    @Async(AsyncConfiguration.NOTIFICATION_EXECUTOR_KEY)
     public void sendResetCode(String userEmail, String resetToken) {
         String body = mailTemplateEngine.generatePasswordResetEmail(resetToken);
         Email email = EmailBuilder.startingBlank()
