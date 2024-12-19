@@ -1,6 +1,5 @@
 package com.nivlalulu.nnpro.service.impl;
 
-import com.nivlalulu.nnpro.common.mapping.IGenericMapper;
 import com.nivlalulu.nnpro.common.mapping.impl.GenericModelMapper;
 import com.nivlalulu.nnpro.repository.IInvoiceRepository;
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
@@ -10,14 +9,11 @@ import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.Product;
 import com.nivlalulu.nnpro.model.User;
 import com.nivlalulu.nnpro.service.IInvoiceService;
-import com.nivlalulu.nnpro.service.IProductService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +22,7 @@ public class InvoiceService implements IInvoiceService {
     private final ProductService productService;
     private final GenericModelMapper mapper;
 
+    @Override
     public InvoiceDto createInvoice(InvoiceDto invoiceDto) {
 
         Set<Product> productList = invoiceDto.getProducts().stream().map(mapper::convertToEntity).collect(Collectors.toSet());
@@ -38,6 +35,7 @@ public class InvoiceService implements IInvoiceService {
         return mapper.convertToDto(invoiceRepository.save(invoice));
     }
 
+    @Override
     public InvoiceDto updateInvoice(InvoiceDto invoiceUpdated) {
         Invoice invoice = checkIfInvoiceExisting(invoiceUpdated.getId());
 
@@ -47,18 +45,21 @@ public class InvoiceService implements IInvoiceService {
         return mapper.convertToDto(invoiceRepository.save(invoice));
     }
 
+    @Override
     public InvoiceDto deleteInvoice(UUID id) {
         Invoice invoice = checkIfInvoiceExisting(id);
         invoiceRepository.delete(invoice);
         return mapper.convertToDto(invoice);
     }
 
+    @Override
     public InvoiceDto addProductToInvoice(UUID invoiceId, List<ProductDto> productsIds) {
         Invoice existingInvoice = checkIfInvoiceExisting(invoiceId);
         existingInvoice.getProductList().addAll(validateProductsForInvoice(productsIds));
         return updateInvoice(mapper.convertToDto(existingInvoice));
     }
 
+    @Override
     public InvoiceDto removeProductFromInvoice(UUID invoiceId, List<ProductDto> productsIds) {
         Invoice existingInvoice = checkIfInvoiceExisting(invoiceId);
         existingInvoice.getProductList().removeAll(validateProductsForInvoice(productsIds));
@@ -66,15 +67,18 @@ public class InvoiceService implements IInvoiceService {
     }
 
 
+    @Override
     public InvoiceDto findInvoiceDtoById(UUID id) {
         Invoice invoice = checkIfInvoiceExisting(id);
         return mapper.convertToDto(invoice);
     }
 
-    protected Optional<Invoice> findInvoiceById(UUID id) {
+    @Override
+    public Optional<Invoice> findInvoiceById(UUID id) {
         return invoiceRepository.findById(id);
     }
 
+    @Override
     public List<InvoiceDto> findAllInvoices() {
         return invoiceRepository
                 .findAll()
@@ -83,6 +87,7 @@ public class InvoiceService implements IInvoiceService {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<Invoice> findAllContainsProduct(Product product) {
         return invoiceRepository.findAllByProductListContains(product);
     }

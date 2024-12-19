@@ -3,25 +3,25 @@ package com.nivlalulu.nnpro.controller.v1;
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
 import com.nivlalulu.nnpro.dto.v1.ProductDto;
 import com.nivlalulu.nnpro.dto.ApiResponse;
-import com.nivlalulu.nnpro.service.impl.InvoiceService;
+import com.nivlalulu.nnpro.service.IInvoiceService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/v1/invoice")
 @RequiredArgsConstructor
 @Validated
-public class InvoiceController {
-    private InvoiceService invoiceService;
+public class InvoiceControllerV1 {
+    private final IInvoiceService invoiceService;
 
     @GetMapping("/readAll")
     public ApiResponse<List<InvoiceDto>> getAllInvoices() {
@@ -39,6 +39,15 @@ public class InvoiceController {
     }
 
     @PostMapping("/saveInvoice")
+    @Operation(
+            summary = "Save the invoice",
+            description = "Changes the password for the specified user.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "The old and new password",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = InvoiceDto.class))
+            )
+    )
     public ApiResponse<InvoiceDto> saveInvoice(@Valid @RequestBody InvoiceDto invoiceDto) {
         try {
             InvoiceDto invoice = invoiceService.createInvoice(invoiceDto);
