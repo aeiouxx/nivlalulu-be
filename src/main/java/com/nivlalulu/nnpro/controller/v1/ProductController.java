@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Validated
 public class ProductController {
-    private ProductService productService;
+    private final ProductService productService;
 
     @PostMapping("/saveProduct")
     public ApiResponse<ProductDto> saveProduct(@Valid @RequestBody ProductDto productDto) {
