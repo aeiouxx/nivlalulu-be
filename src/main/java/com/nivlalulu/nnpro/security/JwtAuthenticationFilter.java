@@ -12,12 +12,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -47,19 +49,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String accessToken = extractAccessToken(request);
         if (accessToken == null) {
             log.debug("Access token is missing, rejecting request");
-            filterChain.doFilter(request, response);
+            denyRequestInvalidToken(response);
             return;
         }
         try {
-            final String username = jwtTokenProvider.extractUsername(accessToken, JwtTokenType.ACCESS);
-            log.debug("Extracted username: '{}'", username);
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                setSecurityContext(request, accessToken, username);
+            var existingAuth = SecurityContextHolder.getContext().getAuthentication();
+            if (existingAuth != null) {
+                log.error("Security context set already, this should not happen!");
+                return;
             }
+
+            Optional<UserDetails> userDetails = fetchDetailsIfAccessTokenValid(accessToken);
+            if (userDetails.isEmpty()) {
+                log.debug("Invalid token, rejecting request");
+                denyRequestInvalidToken(response);
+                return;
+            }
+            setSecurityContext(request, accessToken, userDetails.get());
             log.debug("Security context set, proceeding with request: {}", uri);
         } catch (Exception e) {
             log.error("Error occurred while setting security context", e);
-            setInvalidTokenResponse(response);
+            denyRequestInvalidToken(response);
             return;
         }
         filterChain.doFilter(request, response);
@@ -85,7 +95,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    private void setInvalidTokenResponse(HttpServletResponse response) throws IOException {
+    private void denyRequestInvalidToken(HttpServletResponse response) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
@@ -114,11 +124,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return authorizationHeader.substring(7);
     }
 
-    private void setSecurityContext(HttpServletRequest request, String token, String username) {
-        UserDetails details = userDetailsService.loadUserByUsername(username);
-        if (!jwtTokenProvider.isTokenValid(token, JwtTokenType.ACCESS, details)) {
-            return;
+    private Optional<UserDetails> fetchDetailsIfAccessTokenValid(String token) {
+        UserDetails userDetails;
+        try {
+            var username = jwtTokenProvider.extractUsername(token, JwtTokenType.ACCESS);
+            userDetails = userDetailsService.loadUserByUsername(username);
+        } catch (Exception e) {
+            log.error("Error retrieving user details: '{}'", e.getMessage());
+            return Optional.empty();
         }
+        return jwtTokenProvider.isTokenValid(token, JwtTokenType.ACCESS, userDetails)
+                ? Optional.of(userDetails)
+                : Optional.empty();
+    }
+
+    private void setSecurityContext(HttpServletRequest request, String token, UserDetails details) {
         UsernamePasswordAuthenticationToken authentication
                 = new UsernamePasswordAuthenticationToken(details, null, details.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
