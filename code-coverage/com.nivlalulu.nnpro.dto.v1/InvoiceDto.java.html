@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InvoiceDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.dto.v1</a> &gt; <span class="el_source">InvoiceDto.java</span></div><h1>InvoiceDto.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.dto.v1;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.nivlalulu.nnpro.dto.UserDto;
+import com.nivlalulu.nnpro.enums.PaymentMethod;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.List;
+import java.util.UUID;
+
+@Getter
+<span class="nc" id="L20">@Setter</span>
+<span class="nc" id="L21">public class InvoiceDto {</span>
+
+    @JsonIgnore
+<span class="nc" id="L24">    private UUID id;</span>
+
+    @JsonProperty(&quot;number&quot;)
+    @NotNull(message = &quot;Invoice number cannot be null&quot;)
+<span class="nc" id="L28">    private BigDecimal invoiceNo;</span>
+
+    @JsonProperty(&quot;issue_date&quot;)
+    @NotNull(message = &quot;Issue date cannot be null&quot;)
+<span class="nc" id="L32">    private Timestamp issueDate;</span>
+
+    @JsonProperty(&quot;due_date&quot;)
+    @NotNull(message = &quot;Due date cannot be null&quot;)
+<span class="nc" id="L36">    private Timestamp dueDate;</span>
+
+    @NotNull(message = &quot;Products cannot be null&quot;)
+    @NotEmpty(message = &quot;Products cannot be empty&quot;)
+<span class="nc" id="L40">    private List&lt;@Valid ProductDto&gt; products;</span>
+
+    @NotNull(message = &quot;Payment method cannot be null&quot;)
+<span class="nc" id="L43">    private PaymentMethod paymentMethod;</span>
+
+    @NotNull(message = &quot;Customer cannot be null&quot;)
+    @Valid
+<span class="nc" id="L47">    private UserDto customer;</span>
+
+    @NotNull(message = &quot;Supplier cannot be null&quot;)
+    @Valid
+<span class="nc" id="L51">    private UserDto supplier;</span>
+
+    @JsonProperty(&quot;raw_value&quot;)
+    @NotNull(message = &quot;Raw value cannot be null&quot;)
+    @DecimalMin(value = &quot;0.01&quot;, inclusive = true, message = &quot;Raw value must be greater than zero&quot;)
+<span class="nc" id="L56">    private BigDecimal rawValue;</span>
+
+    @JsonProperty(&quot;tax_value&quot;)
+    @NotNull(message = &quot;Tax value cannot be null&quot;)
+    @DecimalMin(value = &quot;0.01&quot;, inclusive = true, message = &quot;Tax value must be greater than zero&quot;)
+<span class="nc" id="L61">    private BigDecimal taxValue;</span>
+
+    @JsonProperty(&quot;total_value&quot;)
+    @NotNull(message = &quot;Total value cannot be null&quot;)
+    @DecimalMin(value = &quot;0.01&quot;, inclusive = true, message = &quot;Total value must be greater than zero&quot;)
+<span class="nc" id="L66">    private BigDecimal totalValue;</span>
+
+    // Custom validation logic
+    @AssertTrue(message = &quot;Raw value plus tax value must match total value&quot;)
+    public boolean isTotalValueValid() {
+<span class="nc bnc" id="L71" title="All 6 branches missed.">        return rawValue != null &amp;&amp; taxValue != null &amp;&amp; totalValue != null</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">                &amp;&amp; rawValue.add(taxValue).compareTo(totalValue) == 0;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

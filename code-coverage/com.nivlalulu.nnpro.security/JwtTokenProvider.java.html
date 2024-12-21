@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JwtTokenProvider.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.security</a> &gt; <span class="el_source">JwtTokenProvider.java</span></div><h1>JwtTokenProvider.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.security;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
+import java.time.Duration;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+@Component
+<span class="fc" id="L24">@RequiredArgsConstructor</span>
+<span class="fc" id="L25">@Slf4j</span>
+public class JwtTokenProvider {
+    private final JwtKeyProvider jwtKeyProvider;
+    private final UserDetailsService userDetailsService;
+    private static final long ACCESS_EXPIRATION = 15 * 60 * 1000;
+    private static final long REFRESH_EXPIRATION = 7L * 24L * 60L * 60L * 1000L;
+<span class="fc" id="L31">    public static final Duration ACCESS_EXPIRATION_TIME = Duration.ofMillis(ACCESS_EXPIRATION);</span>
+<span class="fc" id="L32">    public static final Duration REFRESH_EXPIRATION_TIME = Duration.ofMillis(REFRESH_EXPIRATION);</span>
+
+    private static final String CLAIM_AUTHORITIES = &quot;authorities&quot;;
+    private static final String CLAIM_REFRESH_ID = &quot;rtid&quot;;
+
+    private static final String COOKIE_REFRESH_KEY = &quot;refresh_token&quot;;
+
+    // &gt; Refresh
+    public void attachRefreshTokenToCookie(
+            HttpServletResponse response,
+            String refreshToken) {
+<span class="fc" id="L43">        Cookie cookie = new Cookie(COOKIE_REFRESH_KEY, refreshToken);</span>
+<span class="fc" id="L44">        cookie.setHttpOnly(true);</span>
+<span class="fc" id="L45">        cookie.setSecure(false);</span>
+<span class="fc" id="L46">        cookie.setPath(&quot;/&quot;);</span>
+<span class="fc" id="L47">        cookie.setMaxAge((int) REFRESH_EXPIRATION_TIME.toSeconds());</span>
+<span class="fc" id="L48">        response.addCookie(cookie);</span>
+<span class="fc" id="L49">    }</span>
+
+    public String extractRefreshTokenFromCookie(HttpServletRequest request) {
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if (request.getCookies() == null) {</span>
+<span class="fc" id="L53">            return null;</span>
+        }
+<span class="fc" id="L55">        return Arrays.stream(request.getCookies())</span>
+<span class="fc" id="L56">                .filter(cookie -&gt; COOKIE_REFRESH_KEY.equals(cookie.getName()))</span>
+<span class="fc" id="L57">                .map(Cookie::getValue)</span>
+<span class="fc" id="L58">                .findFirst()</span>
+<span class="fc" id="L59">                .orElse(null);</span>
+    }
+
+    public String generateRefreshToken(
+            UserDetails userDetails,
+            String refreshTokenId) {
+<span class="fc" id="L65">        final Map&lt;String, Object&gt; claims = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L66">        claims.put(CLAIM_REFRESH_ID, refreshTokenId);</span>
+<span class="fc" id="L67">        return generateToken(</span>
+                claims,
+<span class="fc" id="L69">                userDetails.getUsername(),</span>
+<span class="fc" id="L70">                jwtKeyProvider.getKey(JwtTokenType.REFRESH),</span>
+                REFRESH_EXPIRATION);
+    }
+    public String extractRefreshTokenId(String token) {
+<span class="fc" id="L74">        return extractSignedClaim(token, JwtTokenType.REFRESH, claims -&gt; claims.get(CLAIM_REFRESH_ID, String.class));</span>
+    }
+    // &lt; Refresh
+    // &gt; Access
+    public String generateAccessToken(UserDetails userDetails) {
+<span class="fc" id="L79">        return generateAccessToken(userDetails.getUsername(), userDetails.getAuthorities());</span>
+    }
+    public String generateAccessToken(String username, Collection&lt;? extends GrantedAuthority&gt; authorities) {
+<span class="fc" id="L82">        final Map&lt;String, Object&gt; claims = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L83">        claims.put(CLAIM_AUTHORITIES,</span>
+                authorities
+<span class="fc" id="L85">                        .stream()</span>
+<span class="fc" id="L86">                        .map(GrantedAuthority::getAuthority)</span>
+<span class="fc" id="L87">                        .collect(Collectors.toList())</span>
+                );
+<span class="fc" id="L89">        return generateToken(</span>
+                claims,
+                username,
+<span class="fc" id="L92">                jwtKeyProvider.getKey(JwtTokenType.ACCESS),</span>
+                ACCESS_EXPIRATION);
+    }
+    // &lt; Access
+    // &gt; Common
+    public boolean isTokenValid(String token, JwtTokenType type) {
+<span class="nc" id="L98">        var user = extractUsername(token, type);</span>
+<span class="nc" id="L99">        var details = userDetailsService.loadUserByUsername(user);</span>
+<span class="nc" id="L100">        return isTokenValid(token, type, details);</span>
+    }
+    public boolean isTokenValid(String token, JwtTokenType type, UserDetails userDetails) {
+<span class="nc" id="L103">        final SecretKey key = jwtKeyProvider.getKey(type);</span>
+<span class="nc" id="L104">        return isTokenValid(token, key, userDetails);</span>
+    }
+    public String extractUsername(String token, JwtTokenType type) {
+<span class="fc" id="L107">        return extractSignedClaim(token, type, Claims::getSubject);</span>
+    }
+    private String generateToken(Map&lt;String, Object&gt; claims, String subject, SecretKey key, long expirationMillis) {
+<span class="fc" id="L110">        return Jwts.builder()</span>
+<span class="fc" id="L111">                .claims(claims)</span>
+<span class="fc" id="L112">                .subject(subject)</span>
+<span class="fc" id="L113">                .issuedAt(new Date())</span>
+<span class="fc" id="L114">                .expiration(new Date(System.currentTimeMillis() + expirationMillis))</span>
+<span class="fc" id="L115">                .signWith(key)</span>
+<span class="fc" id="L116">                .compact();</span>
+    }
+    public &lt;T&gt; T extractSignedClaim(String token, JwtTokenType type, Function&lt;Claims, T&gt; resolver) {
+<span class="fc" id="L119">        log.debug(&quot;Extracting claim from {} token: {}&quot;, type, token);</span>
+<span class="fc" id="L120">        final SecretKey key = jwtKeyProvider.getKey(type);</span>
+<span class="fc" id="L121">        final Claims claims = extractSignedClaims(token, key);</span>
+<span class="fc" id="L122">        return resolver.apply(claims);</span>
+    }
+
+    private boolean isTokenValid(String token, SecretKey key, UserDetails userDetails) {
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        if (userDetails == null) return false;</span>
+<span class="nc" id="L127">        final String username = extractUsername(token, key);</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">        if (username == null) {</span>
+<span class="nc" id="L129">            return false;</span>
+        }
+<span class="nc bnc" id="L131" title="All 2 branches missed.">        final boolean notExpired = !isTokenExpired(token, key);</span>
+<span class="nc" id="L132">        final boolean usernameMatches = username.equals(userDetails.getUsername());</span>
+<span class="nc bnc" id="L133" title="All 4 branches missed.">        return notExpired &amp;&amp; usernameMatches;</span>
+    }
+
+    private String extractUsername(String token, SecretKey key) {
+<span class="nc" id="L137">        return extractSignedClaim(token, key, Claims::getSubject);</span>
+    }
+
+    private boolean isTokenExpired(String token, SecretKey key) {
+        try {
+<span class="nc" id="L142">            return extractSignedClaim(token, key, Claims::getExpiration).before(new Date());</span>
+<span class="nc" id="L143">        } catch (ExpiredJwtException e) {</span>
+<span class="nc" id="L144">            log.debug(&quot;Token expired: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L145">            return true;</span>
+        }
+    }
+
+    private &lt;T&gt; T extractSignedClaim(String token, SecretKey key, Function&lt;Claims, T&gt; resolver) {
+<span class="nc" id="L150">        final Claims claims = extractSignedClaims(token, key);</span>
+<span class="nc" id="L151">        return resolver.apply(claims);</span>
+    }
+
+    private Claims extractSignedClaims(String token, SecretKey key) {
+<span class="fc" id="L155">        return Jwts.parser()</span>
+<span class="fc" id="L156">                .verifyWith(key)</span>
+<span class="fc" id="L157">                .build()</span>
+<span class="fc" id="L158">                .parseSignedClaims(token)</span>
+<span class="fc" id="L159">                .getPayload();</span>
+    }
+    // &lt; Common
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

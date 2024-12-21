@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JwtAuthenticationFilter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.security</a> &gt; <span class="el_source">JwtAuthenticationFilter.java</span></div><h1>JwtAuthenticationFilter.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.security;
+
+import com.nivlalulu.nnpro.dto.v1.RefreshTokenResponseDto;
+import com.nivlalulu.nnpro.service.IJwtTokenService;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+
+@Component
+<span class="fc" id="L25">@RequiredArgsConstructor</span>
+<span class="fc" id="L26">@Slf4j</span>
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private final JwtTokenProvider jwtTokenProvider;
+    private final UserDetailsService userDetailsService;
+    private final IJwtTokenService jwtTokenService;
+
+<span class="fc" id="L32">    private static final List&lt;String&gt; NO_AUTH_URLS = List.of(</span>
+            &quot;/api/public/&quot;
+    );
+
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+<span class="fc" id="L42">        var uri = request.getRequestURI();</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">        if (isExcluded(uri)) {</span>
+<span class="fc" id="L44">            log.debug(&quot;Excluded URL: {}&quot;, uri);</span>
+<span class="fc" id="L45">            filterChain.doFilter(request, response);</span>
+<span class="fc" id="L46">            return;</span>
+        }
+<span class="fc" id="L48">        log.debug(&quot;Secured URL: '{}', verifying token&quot;, uri);</span>
+<span class="fc" id="L49">        final String accessToken = extractAccessToken(request);</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (accessToken == null) {</span>
+<span class="fc" id="L51">            log.debug(&quot;Access token is missing, rejecting request&quot;);</span>
+<span class="fc" id="L52">            denyRequestInvalidToken(response);</span>
+<span class="fc" id="L53">            return;</span>
+        }
+        try {
+<span class="fc" id="L56">            var existingAuth = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">            if (existingAuth != null) {</span>
+<span class="nc" id="L58">                log.error(&quot;Security context set already, this should not happen!&quot;);</span>
+<span class="nc" id="L59">                return;</span>
+            }
+
+<span class="fc" id="L62">            Optional&lt;UserDetails&gt; userDetails = fetchDetailsIfAccessTokenValid(accessToken);</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">            if (userDetails.isEmpty()) {</span>
+<span class="fc" id="L64">                log.debug(&quot;Invalid token, rejecting request&quot;);</span>
+<span class="fc" id="L65">                denyRequestInvalidToken(response);</span>
+<span class="fc" id="L66">                return;</span>
+            }
+<span class="fc" id="L68">            setSecurityContext(request, accessToken, userDetails.get());</span>
+<span class="fc" id="L69">            log.debug(&quot;Security context set, proceeding with request: {}&quot;, uri);</span>
+<span class="nc" id="L70">        } catch (Exception e) {</span>
+<span class="nc" id="L71">            log.error(&quot;Error occurred while setting security context&quot;, e);</span>
+<span class="nc" id="L72">            denyRequestInvalidToken(response);</span>
+<span class="nc" id="L73">            return;</span>
+<span class="fc" id="L74">        }</span>
+<span class="fc" id="L75">        filterChain.doFilter(request, response);</span>
+<span class="fc" id="L76">    }</span>
+
+    /**
+     * @deprecated This method is deprecated and will be removed in the future, clients should attempt a silent
+     * refresh via the refresh token endpoint instead.
+     * @param request
+     * @param response
+     * @return
+     */
+    @Deprecated(forRemoval = true)
+    private boolean tryTokenRefresh(HttpServletRequest request, HttpServletResponse response) {
+<span class="nc" id="L87">        log.debug(&quot;Attempting to refresh token&quot;);</span>
+        try {
+<span class="nc" id="L89">            RefreshTokenResponseDto refreshTokenResponse = jwtTokenService.refreshAndRotate(request, response);</span>
+<span class="nc" id="L90">            response.setHeader(&quot;Authorization&quot;, &quot;Bearer &quot; + refreshTokenResponse.accessToken());</span>
+<span class="nc" id="L91">            return true;</span>
+<span class="nc" id="L92">        } catch (Exception e) {</span>
+<span class="nc" id="L93">            log.error(&quot;Error occurred while refreshing token&quot;, e);</span>
+<span class="nc" id="L94">            return false;</span>
+        }
+    }
+
+    private void denyRequestInvalidToken(HttpServletResponse response) throws IOException {
+<span class="fc" id="L99">        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);</span>
+<span class="fc" id="L100">        response.setContentType(&quot;application/json&quot;);</span>
+<span class="fc" id="L101">        response.setCharacterEncoding(&quot;UTF-8&quot;);</span>
+<span class="fc" id="L102">        try (final var writer = response.getWriter()) {</span>
+<span class="fc" id="L103">            writer.write(&quot;Invalid token&quot;);</span>
+<span class="fc" id="L104">            writer.flush();</span>
+        }
+<span class="fc" id="L106">    }</span>
+
+    private boolean isExcluded(String uri) {
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        for (String url : NO_AUTH_URLS) {</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">            if (uri.contains(url)) {</span>
+                // shouldn't even be getting triggered if the configuration is correct
+<span class="fc" id="L112">                log.error(&quot;[WRONG CONFIGURATION!!!] Excluded URL: {}&quot;, uri);</span>
+<span class="fc" id="L113">                return true;</span>
+            }
+<span class="fc" id="L115">        }</span>
+<span class="fc" id="L116">        return false;</span>
+    }
+
+    private String extractAccessToken(HttpServletRequest request) {
+<span class="fc" id="L120">        String authorizationHeader = request.getHeader(&quot;Authorization&quot;);</span>
+<span class="pc bpc" id="L121" title="1 of 4 branches missed.">        if (authorizationHeader == null || !authorizationHeader.startsWith(&quot;Bearer &quot;)) {</span>
+<span class="fc" id="L122">            return null;</span>
+        }
+<span class="fc" id="L124">        return authorizationHeader.substring(7);</span>
+    }
+
+    private Optional&lt;UserDetails&gt; fetchDetailsIfAccessTokenValid(String token) {
+        UserDetails userDetails;
+        try {
+<span class="fc" id="L130">            var username = jwtTokenProvider.extractUsername(token, JwtTokenType.ACCESS);</span>
+<span class="fc" id="L131">            userDetails = userDetailsService.loadUserByUsername(username);</span>
+<span class="nc" id="L132">        } catch (Exception e) {</span>
+<span class="nc" id="L133">            log.error(&quot;Error retrieving user details: '{}'&quot;, e.getMessage());</span>
+<span class="nc" id="L134">            return Optional.empty();</span>
+<span class="fc" id="L135">        }</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        return jwtTokenProvider.isTokenValid(token, JwtTokenType.ACCESS, userDetails)</span>
+<span class="fc" id="L137">                ? Optional.of(userDetails)</span>
+<span class="fc" id="L138">                : Optional.empty();</span>
+    }
+
+    private void setSecurityContext(HttpServletRequest request, String token, UserDetails details) {
+<span class="fc" id="L142">        UsernamePasswordAuthenticationToken authentication</span>
+<span class="fc" id="L143">                = new UsernamePasswordAuthenticationToken(details, null, details.getAuthorities());</span>
+<span class="fc" id="L144">        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));</span>
+<span class="fc" id="L145">        SecurityContextHolder.getContext().setAuthentication(authentication);</span>
+<span class="fc" id="L146">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

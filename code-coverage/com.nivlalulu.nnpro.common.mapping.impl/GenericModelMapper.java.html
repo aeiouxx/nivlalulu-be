@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GenericModelMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.common.mapping.impl</a> &gt; <span class="el_source">GenericModelMapper.java</span></div><h1>GenericModelMapper.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.common.mapping.impl;
+
+import com.nivlalulu.nnpro.common.mapping.IGenericMapper;
+import com.nivlalulu.nnpro.dto.UserDto;
+import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
+import com.nivlalulu.nnpro.dto.v1.ProductDto;
+import com.nivlalulu.nnpro.model.Invoice;
+import com.nivlalulu.nnpro.model.Product;
+import com.nivlalulu.nnpro.model.User;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Component;
+
+@Component
+<span class="fc" id="L15">@RequiredArgsConstructor</span>
+public class GenericModelMapper implements IGenericMapper {
+    private final ModelMapper modelMapper;
+    // Sadly, because we don't have reified generics in java we can't do cool stuff
+    // like this: collection.stream().map(mapper::map&lt;DtoType, EntityType&gt;)
+    // instead we have to use: collection.stream().map(item -&gt; mapper.map(item, EntityType.class))
+    // because the infered type of the lambda is Object and not the actual type of the item Q_Q
+    // and obviously polluting the interface with a bunch of methods like mapProductToDto, mapUserToDto, etc
+    // is garbage
+    /**
+     * Maps a source object to a destination object
+     * @param from
+     * @param toClass
+     * @return TTo
+     */
+    @Override
+    public &lt;TFrom, TTo&gt; TTo map(TFrom from, Class&lt;TTo&gt; toClass) {
+<span class="fc" id="L32">        return modelMapper.map(from, toClass);</span>
+    }
+
+    public ProductDto convertToDto(Product product) {
+<span class="fc" id="L36">        return map(product, ProductDto.class);</span>
+    }
+
+    public UserDto convertToDto(User user) {
+<span class="nc" id="L40">        return map(user, UserDto.class);</span>
+    }
+
+    public InvoiceDto convertToDto(Invoice invoice) {
+<span class="nc" id="L44">        return map(invoice, InvoiceDto.class);</span>
+    }
+
+    public Product convertToEntity(ProductDto productDto) {
+<span class="nc" id="L48">        return map(productDto, Product.class);</span>
+    }
+
+    public Invoice convertToEntity(InvoiceDto invoiceDto) {
+<span class="nc" id="L52">        return map(invoiceDto, Invoice.class);</span>
+    }
+
+    public User convertToEntity(UserDto userDto) {
+<span class="nc" id="L56">        return map(userDto, User.class);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

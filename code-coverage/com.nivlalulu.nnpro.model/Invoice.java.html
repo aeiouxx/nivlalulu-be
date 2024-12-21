@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Invoice.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.model</a> &gt; <span class="el_source">Invoice.java</span></div><h1>Invoice.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.model;
+
+import com.nivlalulu.nnpro.enums.PaymentMethod;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.sql.Timestamp;
+import java.util.Set;
+import java.util.UUID;
+
+@Getter
+<span class="nc" id="L15">@Setter</span>
+<span class="nc" id="L16">@AllArgsConstructor</span>
+<span class="fc" id="L17">@NoArgsConstructor</span>
+@Entity(name = &quot;invoices&quot;)
+public class Invoice {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = &quot;id&quot;, nullable = false, unique = true)
+<span class="nc" id="L23">    private UUID id;</span>
+
+    @Column(nullable = false, unique = true)
+<span class="nc" id="L26">    private UUID invoiceNumber;</span>
+
+    @Column(nullable = false)
+<span class="nc" id="L29">    private Timestamp created;</span>
+
+    @Column(nullable = false)
+<span class="nc" id="L32">    private Timestamp expiration;</span>
+
+    @Column(nullable = false)
+<span class="nc" id="L35">    private PaymentMethod paymentMethod;</span>
+
+    @ManyToMany
+    @JoinTable(
+            name = &quot;invoices_products&quot;,
+            joinColumns = @JoinColumn(name = &quot;invoice_id&quot;),
+            inverseJoinColumns = @JoinColumn(name = &quot;product_id&quot;)
+    )
+<span class="nc" id="L43">    private Set&lt;Product&gt; productList;</span>
+
+
+    @ManyToOne
+    @JoinColumn(name = &quot;customer_id&quot;, referencedColumnName = &quot;id&quot;)
+<span class="nc" id="L48">    private User customer;</span>
+
+    @Column
+<span class="nc" id="L51">    private String customerOrganizationName;</span>
+
+    @Column
+<span class="nc" id="L54">    private String customerAddress;</span>
+
+    @Column
+<span class="nc" id="L57">    private String customerCountry;</span>
+
+    @Column
+<span class="nc" id="L60">    private String customerCompanyId;</span>
+
+    @Column
+<span class="nc" id="L63">    private String customerTaxId;</span>
+
+    @ManyToOne
+    @JoinColumn(name = &quot;supplier_id&quot;, referencedColumnName = &quot;id&quot;)
+<span class="nc" id="L67">    private User supplier;</span>
+
+    @Column
+<span class="nc" id="L70">    private String supplierOrganizationName;</span>
+
+    @Column
+<span class="nc" id="L73">    private String supplierAddress;</span>
+
+    @Column
+<span class="nc" id="L76">    private String supplierCountry;</span>
+
+    @Column
+<span class="nc" id="L79">    private String contactPerson;</span>
+
+    @Column
+<span class="nc" id="L82">    private String supplierCompanyId;</span>
+
+    @Column
+<span class="nc" id="L85">    private String supplierTaxId;</span>
+
+<span class="nc" id="L87">    public Invoice(Timestamp created, Timestamp expiration, PaymentMethod paymentMethod, Set&lt;Product&gt; productList, User customer, User supplier) {</span>
+<span class="nc" id="L88">        this.created = created;</span>
+<span class="nc" id="L89">        this.expiration = expiration;</span>
+<span class="nc" id="L90">        this.paymentMethod = paymentMethod;</span>
+<span class="nc" id="L91">        this.productList = productList;</span>
+<span class="nc" id="L92">        this.customer = customer;</span>
+<span class="nc" id="L93">        this.supplier = supplier;</span>
+<span class="nc" id="L94">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

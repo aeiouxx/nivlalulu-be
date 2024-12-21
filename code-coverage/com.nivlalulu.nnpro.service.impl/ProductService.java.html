@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProductService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.service.impl</a> &gt; <span class="el_source">ProductService.java</span></div><h1>ProductService.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.service.impl;
+
+import com.nivlalulu.nnpro.common.mapping.impl.GenericModelMapper;
+import com.nivlalulu.nnpro.repository.IInvoiceRepository;
+import com.nivlalulu.nnpro.repository.IProductRepository;
+import com.nivlalulu.nnpro.dto.v1.ProductDto;
+import com.nivlalulu.nnpro.model.Invoice;
+import com.nivlalulu.nnpro.model.Product;
+import com.nivlalulu.nnpro.service.IProductService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Service
+<span class="fc" id="L21">@RequiredArgsConstructor</span>
+public class ProductService implements IProductService {
+
+    private final IProductRepository IProductRepository;
+    private final IInvoiceRepository invoiceRepository;
+    private final GenericModelMapper mapper;
+
+    public ProductDto createProduct(ProductDto productDto) {
+<span class="fc" id="L29">        Optional&lt;Product&gt; isProductExisting = IProductRepository.findProductByNameAndPrice(productDto.getName(), productDto.getPrice());</span>
+<span class="fc bfc" id="L30" title="All 2 branches covered.">        if (isProductExisting.isPresent()) {</span>
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">            return duplicityCheck(isProductExisting.get(), productDto) ?</span>
+<span class="fc" id="L32">                    mapper.convertToDto(isProductExisting.get()) :</span>
+<span class="nc" id="L33">                    mapper.convertToDto(IProductRepository.save(isProductExisting.get()));</span>
+        }
+
+<span class="fc" id="L36">        Product product = new Product(productDto.getName(), productDto.getQuantity(), productDto.getPrice(),</span>
+<span class="fc" id="L37">                productDto.getTax(), productDto.getTotal());</span>
+<span class="fc" id="L38">        return mapper.convertToDto(IProductRepository.save(product));</span>
+    }
+
+    public ProductDto updateProduct(ProductDto productDto) {
+<span class="fc" id="L42">        Product product = IProductRepository.findById(productDto.getId())</span>
+<span class="pc" id="L43">                .orElseThrow(() -&gt; new RuntimeException(String.format(&quot;Product with id %s doesn't exist, can't be updated&quot;,</span>
+<span class="nc" id="L44">                        productDto.getId())));</span>
+
+<span class="fc" id="L46">        product.setName(productDto.getName());</span>
+<span class="fc" id="L47">        product.setPrice(productDto.getPrice());</span>
+<span class="fc" id="L48">        product.setTaxPrice(productDto.getTax());</span>
+<span class="fc" id="L49">        product.setTotalPrice(productDto.getTotal());</span>
+<span class="fc" id="L50">        product.setQuantity(productDto.getQuantity());</span>
+
+<span class="fc" id="L52">        return mapper.convertToDto(IProductRepository.save(product));</span>
+    }
+
+    public ProductDto deleteProduct(UUID id) {
+<span class="fc" id="L56">        Product product = IProductRepository.findById(id)</span>
+<span class="pc" id="L57">                .orElseThrow(() -&gt; new NoSuchElementException(String.format(&quot;Product with id %s doesn't exist, can't be deleted&quot;, id)));</span>
+
+<span class="fc" id="L59">        List&lt;Invoice&gt; listWhichContainsProduct = invoiceRepository.findAllByProductListContains(product);</span>
+
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">        if (!listWhichContainsProduct.isEmpty()) {</span>
+<span class="nc" id="L62">            throw new RuntimeException(String.format(&quot;Product with id %s can't be deleted, is in invoices&quot;, id));</span>
+        }
+
+<span class="fc" id="L65">        IProductRepository.delete(product);</span>
+<span class="fc" id="L66">        return mapper.convertToDto(product);</span>
+    }
+
+    public List&lt;ProductDto&gt; findAllByPrice(BigDecimal price) {
+<span class="fc" id="L70">        return IProductRepository.findAllByPrice(price).stream().map(mapper::convertToDto).collect(Collectors.toList());</span>
+    }
+
+    public List&lt;ProductDto&gt; findAllByNameContaining(String name) {
+<span class="nc" id="L74">        return IProductRepository.findAllByNameContaining(name).stream().map(mapper::convertToDto).collect(Collectors.toList());</span>
+    }
+
+    public List&lt;Product&gt; findProductsByIds(List&lt;UUID&gt; ids) {
+<span class="nc" id="L78">        return IProductRepository.findByIdIn(ids);</span>
+    }
+
+    public Optional&lt;Product&gt; findProductById(UUID id) {
+<span class="nc" id="L82">        return IProductRepository.findById(id);</span>
+    }
+
+    protected boolean duplicityCheck(Product product, ProductDto productDto) {
+<span class="fc" id="L86">        boolean isNameMatching = product.getName().equals(productDto.getName());</span>
+<span class="fc" id="L87">        boolean isNamePrice = product.getPrice().equals(productDto.getPrice());</span>
+<span class="pc bpc" id="L88" title="2 of 4 branches missed.">        return isNameMatching &amp;&amp; isNamePrice;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

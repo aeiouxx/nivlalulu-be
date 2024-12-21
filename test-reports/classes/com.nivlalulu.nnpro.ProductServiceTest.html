@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - ProductServiceTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>ProductServiceTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/com.nivlalulu.nnpro.html">com.nivlalulu.nnpro</a> &gt; ProductServiceTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">5</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">0.929s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+<li>
+<a href="#tab2">Standard error</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">duplicatedProduct()</td>
+<td class="success">0.841s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">newProduct()</td>
+<td class="success">0.008s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testDeleteProduct_ProductExists()</td>
+<td class="success">0.034s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testFindAllByPrice()</td>
+<td class="success">0.013s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testUpdateProduct()</td>
+<td class="success">0.033s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>11:10:22.415 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.nivlalulu.nnpro.ProductServiceTest]: ProductServiceTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+11:10:22.590 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.nivlalulu.nnpro.Application for test class com.nivlalulu.nnpro.ProductServiceTest
+11:10:22.864 [Test worker] INFO org.testcontainers.images.PullPolicy -- Image pull policy will be performed by: DefaultPullPolicy()
+11:10:22.869 [Test worker] INFO org.testcontainers.utility.ImageNameSubstitutor -- Image name substitution will be performed by: DefaultImageNameSubstitutor (composite of 'ConfigurationFileImageNameSubstitutor' and 'PrefixingImageNameSubstitutor')
+11:10:23.836 [Test worker] INFO org.testcontainers.dockerclient.DockerClientProviderStrategy -- Found Docker environment with local Unix socket (unix:///var/run/docker.sock)
+11:10:23.847 [Test worker] INFO org.testcontainers.DockerClientFactory -- Docker host IP address is localhost
+11:10:23.869 [Test worker] INFO org.testcontainers.DockerClientFactory -- Connected to docker: 
+  Server Version: 26.1.3
+  API Version: 1.45
+  Operating System: Ubuntu 22.04.5 LTS
+  Total Memory: 15981 MB
+11:10:23.922 [Test worker] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling docker image: testcontainers/ryuk:0.6.0. Please be patient; this may take some time but only needs to be done once.
+11:10:24.945 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Starting to pull image
+11:10:24.970 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling image layers:  0 pending,  0 downloaded,  0 extracted, (0 bytes/0 bytes)
+11:10:25.473 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling image layers:  2 pending,  1 downloaded,  0 extracted, (65 KB/? MB)
+11:10:25.489 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling image layers:  1 pending,  2 downloaded,  0 extracted, (3 MB/? MB)
+11:10:25.495 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling image layers:  0 pending,  3 downloaded,  0 extracted, (3 MB/6 MB)
+11:10:25.586 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling image layers:  0 pending,  3 downloaded,  1 extracted, (3 MB/6 MB)
+11:10:26.618 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling image layers:  0 pending,  3 downloaded,  2 extracted, (3 MB/6 MB)
+11:10:26.674 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling image layers:  0 pending,  3 downloaded,  3 extracted, (6 MB/6 MB)
+11:10:26.681 [Test worker] INFO tc.testcontainers/ryuk:0.6.0 -- Image testcontainers/ryuk:0.6.0 pull took PT2.757950315S
+11:10:26.681 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pull complete. 3 layers, pulled in 1s (downloaded 6 MB at 6 MB/s)
+11:10:26.716 [Test worker] INFO tc.testcontainers/ryuk:0.6.0 -- Creating container for image: testcontainers/ryuk:0.6.0
+11:10:26.829 [Test worker] INFO tc.testcontainers/ryuk:0.6.0 -- Container testcontainers/ryuk:0.6.0 is starting: ae8d271f0a8793936954829ca68ac484d7ec24710c8e11257caa5a8fdc13135d
+11:10:27.223 [Test worker] INFO tc.testcontainers/ryuk:0.6.0 -- Container testcontainers/ryuk:0.6.0 started in PT0.506539455S
+11:10:27.228 [Test worker] INFO org.testcontainers.utility.RyukResourceReaper -- Ryuk started - will monitor and terminate Testcontainers containers on JVM exit
+11:10:27.228 [Test worker] INFO org.testcontainers.DockerClientFactory -- Checking the system...
+11:10:27.229 [Test worker] INFO org.testcontainers.DockerClientFactory -- ✔︎ Docker server version should be at least 1.6.0
+11:10:27.232 [Test worker] INFO tc.postgres:latest -- Pulling docker image: postgres:latest. Please be patient; this may take some time but only needs to be done once.
+11:10:28.199 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Starting to pull image
+11:10:28.200 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending,  0 downloaded,  0 extracted, (0 bytes/0 bytes)
+11:10:28.700 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers: 13 pending,  1 downloaded,  0 extracted, (336 KB/? MB)
+11:10:28.719 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers: 12 pending,  2 downloaded,  0 extracted, (336 KB/? MB)
+11:10:28.845 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers: 11 pending,  3 downloaded,  0 extracted, (17 MB/? MB)
+11:10:28.975 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers: 10 pending,  4 downloaded,  0 extracted, (17 MB/? MB)
+11:10:29.012 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  9 pending,  5 downloaded,  0 extracted, (17 MB/? MB)
+11:10:29.113 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  8 pending,  6 downloaded,  0 extracted, (17 MB/? MB)
+11:10:29.246 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  7 pending,  7 downloaded,  0 extracted, (17 MB/? MB)
+11:10:29.280 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  6 pending,  8 downloaded,  0 extracted, (17 MB/? MB)
+11:10:29.518 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  5 pending,  9 downloaded,  0 extracted, (32 MB/? MB)
+11:10:29.546 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  4 pending, 10 downloaded,  0 extracted, (35 MB/? MB)
+11:10:29.778 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  3 pending, 11 downloaded,  0 extracted, (68 MB/? MB)
+11:10:29.814 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  2 pending, 12 downloaded,  0 extracted, (68 MB/? MB)
+11:10:29.937 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  2 pending, 12 downloaded,  1 extracted, (114 MB/? MB)
+11:10:30.005 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  1 pending, 13 downloaded,  1 extracted, (114 MB/? MB)
+11:10:30.035 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending, 14 downloaded,  1 extracted, (114 MB/146 MB)
+11:10:30.226 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending, 14 downloaded,  2 extracted, (114 MB/146 MB)
+11:10:30.354 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending, 14 downloaded,  3 extracted, (118 MB/146 MB)
+11:10:30.392 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending, 14 downloaded,  4 extracted, (119 MB/146 MB)
+11:10:30.693 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending, 14 downloaded,  5 extracted, (127 MB/146 MB)
+11:10:30.753 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending, 14 downloaded,  6 extracted, (128 MB/146 MB)
+11:10:30.762 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending, 14 downloaded,  7 extracted, (128 MB/146 MB)
+11:10:30.785 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending, 14 downloaded,  8 extracted, (128 MB/146 MB)
+11:10:33.727 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending, 14 downloaded,  9 extracted, (146 MB/146 MB)
+11:10:33.740 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending, 14 downloaded, 10 extracted, (146 MB/146 MB)
+11:10:33.754 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending, 14 downloaded, 11 extracted, (146 MB/146 MB)
+11:10:33.765 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending, 14 downloaded, 12 extracted, (146 MB/146 MB)
+11:10:33.775 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending, 14 downloaded, 13 extracted, (146 MB/146 MB)
+11:10:33.785 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending, 14 downloaded, 14 extracted, (146 MB/146 MB)
+11:10:33.791 [Test worker] INFO tc.postgres:latest -- Image postgres:latest pull took PT6.559047335S
+11:10:33.791 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pull complete. 14 layers, pulled in 5s (downloaded 146 MB at 29 MB/s)
+11:10:33.794 [Test worker] INFO tc.postgres:latest -- Creating container for image: postgres:latest
+11:10:33.810 [Test worker] INFO tc.postgres:latest -- Container postgres:latest is starting: ae87f28c76a5c6e72ca3a540e3115629564f2e6ba49e0c7dfcae8e19721b8a78
+11:10:35.085 [Test worker] INFO tc.postgres:latest -- Container postgres:latest started in PT1.290537157S
+11:10:35.086 [Test worker] INFO tc.postgres:latest -- Container is started (JDBC URL: jdbc:postgresql://localhost:32769/test_db?loggerLevel=OFF)
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.4)
+
+2024-12-21T11:10:35.618Z  INFO 2010 --- [    Test worker] com.nivlalulu.nnpro.ProductServiceTest   : Starting ProductServiceTest using Java 21.0.5 with PID 2010 (started by runner in /home/runner/work/nivlalulu-be/nivlalulu-be)
+2024-12-21T11:10:35.620Z  INFO 2010 --- [    Test worker] com.nivlalulu.nnpro.ProductServiceTest   : The following 1 profile is active: &quot;test&quot;
+2024-12-21T11:10:37.262Z  INFO 2010 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2024-12-21T11:10:37.265Z  INFO 2010 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-12-21T11:10:37.493Z  INFO 2010 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 215 ms. Found 5 JPA repository interfaces.
+2024-12-21T11:10:37.532Z  INFO 2010 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2024-12-21T11:10:37.536Z  INFO 2010 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2024-12-21T11:10:37.560Z  INFO 2010 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.nivlalulu.nnpro.repository.IInvoiceRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2024-12-21T11:10:37.561Z  INFO 2010 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.nivlalulu.nnpro.repository.IPasswordResetTokenRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2024-12-21T11:10:37.562Z  INFO 2010 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.nivlalulu.nnpro.repository.IProductRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2024-12-21T11:10:37.562Z  INFO 2010 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.nivlalulu.nnpro.repository.IRefreshTokenRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2024-12-21T11:10:37.562Z  INFO 2010 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.nivlalulu.nnpro.repository.IUserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2024-12-21T11:10:37.562Z  INFO 2010 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 11 ms. Found 0 Redis repository interfaces.
+2024-12-21T11:10:38.390Z  INFO 2010 --- [    Test worker] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 0 (http)
+2024-12-21T11:10:38.406Z  INFO 2010 --- [    Test worker] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2024-12-21T11:10:38.406Z  INFO 2010 --- [    Test worker] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.19]
+2024-12-21T11:10:38.478Z  INFO 2010 --- [    Test worker] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2024-12-21T11:10:38.479Z  INFO 2010 --- [    Test worker] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2445 ms
+2024-12-21T11:10:38.605Z  INFO 2010 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2024-12-21T11:10:38.817Z  INFO 2010 --- [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2b053d50
+2024-12-21T11:10:38.819Z  INFO 2010 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2024-12-21T11:10:39.017Z  INFO 2010 --- [    Test worker] liquibase.database                       : Set default schema name to public
+2024-12-21T11:10:39.970Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/2024/12/12-01-add-invoices-products.xml
+2024-12-21T11:10:40.121Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/2024/12/12-02-add-refresh-tokens.xml
+2024-12-21T11:10:40.178Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/2024/12/14-01-add-password-reset-token.xml
+2024-12-21T11:10:40.298Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Creating database history table with name: public.databasechangelog
+2024-12-21T11:10:40.333Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Reading from public.databasechangelog
+2024-12-21T11:10:40.483Z  INFO 2010 --- [    Test worker] liquibase.lockservice                    : Successfully acquired change log lock
+2024-12-21T11:10:40.484Z  INFO 2010 --- [    Test worker] liquibase.command                        : Using deploymentId: 4779440484
+2024-12-21T11:10:40.486Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Reading from public.databasechangelog
+Running Changeset: db/changelog/2024/db.changelog-initial.xml::1732762339778-1::liquibase (generated)
+2024-12-21T11:10:40.579Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Table users created
+2024-12-21T11:10:40.580Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/db.changelog-initial.xml::1732762339778-1::liquibase (generated) ran successfully in 29ms
+Running Changeset: db/changelog/2024/db.changelog-initial.xml::1732762339778-2::liquibase (generated)
+2024-12-21T11:10:40.590Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Unique constraint added to users(email)
+2024-12-21T11:10:40.591Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/db.changelog-initial.xml::1732762339778-2::liquibase (generated) ran successfully in 5ms
+Running Changeset: db/changelog/2024/db.changelog-initial.xml::1732762339778-3::liquibase (generated)
+2024-12-21T11:10:40.597Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Unique constraint added to users(username)
+2024-12-21T11:10:40.598Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/db.changelog-initial.xml::1732762339778-3::liquibase (generated) ran successfully in 3ms
+Running Changeset: db/changelog/2024/12/12-01-add-invoices-products.xml::1734028693683-1::Niko (generated)
+2024-12-21T11:10:40.612Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Table invoices created
+2024-12-21T11:10:40.613Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/12-01-add-invoices-products.xml::1734028693683-1::Niko (generated) ran successfully in 7ms
+Running Changeset: db/changelog/2024/12/12-01-add-invoices-products.xml::1734028693683-2::Niko (generated)
+2024-12-21T11:10:40.621Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Table invoices_products created
+2024-12-21T11:10:40.622Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/12-01-add-invoices-products.xml::1734028693683-2::Niko (generated) ran successfully in 3ms
+Running Changeset: db/changelog/2024/12/12-01-add-invoices-products.xml::1734028693683-3::Niko (generated)
+2024-12-21T11:10:40.630Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Table products created
+2024-12-21T11:10:40.631Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/12-01-add-invoices-products.xml::1734028693683-3::Niko (generated) ran successfully in 4ms
+Running Changeset: db/changelog/2024/12/12-01-add-invoices-products.xml::1734028693683-4::Niko (generated)
+2024-12-21T11:10:40.638Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Unique constraint added to invoices(invoice_number)
+2024-12-21T11:10:40.638Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/12-01-add-invoices-products.xml::1734028693683-4::Niko (generated) ran successfully in 2ms
+Running Changeset: db/changelog/2024/12/12-01-add-invoices-products.xml::1734028693683-5::Niko (generated)
+2024-12-21T11:10:40.647Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Foreign key constraint added to invoices (customer_id)
+2024-12-21T11:10:40.648Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/12-01-add-invoices-products.xml::1734028693683-5::Niko (generated) ran successfully in 4ms
+Running Changeset: db/changelog/2024/12/12-01-add-invoices-products.xml::1734028693683-6::Niko (generated)
+2024-12-21T11:10:40.656Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Foreign key constraint added to invoices (supplier_id)
+2024-12-21T11:10:40.657Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/12-01-add-invoices-products.xml::1734028693683-6::Niko (generated) ran successfully in 3ms
+Running Changeset: db/changelog/2024/12/12-01-add-invoices-products.xml::1734028693683-7::Niko (generated)
+2024-12-21T11:10:40.664Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Foreign key constraint added to invoices_products (invoice_id)
+2024-12-21T11:10:40.665Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/12-01-add-invoices-products.xml::1734028693683-7::Niko (generated) ran successfully in 3ms
+Running Changeset: db/changelog/2024/12/12-01-add-invoices-products.xml::1734028693683-8::Niko (generated)
+2024-12-21T11:10:40.671Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Foreign key constraint added to invoices_products (product_id)
+2024-12-21T11:10:40.672Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/12-01-add-invoices-products.xml::1734028693683-8::Niko (generated) ran successfully in 3ms
+Running Changeset: db/changelog/2024/12/12-02-add-refresh-tokens.xml::create-refresh-tokens::aeiox
+2024-12-21T11:10:40.698Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Table refresh_tokens created
+2024-12-21T11:10:40.700Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Unique constraint added to refresh_tokens(token_id)
+2024-12-21T11:10:40.702Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Foreign key constraint added to refresh_tokens (user_id)
+2024-12-21T11:10:40.703Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/12-02-add-refresh-tokens.xml::create-refresh-tokens::aeiox ran successfully in 19ms
+Running Changeset: db/changelog/2024/12/14-01-add-password-reset-token.xml::add-password-reset-token::aeiox
+2024-12-21T11:10:40.716Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Table password_reset_token created
+2024-12-21T11:10:40.717Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Unique constraint added to password_reset_token(token_hash)
+2024-12-21T11:10:40.718Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Unique constraint added to password_reset_token(user_id)
+2024-12-21T11:10:40.720Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : Foreign key constraint added to password_reset_token (user_id)
+2024-12-21T11:10:40.721Z  INFO 2010 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/14-01-add-password-reset-token.xml::add-password-reset-token::aeiox ran successfully in 9ms
+2024-12-21T11:10:40.727Z  INFO 2010 --- [    Test worker] liquibase.util                           : UPDATE SUMMARY
+2024-12-21T11:10:40.728Z  INFO 2010 --- [    Test worker] liquibase.util                           : Run:                         13
+2024-12-21T11:10:40.728Z  INFO 2010 --- [    Test worker] liquibase.util                           : Previously run:               0
+2024-12-21T11:10:40.728Z  INFO 2010 --- [    Test worker] liquibase.util                           : Filtered out:                 0
+2024-12-21T11:10:40.728Z  INFO 2010 --- [    Test worker] liquibase.util                           : -------------------------------
+2024-12-21T11:10:40.728Z  INFO 2010 --- [    Test worker] liquibase.util                           : Total change sets:           13
+2024-12-21T11:10:40.729Z  INFO 2010 --- [    Test worker] liquibase.util                           : Update summary generated
+2024-12-21T11:10:40.731Z  INFO 2010 --- [    Test worker] liquibase.command                        : Update command completed successfully.
+Liquibase: Update has been successful. Rows affected: 13
+2024-12-21T11:10:40.733Z  INFO 2010 --- [    Test worker] liquibase.lockservice                    : Successfully released change log lock
+2024-12-21T11:10:40.734Z  INFO 2010 --- [    Test worker] liquibase.command                        : Command execution complete
+2024-12-21T11:10:40.849Z  INFO 2010 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-12-21T11:10:40.936Z  INFO 2010 --- [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-12-21T11:10:40.998Z  INFO 2010 --- [    Test worker] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2024-12-21T11:10:41.329Z  INFO 2010 --- [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-12-21T11:10:42.918Z  INFO 2010 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-12-21T11:10:42.922Z  INFO 2010 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+DEBUG: setDebug: Jakarta Mail version 2.0.1
+2024-12-21T11:10:44.350Z  WARN 2010 --- [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-12-21T11:10:44.856Z  INFO 2010 --- [    Test worker] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@1f59cf5f, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@34046376, org.springframework.security.web.context.SecurityContextHolderFilter@1bcd0e6f, org.springframework.security.web.header.HeaderWriterFilter@50dec5d5, org.springframework.web.filter.CorsFilter@294a1792, org.springframework.security.web.authentication.logout.LogoutFilter@193cd124, com.nivlalulu.nnpro.security.JwtAuthenticationFilter@4fb58b77, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@2634a835, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@65dc0270, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@57701e86, org.springframework.security.web.session.SessionManagementFilter@6b256c04, org.springframework.security.web.access.ExceptionTranslationFilter@27c4d2d3, org.springframework.security.web.access.intercept.AuthorizationFilter@7b7a118b]
+2024-12-21T11:10:45.936Z  INFO 2010 --- [    Test worker] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 42257 (http) with context path '/api'
+2024-12-21T11:10:45.950Z  INFO 2010 --- [    Test worker] com.nivlalulu.nnpro.ProductServiceTest   : Started ProductServiceTest in 10.814 seconds (process running for 25.135)
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build what is described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build what is described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
+</pre>
+</span>
+</div>
+<div id="tab2" class="tab">
+<h2>Standard error</h2>
+<span class="code">
+<pre>WARNING: A Java agent has been loaded dynamically (/home/runner/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.14.12/be4984cb6fd1ef1d11f218a648889dfda44b8a15/byte-buddy-agent-1.14.12.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 8.9</a> at Dec 21, 2024, 11:11:04 AM</p>
+</div>
+</div>
+</body>
+</html>
