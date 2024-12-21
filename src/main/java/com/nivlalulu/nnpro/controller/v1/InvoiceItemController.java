@@ -1,11 +1,10 @@
 package com.nivlalulu.nnpro.controller.v1;
 
-import com.nivlalulu.nnpro.dto.v1.ProductDto;
+import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
 import com.nivlalulu.nnpro.dto.ApiResponse;
-import com.nivlalulu.nnpro.service.impl.ProductService;
+import com.nivlalulu.nnpro.service.impl.InvoiceItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,13 +17,13 @@ import java.util.stream.Collectors;
 @RequestMapping("/v1/product")
 @RequiredArgsConstructor
 @Validated
-public class ProductController {
-    private final ProductService productService;
+public class InvoiceItemController {
+    private final InvoiceItemService productService;
 
     @PostMapping("/saveProduct")
-    public ApiResponse<ProductDto> saveProduct(@Valid @RequestBody ProductDto productDto) {
+    public ApiResponse<InvoiceItemDto> saveInvoiceItem(@Valid @RequestBody InvoiceItemDto invoiceItemDto) {
         try {
-            ProductDto product = productService.createProduct(productDto);
+            InvoiceItemDto product = productService.createInvoiceItem(invoiceItemDto);
             return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly added product", product);
         } catch (RuntimeException ex) {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
@@ -32,9 +31,9 @@ public class ProductController {
     }
 
     @PutMapping("/updateProduct")
-    public ApiResponse<ProductDto> updateProduct(@Valid @RequestBody ProductDto productDto) {
+    public ApiResponse<InvoiceItemDto> updateInvoiceItem(@Valid @RequestBody InvoiceItemDto invoiceItemDto) {
         try {
-            ProductDto updatedProduct = productService.updateProduct(productDto);
+            InvoiceItemDto updatedProduct = productService.updateInvoiceItem(invoiceItemDto);
             return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly updated product", updatedProduct);
         } catch (RuntimeException ex) {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
@@ -42,9 +41,9 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse<ProductDto> deleteProduct(@PathVariable UUID id) {
+    public ApiResponse<InvoiceItemDto> deleteInvoiceItem(@PathVariable UUID id) {
         try {
-            return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly deleted product", productService.deleteProduct(id));
+            return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly deleted product", productService.deleteInvoiceItem(id));
         } catch (RuntimeException ex) {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
         }
