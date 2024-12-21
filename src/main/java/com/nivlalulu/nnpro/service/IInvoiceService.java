@@ -1,9 +1,9 @@
 package com.nivlalulu.nnpro.service;
 
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
-import com.nivlalulu.nnpro.dto.v1.ProductDto;
+import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
 import com.nivlalulu.nnpro.model.Invoice;
-import com.nivlalulu.nnpro.model.Product;
+import com.nivlalulu.nnpro.model.InvoiceItem;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,9 +16,9 @@ public interface IInvoiceService {
 
     InvoiceDto deleteInvoice(UUID id);
 
-    InvoiceDto addProductToInvoice(UUID invoiceId, List<ProductDto> productsIds);
+    InvoiceDto addInvoiceItemToInvoice(UUID invoiceId, List<InvoiceItemDto> productsIds);
 
-    InvoiceDto removeProductFromInvoice(UUID invoiceId, List<ProductDto> productsIds);
+    InvoiceDto removeInvoiceItemFromInvoice(UUID invoiceId, List<InvoiceItemDto> productsIds);
 
     InvoiceDto findInvoiceDtoById(UUID id);
 
@@ -26,5 +26,5 @@ public interface IInvoiceService {
 
     List<InvoiceDto> findAllInvoices();
 
-    List<Invoice> findAllContainsProduct(Product product);
+    List<Invoice> findAllContainsInvoiceItem(InvoiceItem product);
 }

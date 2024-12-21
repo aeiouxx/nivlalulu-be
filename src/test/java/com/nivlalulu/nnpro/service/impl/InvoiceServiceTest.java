@@ -87,7 +87,7 @@ public class InvoiceServiceTest {
 
         InvoiceItem invoiceItem = new InvoiceItem("Test Product", 2, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
 
-        InvoiceDto updatedInvoice = invoiceService.addProductToInvoice(invoice.getId(), List.of(mapper.convertToDto(invoiceItem)));
+        InvoiceDto updatedInvoice = invoiceService.addInvoiceItemToInvoice(invoice.getId(), List.of(mapper.convertToDto(invoiceItem)));
 
         assertNotNull(updatedInvoice);
         assertEquals(1, updatedInvoice.getProducts().size());
@@ -104,7 +104,7 @@ public class InvoiceServiceTest {
 
         InvoiceDto createdInvoice = invoiceService.createInvoice(mapper.convertToDto(invoice));
 
-        InvoiceDto updatedInvoice = invoiceService.removeProductFromInvoice(invoice.getId(), List.of(mapper.convertToDto(invoiceItem)));
+        InvoiceDto updatedInvoice = invoiceService.removeInvoiceItemFromInvoice(invoice.getId(), List.of(mapper.convertToDto(invoiceItem)));
 
         assertNotNull(updatedInvoice);
         assertTrue(updatedInvoice.getProducts().isEmpty());
