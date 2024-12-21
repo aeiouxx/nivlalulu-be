@@ -13,7 +13,6 @@ import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.service.IInvoiceService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -29,6 +28,7 @@ public class InvoiceService implements IInvoiceService {
     private final IUserRepository IUserRepository;
     private final UserService userService;
 
+    @Override
     public InvoiceDto createInvoice(InvoiceDto invoiceDto) {
         Set<InvoiceItem> invoiceItemList = invoiceDto.getProducts().stream().map(mapper::convertToEntity).collect(Collectors.toSet());
         Party customer = mapper.convertToEntity(invoiceDto.getCustomer());
@@ -43,6 +43,7 @@ public class InvoiceService implements IInvoiceService {
         return mapper.convertToDto(invoiceRepository.save(invoice));
     }
 
+    @Override
     public InvoiceDto updateInvoice(InvoiceDto invoiceUpdated) {
         Invoice invoice = checkIfInvoiceExisting(invoiceUpdated.getId());
 
@@ -52,6 +53,7 @@ public class InvoiceService implements IInvoiceService {
         return mapper.convertToDto(invoiceRepository.save(invoice));
     }
 
+    @Override
     public InvoiceDto deleteInvoice(UUID id) {
         Invoice invoice = checkIfInvoiceExisting(id);
         User user = userService.findUserById(invoice.getUser().getId());
@@ -74,15 +76,18 @@ public class InvoiceService implements IInvoiceService {
     }
 
 
+    @Override
     public InvoiceDto findInvoiceDtoById(UUID id) {
         Invoice invoice = checkIfInvoiceExisting(id);
         return mapper.convertToDto(invoice);
     }
 
-    protected Optional<Invoice> findInvoiceById(UUID id) {
+    @Override
+    public Optional<Invoice> findInvoiceById(UUID id) {
         return invoiceRepository.findById(id);
     }
 
+    @Override
     public List<InvoiceDto> findAllInvoices() {
         return invoiceRepository
                 .findAll()
@@ -91,6 +96,7 @@ public class InvoiceService implements IInvoiceService {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<Invoice> findAllContainsProduct(InvoiceItem invoiceItem) {
         return invoiceRepository.findAllByInvoiceItemListContains(invoiceItem);
     }

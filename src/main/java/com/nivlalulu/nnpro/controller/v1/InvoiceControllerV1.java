@@ -3,25 +3,25 @@ package com.nivlalulu.nnpro.controller.v1;
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
 import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
 import com.nivlalulu.nnpro.dto.ApiResponse;
-import com.nivlalulu.nnpro.service.impl.InvoiceService;
+import com.nivlalulu.nnpro.service.IInvoiceService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/v1/invoice")
 @RequiredArgsConstructor
 @Validated
 public class InvoiceControllerV1 {
-    private final InvoiceService invoiceService;
+    private final IInvoiceService invoiceService;
 
     @GetMapping("/readAll")
     public ApiResponse<List<InvoiceDto>> getAllInvoices() {
@@ -39,6 +39,15 @@ public class InvoiceControllerV1 {
     }
 
     @PostMapping("/saveInvoice")
+    @Operation(
+            summary = "Save the invoice",
+            description = "Changes the password for the specified user.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "The old and new password",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = InvoiceDto.class))
+            )
+    )
     public ApiResponse<InvoiceDto> saveInvoice(@Valid @RequestBody InvoiceDto invoiceDto) {
         try {
             InvoiceDto invoice = invoiceService.createInvoice(invoiceDto);
@@ -59,24 +68,20 @@ public class InvoiceControllerV1 {
     }
 
     @PutMapping("/addProducts/{id}")
-    public ApiResponse<InvoiceDto> addProductToInvoice(@PathVariable UUID id,
-                                                       @RequestBody List<@Valid InvoiceItemDto> productsIds) {
+    public ApiResponse<InvoiceDto> addProductToInvoice(@PathVariable UUID id, @RequestBody List<@Valid ProductDto> productsIds) {
         try {
             InvoiceDto updatedProduct = invoiceService.addProductToInvoice(id, productsIds);
-            return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly add products to invoice",
-                    updatedProduct);
+            return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly add products to invoice", updatedProduct);
         } catch (RuntimeException ex) {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
         }
     }
 
     @PutMapping("/removeProducts/{id}")
-    public ApiResponse<InvoiceDto> removeProductsFromInvoice(@PathVariable UUID id,
-                                                             @RequestBody List<@Valid InvoiceItemDto> productsIds) {
+    public ApiResponse<InvoiceDto> removeProductsFromInvoice(@PathVariable UUID id, @RequestBody List<@Valid ProductDto> productsIds) {
         try {
             InvoiceDto updatedProduct = invoiceService.removeProductFromInvoice(id, productsIds);
-            return new ApiResponse<>(HttpStatus.OK.value(),
-                    "Successfuly removed products from invoice", updatedProduct);
+            return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly removed products from invoice", updatedProduct);
         } catch (RuntimeException ex) {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
         }
@@ -85,8 +90,7 @@ public class InvoiceControllerV1 {
     @DeleteMapping("/{id}")
     public ApiResponse<InvoiceDto> deleteInvoice(@PathVariable UUID id) {
         try {
-            return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly deleted product",
-                    invoiceService.deleteInvoice(id));
+            return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly deleted product", invoiceService.deleteInvoice(id));
         } catch (RuntimeException ex) {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
         }
