@@ -68,9 +68,9 @@ public class InvoiceControllerV1 {
     }
 
     @PutMapping("/addProducts/{id}")
-    public ApiResponse<InvoiceDto> addProductToInvoice(@PathVariable UUID id, @RequestBody List<@Valid ProductDto> productsIds) {
+    public ApiResponse<InvoiceDto> addProductToInvoice(@PathVariable UUID id, @RequestBody List<@Valid InvoiceItemDto> productsIds) {
         try {
-            InvoiceDto updatedProduct = invoiceService.addProductToInvoice(id, productsIds);
+            InvoiceDto updatedProduct = invoiceService.addInvoiceItemToInvoice(id, productsIds);
             return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly add products to invoice", updatedProduct);
         } catch (RuntimeException ex) {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
@@ -78,9 +78,9 @@ public class InvoiceControllerV1 {
     }
 
     @PutMapping("/removeProducts/{id}")
-    public ApiResponse<InvoiceDto> removeProductsFromInvoice(@PathVariable UUID id, @RequestBody List<@Valid ProductDto> productsIds) {
+    public ApiResponse<InvoiceDto> removeProductsFromInvoice(@PathVariable UUID id, @RequestBody List<@Valid InvoiceItemDto> productsIds) {
         try {
-            InvoiceDto updatedProduct = invoiceService.removeProductFromInvoice(id, productsIds);
+            InvoiceDto updatedProduct = invoiceService.removeInvoiceItemFromInvoice(id, productsIds);
             return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly removed products from invoice", updatedProduct);
         } catch (RuntimeException ex) {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);

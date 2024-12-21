@@ -13,6 +13,7 @@ import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.service.IInvoiceService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -63,13 +64,14 @@ public class InvoiceService implements IInvoiceService {
         return mapper.convertToDto(invoice);
     }
 
-    public InvoiceDto addProductToInvoice(UUID invoiceId, List<InvoiceItemDto> productsIds) {
+    @Override
+    public InvoiceDto addInvoiceItemToInvoice(UUID invoiceId, List<InvoiceItemDto> productsIds) {
         Invoice existingInvoice = checkIfInvoiceExisting(invoiceId);
         existingInvoice.getInvoiceItemList().addAll(validateInvoiceItemForInvoice(productsIds));
         return updateInvoice(mapper.convertToDto(existingInvoice));
     }
 
-    public InvoiceDto removeProductFromInvoice(UUID invoiceId, List<InvoiceItemDto> productsIds) {
+    public InvoiceDto removeInvoiceItemFromInvoice(UUID invoiceId, List<InvoiceItemDto> productsIds) {
         Invoice existingInvoice = checkIfInvoiceExisting(invoiceId);
         validateInvoiceItemForInvoice(productsIds).forEach(existingInvoice.getInvoiceItemList()::remove);
         return updateInvoice(mapper.convertToDto(existingInvoice));
@@ -97,7 +99,7 @@ public class InvoiceService implements IInvoiceService {
     }
 
     @Override
-    public List<Invoice> findAllContainsProduct(InvoiceItem invoiceItem) {
+    public List<Invoice> findAllContainsInvoiceItem(InvoiceItem invoiceItem) {
         return invoiceRepository.findAllByInvoiceItemListContains(invoiceItem);
     }
 
