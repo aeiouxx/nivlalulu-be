@@ -13,8 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 @Configuration
-@ConditionalOnExpression("${swagger.enabled:true}")
-@Profile("dev")
+@ConditionalOnExpression("${springdoc.api-docs.enabled:true}")
 public class SwaggerConfiguration {
     private static final String SECURITY_SCHEME_KEY = "bearerAuth";
 
