@@ -24,6 +24,9 @@ jwt:
   access-secret: ${JWT_ACCESS_SECRET}
   refresh-secret: ${JWT_REFRESH_SECRET}
 
+springdoc:
+  api-docs:
+    enabled: false
 
 mail:
   host: smtp.gmail.com
