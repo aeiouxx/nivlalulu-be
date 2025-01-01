@@ -14,6 +14,8 @@ import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.service.IInvoiceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -28,6 +30,23 @@ public class InvoiceService implements IInvoiceService {
     private final GenericModelMapper mapper;
     private final IUserRepository IUserRepository;
     private final UserService userService;
+
+    @Override
+    public Page<InvoiceDto> findInvoices(Pageable pageable) {
+        return invoiceRepository
+                .findAll(pageable)
+                .map(mapper::convertToDto);
+    }
+
+    @Override
+    public InvoiceDto findInvoiceByIdForUser(UUID id, User user) {
+        Optional<Invoice> invoice = invoiceRepository.findByIdAndUser(id, user);
+        if (invoice.isEmpty()) {
+            throw new NotFoundException("Invoice", "id", id.toString());
+        }
+        return mapper.convertToDto(invoice.get());
+    }
+
 
     @Override
     public InvoiceDto createInvoice(InvoiceDto invoiceDto) {

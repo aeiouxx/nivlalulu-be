@@ -1,99 +1,92 @@
 package com.nivlalulu.nnpro.controller.v1;
 
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
-import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
-import com.nivlalulu.nnpro.dto.ApiResponse;
+import com.nivlalulu.nnpro.model.User;
 import com.nivlalulu.nnpro.service.IInvoiceService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.NotImplementedException;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/invoice")
+@RequestMapping("/v1/invoices")
 @RequiredArgsConstructor
 @Validated
+@Slf4j
+@Tag(name = "Invoice management", description = "Operations related to managing invoices.")
 public class InvoiceControllerV1 {
     private final IInvoiceService invoiceService;
 
-    @GetMapping("/readAll")
-    public ApiResponse<List<InvoiceDto>> getAllInvoices() {
-        return new ApiResponse<>(HttpStatus.OK.value(), "All invoices", invoiceService.findAllInvoices());
-    }
-
-    @GetMapping("/{id}")
-    public ApiResponse<InvoiceDto> getInvoice(@PathVariable UUID id) {
-        try {
-            InvoiceDto invoiceDto = invoiceService.findInvoiceDtoById(id);
-            return new ApiResponse<>(HttpStatus.OK.value(), String.format("Invoice id %s found", id), invoiceDto);
-        } catch (RuntimeException ex) {
-            return new ApiResponse<>(HttpStatus.NOT_FOUND.value(), ex.getMessage(), null);
-        }
-    }
-
-    @PostMapping("/saveInvoice")
     @Operation(
-            summary = "Save the invoice",
-            description = "Changes the password for the specified user.",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "The old and new password",
-                    required = true,
-                    content = @Content(schema = @Schema(implementation = InvoiceDto.class))
-            )
+            summary = "List invoices (paginated)",
+            description = "Returns a page of invoices along with pagination metadata."
     )
-    public ApiResponse<InvoiceDto> saveInvoice(@Valid @RequestBody InvoiceDto invoiceDto) {
-        try {
-            InvoiceDto invoice = invoiceService.createInvoice(invoiceDto);
-            return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly added invoice", invoice);
-        } catch (Exception ex) {
-            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
-        }
+    @GetMapping
+    @PageableAsQueryParam
+    public Page<InvoiceDto> getInvoices(
+            @AuthenticationPrincipal User user,
+            final Pageable pageable) {
+        log.info("User '{}' requested invoices with paging: {}", user.getUsername(), pageable);
+        throw new NotImplementedException("Not implemented yet");
     }
 
-    @PutMapping("/updateInvoice")
-    public ApiResponse<InvoiceDto> updateInvoice(@Valid @RequestBody InvoiceDto invoiceDto) {
-        try {
-            InvoiceDto updatedProduct = invoiceService.updateInvoice(invoiceDto);
-            return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly updated product", updatedProduct);
-        } catch (RuntimeException ex) {
-            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
-        }
+    @Operation(
+            summary = "Retrieve an invoice",
+            description = "Returns the invoice with the specified customer facing identifier."
+    )
+    @GetMapping("/{id}")
+    public InvoiceDto getInvoice(
+            @AuthenticationPrincipal User user,
+            @PathVariable UUID id) {
+        log.info("User '{}' requested invoice with id: {}", user.getUsername(), id);
+        return invoiceService.findInvoiceByIdForUser(id, user);
     }
 
-    @PutMapping("/addProducts/{id}")
-    public ApiResponse<InvoiceDto> addProductToInvoice(@PathVariable UUID id, @RequestBody List<@Valid InvoiceItemDto> productsIds) {
-        try {
-            InvoiceDto updatedProduct = invoiceService.addInvoiceItemToInvoice(id, productsIds);
-            return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly add products to invoice", updatedProduct);
-        } catch (RuntimeException ex) {
-            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
-        }
+    @PostMapping
+    @Operation(
+            summary = "Create an invoice",
+            description = "Creates a new invoice."
+    )
+    @ResponseStatus(HttpStatus.CREATED)
+    public InvoiceDto createInvoice(
+            @AuthenticationPrincipal User user,
+            @Validated @RequestBody InvoiceDto invoiceDto) {
+        log.info("User '{}' requested to create invoice: {}", user.getUsername(), invoiceDto);
+        return invoiceService.createInvoice(invoiceDto);
     }
 
-    @PutMapping("/removeProducts/{id}")
-    public ApiResponse<InvoiceDto> removeProductsFromInvoice(@PathVariable UUID id, @RequestBody List<@Valid InvoiceItemDto> productsIds) {
-        try {
-            InvoiceDto updatedProduct = invoiceService.removeInvoiceItemFromInvoice(id, productsIds);
-            return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly removed products from invoice", updatedProduct);
-        } catch (RuntimeException ex) {
-            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
-        }
+    @Operation(
+            summary = "Update an invoice",
+            description = "Updates an existing invoice."
+    )
+    @PutMapping("/{id}")
+    public InvoiceDto updateInvoice(
+            @AuthenticationPrincipal User user,
+            @PathVariable UUID id,
+            @Validated @RequestBody InvoiceDto invoiceDto) {
+        log.info("User '{}' requested to update invoice with id: {}", user.getUsername(), id);
+        return invoiceService.updateInvoice(invoiceDto);
     }
 
+    @Operation(
+            summary = "Delete an invoice",
+            description = "Deletes an existing invoice."
+    )
     @DeleteMapping("/{id}")
-    public ApiResponse<InvoiceDto> deleteInvoice(@PathVariable UUID id) {
-        try {
-            return new ApiResponse<>(HttpStatus.OK.value(), "Successfuly deleted product", invoiceService.deleteInvoice(id));
-        } catch (RuntimeException ex) {
-            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
-        }
+    public InvoiceDto deleteInvoice(
+            @AuthenticationPrincipal User user,
+            @PathVariable UUID id) {
+        return invoiceService.deleteInvoice(id);
     }
 
 }
