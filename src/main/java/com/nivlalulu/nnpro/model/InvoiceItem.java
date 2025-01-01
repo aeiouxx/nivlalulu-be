@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "products")
-public class Product {
+public class InvoiceItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,7 +29,7 @@ public class Product {
     private Integer quantity;
 
     @Column(nullable = false)
-    private BigDecimal price;
+    private BigDecimal unitPrice;
 
     @Column(nullable = false)
     private BigDecimal taxPrice;
@@ -37,13 +37,18 @@ public class Product {
     @Column(nullable = false)
     private BigDecimal totalPrice;
 
-    @ManyToMany(mappedBy = "productList")
-    private Set<Invoice> invoice;
+    @ManyToOne
+    @JoinColumn(name = "invoice_id", referencedColumnName = "id", nullable = false)
+    private Invoice invoice;
 
-    public Product(String name, Integer quantity, BigDecimal price, BigDecimal taxPrice, BigDecimal totalPrice) {
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
+    public InvoiceItem(String name, Integer quantity, BigDecimal unitPrice, BigDecimal taxPrice, BigDecimal totalPrice) {
         this.name = name;
         this.quantity = quantity;
-        this.price = price;
+        this.unitPrice = unitPrice;
         this.taxPrice = taxPrice;
         this.totalPrice = totalPrice;
     }

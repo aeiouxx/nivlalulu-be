@@ -1,10 +1,10 @@
 package com.nivlalulu.nnpro;
 
-import com.nivlalulu.nnpro.repository.IProductRepository;
-import com.nivlalulu.nnpro.dto.v1.ProductDto;
-import com.nivlalulu.nnpro.model.Product;
+import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
+import com.nivlalulu.nnpro.model.InvoiceItem;
+import com.nivlalulu.nnpro.repository.IInvoiceItemRepository;
 import com.nivlalulu.nnpro.common.mapping.impl.GenericModelMapper;
-import com.nivlalulu.nnpro.service.impl.ProductService;
+import com.nivlalulu.nnpro.service.impl.InvoiceItemService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,9 +26,9 @@ import static org.junit.Assert.assertEquals;
 public class ProductServiceTest {
 
     @Autowired
-    private ProductService productService;
+    private InvoiceItemService invoiceItemService;
     @Autowired
-    private IProductRepository IProductRepository;
+    private IInvoiceItemRepository IInvoiceRepository;
     @Autowired
     private GenericModelMapper mapper;
 
@@ -50,51 +50,51 @@ public class ProductServiceTest {
 
     @Test
     public void newProduct() {
-        Product productDto = new Product("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
-        ProductDto createdProduct = productService.createProduct(mapper.convertToDto(productDto));
+        InvoiceItem productDto = new InvoiceItem("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
+        InvoiceItemDto createdProduct = invoiceItemService.createInvoiceItem(mapper.convertToDto(productDto));
 
         assertNotNull(createdProduct);
         assertEquals(productDto.getName(), createdProduct.getName());
-        assertEquals(productDto.getPrice(), createdProduct.getPrice());
+        assertEquals(productDto.getUnitPrice(), createdProduct.getUnitPrice());
     }
 
     @Test
     public void duplicatedProduct() {
-        Product newProduct = new Product("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
-        ProductDto newProductDto = productService.createProduct(mapper.convertToDto(newProduct));
+        InvoiceItem newProduct = new InvoiceItem("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
+        InvoiceItemDto newProductDto = invoiceItemService.createInvoiceItem(mapper.convertToDto(newProduct));
 
-        Product duplicatedProduct = new Product("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
-        ProductDto existingProduct = productService.createProduct(mapper.convertToDto(duplicatedProduct));
+        InvoiceItem duplicatedProduct = new InvoiceItem("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
+        InvoiceItemDto existingProduct = invoiceItemService.createInvoiceItem(mapper.convertToDto(duplicatedProduct));
 
         assertNotNull(newProductDto);
         assertEquals(newProductDto.getId(), existingProduct.getId());
         assertEquals(newProductDto.getName(), existingProduct.getName());
-        assertEquals(newProductDto.getPrice(), existingProduct.getPrice());
+        assertEquals(newProductDto.getUnitPrice(), existingProduct.getUnitPrice());
     }
 
     @Test
     public void testUpdateProduct() {
-        Product product = new Product("Old Product", 5, new BigDecimal("10.00"), new BigDecimal("1.00"), new BigDecimal("11.00"));
-        IProductRepository.save(product);
+        InvoiceItem product = new InvoiceItem("Old Product", 5, new BigDecimal("10.00"), new BigDecimal("1.00"), new BigDecimal("11.00"));
+        IInvoiceRepository.save(product);
 
-        ProductDto updateDto = new ProductDto(product.getId(), "Updated Product", 7, new BigDecimal("15.00"), new BigDecimal("1.50"), new BigDecimal("16.50"));
-        ProductDto updatedProduct = productService.updateProduct(updateDto);
+        InvoiceItemDto updateDto = new InvoiceItemDto(product.getId(), "Updated Product", 7, new BigDecimal("15.00"), new BigDecimal("1.50"), new BigDecimal("16.50"), null);
+        InvoiceItemDto updatedProduct = invoiceItemService.updateInvoiceItem(updateDto);
 
         assertNotNull(updatedProduct);
         assertEquals("Updated Product", updatedProduct.getName());
-        assertEquals(new BigDecimal("15.00"), updatedProduct.getPrice());
+        assertEquals(new BigDecimal("15.00"), updatedProduct.getUnitPrice());
     }
 
     @Test
     public void testDeleteProduct_ProductExists() {
-        Product product = new Product("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
-        IProductRepository.save(product);
+        InvoiceItem product = new InvoiceItem("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
+        IInvoiceRepository.save(product);
 
-        ProductDto deletedProduct = productService.deleteProduct(product.getId());
+        InvoiceItemDto deletedProduct = invoiceItemService.deleteInvoiceItem(product.getId());
 
         assertNotNull(deletedProduct);
         assertEquals(product.getName(), deletedProduct.getName());
-        assertTrue(IProductRepository.findById(product.getId()).isEmpty());
+        assertTrue(IInvoiceRepository.findById(product.getId()).isEmpty());
     }
 
 //    @Test
@@ -110,13 +110,13 @@ public class ProductServiceTest {
 
     @Test
     public void testFindAllByPrice() {
-        Product product1 = new Product("Product 1", 5, new BigDecimal("10.00"), new BigDecimal("1.00"), new BigDecimal("11.00"));
-        Product product2 = new Product("Product 2", 3, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
+        InvoiceItem product1 = new InvoiceItem("Product 1", 5, new BigDecimal("10.00"), new BigDecimal("1.00"), new BigDecimal("11.00"));
+        InvoiceItem product2 = new InvoiceItem("Product 2", 3, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
 
-        IProductRepository.save(product1);
-        IProductRepository.save(product2);
+        IInvoiceRepository.save(product1);
+        IInvoiceRepository.save(product2);
 
-        List<ProductDto> products = productService.findAllByPrice(new BigDecimal("10.00"));
+        List<InvoiceItemDto> products = invoiceItemService.findAllByPrice(new BigDecimal("10.00"));
 
         assertEquals(1, products.size());
         assertEquals("Product 1", products.get(0).getName());
