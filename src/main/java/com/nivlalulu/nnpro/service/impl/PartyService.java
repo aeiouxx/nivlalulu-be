@@ -3,6 +3,7 @@ package com.nivlalulu.nnpro.service.impl;
 import com.nivlalulu.nnpro.common.exceptions.NotFoundException;
 import com.nivlalulu.nnpro.common.mapping.impl.GenericModelMapper;
 import com.nivlalulu.nnpro.dto.v1.PartyDto;
+import com.nivlalulu.nnpro.dto.v1.UserDto;
 import com.nivlalulu.nnpro.model.Party;
 import com.nivlalulu.nnpro.model.User;
 import com.nivlalulu.nnpro.repository.IPartyRepository;
@@ -27,10 +28,16 @@ public class PartyService implements IPartyService {
     private final GenericModelMapper mapper;
 
     @Override
-    public PartyDto createParty(PartyDto partyDto) {
-        Optional<Party> existingParty = partyRepository.findByTaxIdOrCompanyId(partyDto.getTaxId(),
-                partyDto.getCompanyId());
+    public PartyDto createParty(PartyDto partyDto, UserDto userDto) {
+        Optional<Party> existingParty = partyRepository.findByTaxIdOrCompanyIdAndUserId(partyDto.getTaxId(),
+                partyDto.getCompanyId(), userDto.getId());
+        if (!isUserIdMatching(partyDto.getUserId(), userDto.getId())) {
+            throw new RuntimeException("User id isn't matching");
+        }
         if (existingParty.isPresent()) {
+            if (!isUserIdMatching(existingParty.get().getUser().getId(), userDto.getId())) {
+                throw new RuntimeException("User id isn't matching");
+            }
             if (!duplicityCheck(partyDto, existingParty.get())) {
                 User user = userService.findUserById(existingParty.get().getUser().getId());
                 user.getParties().add(existingParty.get());
@@ -49,14 +56,19 @@ public class PartyService implements IPartyService {
                 partyDto.getCompanyId(),
                 partyDto.getTaxId(),
                 partyDto.getTelephone(),
-                partyDto.getEmail());
+                partyDto.getEmail(),
+                userService.findUserById(userDto.getId()));
         return mapper.convertToDto(partyRepository.save(party));
     }
 
     @Override
-    public PartyDto updateParty(PartyDto partyDto) {
+    public PartyDto updateParty(PartyDto partyDto, UserDto userDto) {
         Party party = partyRepository.findById(partyDto.getId())
                 .orElseThrow(() -> new NotFoundException("Party", "id", partyDto.getId().toString()));
+
+        if (!isUserIdMatching(party.getUser().getId(), userDto.getId())) {
+            throw new RuntimeException("User isn't linked to party");
+        }
 
         party.setOrganizationName(partyDto.getOrganizationName());
         party.setPersonName(partyDto.getPersonName());
@@ -72,9 +84,13 @@ public class PartyService implements IPartyService {
     }
 
     @Override
-    public PartyDto deleteParty(UUID id) {
+    public PartyDto deleteParty(UUID id, UserDto userDto) {
         Party party = partyRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Party", "id", id.toString()));
+
+        if (!isUserIdMatching(party.getUser().getId(), userDto.getId())) {
+            throw new RuntimeException("User isn't linked to party");
+        }
 
         if (!party.getCustomerInvoices().isEmpty()) {
             throw new RuntimeException("Can't delete party because is in some Invoice as customer!");
@@ -83,7 +99,7 @@ public class PartyService implements IPartyService {
             throw new RuntimeException("Can't delete party because is in some Invoice as supplier!");
         }
 
-        User user = userService.findUserById(party.getUser().getId());
+        User user = userService.findUserById(userDto.getId());
         user.getInvoiceItems().remove(user);
         userRepository.save(user);
 
@@ -92,26 +108,37 @@ public class PartyService implements IPartyService {
     }
 
     @Override
-    public PartyDto findById(UUID id) {
+    public PartyDto findById(UUID id, UserDto userDto) {
         Party party = checkIfInvoiceExisting(id);
-        return mapper.convertToDto(party);
+        if (isUserIdMatching(party.getUser().getId(), userDto.getId())) {
+            return mapper.convertToDto(party);
+        }
+        throw new RuntimeException("Party isn't linked to this user");
     }
 
     @Override
-    public Optional<PartyDto> findByTaxId(String taxId) {
-        Optional<Party> party = partyRepository.findByTaxId(taxId);
+    public Optional<PartyDto> findByTaxId(String taxId, UserDto userDto) {
+        Optional<Party> party = partyRepository.findByTaxIdAndUserId(taxId, userDto.getId());
         return party.map(value -> Optional.of(mapper.convertToDto(value))).orElse(null);
     }
 
     @Override
-    public Optional<PartyDto> findByCompanyId(String companyId) {
-        Optional<Party> party = partyRepository.findByCompanyId(companyId);
+    public Optional<PartyDto> findByCompanyId(String companyId, UserDto userDto) {
+        Optional<Party> party = partyRepository.findByCompanyIdAndUserId(companyId, userDto.getId());
         return party.map(value -> Optional.of(mapper.convertToDto(value))).orElse(null);
     }
 
     @Override
     public List<PartyDto> findAllParties() {
         return partyRepository.findAll()
+                .stream()
+                .map(mapper::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PartyDto> findUserParties(UserDto userDto) {
+        return partyRepository.findPartiesByUser(userDto.getId())
                 .stream()
                 .map(mapper::convertToDto)
                 .collect(Collectors.toList());
@@ -125,11 +152,16 @@ public class PartyService implements IPartyService {
 
     @Override
     public Party checkIfInvoiceExisting(UUID partyId) {
-        Optional<Party> existingParty = partyRepository.findById(partyId);
         return partyRepository.findById(partyId)
                 .orElseThrow(() -> {
                     log.error("Party with id {} doesn't exist.", partyId);
                     return new NotFoundException(Party.class);
                 });
     }
+
+    private boolean isUserIdMatching(Long id, Long userId) {
+        return id.equals(userId);
+    }
+
+
 }
