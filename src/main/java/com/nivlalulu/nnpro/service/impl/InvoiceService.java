@@ -1,6 +1,7 @@
 package com.nivlalulu.nnpro.service.impl;
 
 import com.nivlalulu.nnpro.common.mapping.impl.GenericModelMapper;
+import com.nivlalulu.nnpro.dto.v1.UserDto;
 import com.nivlalulu.nnpro.repository.IInvoiceRepository;
 import com.nivlalulu.nnpro.common.exceptions.NotFoundException;
 import com.nivlalulu.nnpro.model.InvoiceItem;
@@ -30,7 +31,10 @@ public class InvoiceService implements IInvoiceService {
     private final UserService userService;
 
     @Override
-    public InvoiceDto createInvoice(InvoiceDto invoiceDto) {
+    public InvoiceDto createInvoice(InvoiceDto invoiceDto, UserDto userDto) {
+        if (!isUserIdMatching(invoiceDto.getUserId(), userDto.getId())) {
+            throw new RuntimeException("User isn't linked to invoice");
+        }
         Set<InvoiceItem> invoiceItemList = invoiceDto.getProducts().stream().map(mapper::convertToEntity).collect(Collectors.toSet());
         Party customer = mapper.convertToEntity(invoiceDto.getCustomer());
         Party supplier = mapper.convertToEntity(invoiceDto.getSupplier());
@@ -45,8 +49,8 @@ public class InvoiceService implements IInvoiceService {
     }
 
     @Override
-    public InvoiceDto updateInvoice(InvoiceDto invoiceUpdated) {
-        Invoice invoice = checkIfInvoiceExisting(invoiceUpdated.getId());
+    public InvoiceDto updateInvoice(InvoiceDto invoiceUpdated, UserDto userDto) {
+        Invoice invoice = checkIfInvoiceExisting(invoiceUpdated.getId(), userDto);
 
         invoice.setInvoiceItemList(invoiceUpdated.getProducts().stream().map(mapper::convertToEntity).collect(Collectors.toSet()));
         invoice.setExpiresAt(invoiceUpdated.getDueDate());
@@ -55,8 +59,8 @@ public class InvoiceService implements IInvoiceService {
     }
 
     @Override
-    public InvoiceDto deleteInvoice(UUID id) {
-        Invoice invoice = checkIfInvoiceExisting(id);
+    public InvoiceDto deleteInvoice(UUID id, UserDto userDto) {
+        Invoice invoice = checkIfInvoiceExisting(id, userDto);
         User user = userService.findUserById(invoice.getUser().getId());
         user.getInvoices().remove(invoice);
         IUserRepository.save(user);
@@ -65,28 +69,35 @@ public class InvoiceService implements IInvoiceService {
     }
 
     @Override
-    public InvoiceDto addInvoiceItemToInvoice(UUID invoiceId, List<InvoiceItemDto> productsIds) {
-        Invoice existingInvoice = checkIfInvoiceExisting(invoiceId);
+    public InvoiceDto addInvoiceItemToInvoice(UUID invoiceId, List<InvoiceItemDto> productsIds, UserDto userDto) {
+        Invoice existingInvoice = checkIfInvoiceExisting(invoiceId, userDto);
         existingInvoice.getInvoiceItemList().addAll(validateInvoiceItemForInvoice(productsIds));
-        return updateInvoice(mapper.convertToDto(existingInvoice));
+        return updateInvoice(mapper.convertToDto(existingInvoice), userDto);
     }
 
-    public InvoiceDto removeInvoiceItemFromInvoice(UUID invoiceId, List<InvoiceItemDto> productsIds) {
-        Invoice existingInvoice = checkIfInvoiceExisting(invoiceId);
+    public InvoiceDto removeInvoiceItemFromInvoice(UUID invoiceId, List<InvoiceItemDto> productsIds, UserDto userDto) {
+        Invoice existingInvoice = checkIfInvoiceExisting(invoiceId, userDto);
         validateInvoiceItemForInvoice(productsIds).forEach(existingInvoice.getInvoiceItemList()::remove);
-        return updateInvoice(mapper.convertToDto(existingInvoice));
+        return updateInvoice(mapper.convertToDto(existingInvoice), userDto);
     }
 
 
     @Override
-    public InvoiceDto findInvoiceDtoById(UUID id) {
-        Invoice invoice = checkIfInvoiceExisting(id);
+    public InvoiceDto findInvoiceDtoById(UUID id, UserDto userDto) {
+        Invoice invoice = checkIfInvoiceExisting(id, userDto);
         return mapper.convertToDto(invoice);
     }
 
     @Override
-    public Optional<Invoice> findInvoiceById(UUID id) {
-        return invoiceRepository.findById(id);
+    public Optional<Invoice> findInvoiceById(UUID id, UserDto userDto) {
+        Optional<Invoice> invoice = invoiceRepository.findById(id);
+        if (invoice.isEmpty()) {
+            return Optional.empty();
+        }
+        if (!isUserIdMatching(invoice.get().getUser().getId(), userDto.getId())) {
+            throw new RuntimeException("User isn't linked to invoice");
+        }
+        return invoice;
     }
 
     @Override
@@ -112,13 +123,18 @@ public class InvoiceService implements IInvoiceService {
         return invoiceItems;
     }
 
-    public Invoice checkIfInvoiceExisting(UUID invoiceId) {
-        Optional<Invoice> existingInvoice = findInvoiceById(invoiceId);
+    public Invoice checkIfInvoiceExisting(UUID invoiceId, UserDto userDto) {
+        Optional<Invoice> existingInvoice = findInvoiceById(invoiceId, userDto);
         if (existingInvoice.isEmpty()) {
             throw new NotFoundException("Invoice", "id", invoiceId.toString());
-        } else {
-            return existingInvoice.get();
+        } else if (!isUserIdMatching(existingInvoice.get().getUser().getId(), userDto.getId())) {
+            throw new RuntimeException("User isn't linked to invoice");
         }
+        return existingInvoice.get();
+    }
+
+    private boolean isUserIdMatching(Long id, Long userId) {
+        return id.equals(userId);
     }
 
 }
