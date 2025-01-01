@@ -42,7 +42,7 @@ public class InvoiceService implements IInvoiceService {
 
         Invoice invoice = new Invoice(invoiceDto.getIssueDate(), invoiceDto.getDueDate(),
                 invoiceDto.getPaymentMethod(), invoiceDto.getVariableSymbol(), invoiceItemList, customer, supplier);
-        invoiceItemList.forEach(product -> invoiceItemService.createInvoiceItem(mapper.convertToDto(product)));
+        invoiceItemList.forEach(product -> invoiceItemService.createInvoiceItem(mapper.convertToDto(product), mapper.convertToDto(user)));
         user.getInvoices().add(invoice);
         IUserRepository.save(user);
         return mapper.convertToDto(invoiceRepository.save(invoice));
@@ -71,13 +71,13 @@ public class InvoiceService implements IInvoiceService {
     @Override
     public InvoiceDto addInvoiceItemToInvoice(UUID invoiceId, List<InvoiceItemDto> productsIds, UserDto userDto) {
         Invoice existingInvoice = checkIfInvoiceExisting(invoiceId, userDto);
-        existingInvoice.getInvoiceItemList().addAll(validateInvoiceItemForInvoice(productsIds));
+        existingInvoice.getInvoiceItemList().addAll(validateInvoiceItemForInvoice(productsIds, userDto));
         return updateInvoice(mapper.convertToDto(existingInvoice), userDto);
     }
 
     public InvoiceDto removeInvoiceItemFromInvoice(UUID invoiceId, List<InvoiceItemDto> productsIds, UserDto userDto) {
         Invoice existingInvoice = checkIfInvoiceExisting(invoiceId, userDto);
-        validateInvoiceItemForInvoice(productsIds).forEach(existingInvoice.getInvoiceItemList()::remove);
+        validateInvoiceItemForInvoice(productsIds, userDto).forEach(existingInvoice.getInvoiceItemList()::remove);
         return updateInvoice(mapper.convertToDto(existingInvoice), userDto);
     }
 
@@ -114,10 +114,10 @@ public class InvoiceService implements IInvoiceService {
         return invoiceRepository.findAllByInvoiceItemListContains(invoiceItem);
     }
 
-    public List<InvoiceItem> validateInvoiceItemForInvoice(List<InvoiceItemDto> productsIds) {
+    public List<InvoiceItem> validateInvoiceItemForInvoice(List<InvoiceItemDto> productsIds, UserDto userDto) {
         List<InvoiceItem> invoiceItems = new ArrayList<>();
         for (InvoiceItemDto productId : productsIds) {
-            InvoiceItem existingProduct = invoiceItemService.findProductById(productId.getId());
+            InvoiceItem existingProduct = invoiceItemService.findProductById(productId.getId(), userDto);
             invoiceItems.add(existingProduct);
         }
         return invoiceItems;

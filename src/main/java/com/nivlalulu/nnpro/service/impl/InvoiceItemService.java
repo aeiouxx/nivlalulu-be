@@ -2,6 +2,7 @@ package com.nivlalulu.nnpro.service.impl;
 
 import com.nivlalulu.nnpro.common.exceptions.NotFoundException;
 import com.nivlalulu.nnpro.common.mapping.impl.GenericModelMapper;
+import com.nivlalulu.nnpro.dto.v1.UserDto;
 import com.nivlalulu.nnpro.model.InvoiceItem;
 import com.nivlalulu.nnpro.model.User;
 import com.nivlalulu.nnpro.repository.IInvoiceRepository;
@@ -31,7 +32,10 @@ public class InvoiceItemService {
 
     private final GenericModelMapper mapper;
 
-    public InvoiceItemDto createInvoiceItem(InvoiceItemDto invoiceItemDto) {
+    public InvoiceItemDto createInvoiceItem(InvoiceItemDto invoiceItemDto, UserDto userDto) {
+        if (isUserIdMatching(invoiceItemDto.getUserId(), userDto.getId())) {
+            throw new RuntimeException("User isn't linked to invoice item");
+        }
         Optional<InvoiceItem> isProductExisting = IInvoiceItemRepository.findProductByNameAndUnitPrice(invoiceItemDto.getName(), invoiceItemDto.getUnitPrice());
         if (isProductExisting.isPresent()) {
             if (!duplicityCheck(isProductExisting.get(), invoiceItemDto)) {
@@ -49,9 +53,8 @@ public class InvoiceItemService {
         return mapper.convertToDto(IInvoiceItemRepository.save(invoiceItem));
     }
 
-    public InvoiceItemDto updateInvoiceItem(InvoiceItemDto invoiceItemDto) {
-        InvoiceItem invoiceItem = IInvoiceItemRepository.findById(invoiceItemDto.getId())
-                .orElseThrow(() -> new NotFoundException("Product", "id", invoiceItemDto.getId().toString()));
+    public InvoiceItemDto updateInvoiceItem(InvoiceItemDto invoiceItemDto, UserDto userDto) {
+        InvoiceItem invoiceItem = checkIfInvoiceItemExisting(invoiceItemDto.getId(), userDto);
 
         invoiceItem.setName(invoiceItemDto.getName());
         invoiceItem.setUnitPrice(invoiceItemDto.getUnitPrice());
@@ -62,9 +65,8 @@ public class InvoiceItemService {
         return mapper.convertToDto(IInvoiceItemRepository.save(invoiceItem));
     }
 
-    public InvoiceItemDto deleteInvoiceItem(UUID id) {
-        InvoiceItem invoiceItem = IInvoiceItemRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Product", "id", id.toString()));
+    public InvoiceItemDto deleteInvoiceItem(UUID id, UserDto userDto) {
+        InvoiceItem invoiceItem = checkIfInvoiceItemExisting(id, userDto);
 
         List<Invoice> listWhichContainsProduct = IInvoiceRepository.findAllByInvoiceItemListContains(invoiceItem);
 
@@ -92,8 +94,8 @@ public class InvoiceItemService {
         return IInvoiceItemRepository.findByIdIn(ids);
     }
 
-    public InvoiceItem findProductById(UUID id) {
-        return checkIfInvoiceItemExisting(id);
+    public InvoiceItem findProductById(UUID id, UserDto userDto) {
+        return checkIfInvoiceItemExisting(id, userDto);
     }
 
     public List<InvoiceItemDto> findAllInvoiceItems() {
@@ -106,12 +108,17 @@ public class InvoiceItemService {
         return isNameMatching && isNamePrice;
     }
 
-    public InvoiceItem checkIfInvoiceItemExisting(UUID invoiceItemId) {
+    public InvoiceItem checkIfInvoiceItemExisting(UUID invoiceItemId, UserDto userDto) {
         Optional<InvoiceItem> existingInvoiceItem = IInvoiceItemRepository.findById(invoiceItemId);
         if (existingInvoiceItem.isEmpty()) {
             throw new NotFoundException("Invoice item", "id", invoiceItemId.toString());
-        } else {
-            return existingInvoiceItem.get();
+        } else if (!isUserIdMatching(existingInvoiceItem.get().getUser().getId(), userDto.getId())) {
+            throw new RuntimeException("User isn't linked to invoice item");
         }
+        return existingInvoiceItem.get();
+    }
+
+    private boolean isUserIdMatching(Long id, Long userId) {
+        return id.equals(userId);
     }
 }

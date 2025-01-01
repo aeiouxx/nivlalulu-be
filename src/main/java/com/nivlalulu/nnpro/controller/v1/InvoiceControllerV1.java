@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +42,7 @@ public class InvoiceControllerV1 {
     }
 
     @PostMapping("/saveInvoice")
+    @PreAuthorize("#invoiceDto.userId == authentication.principal.id")
     @Operation(
             summary = "Save the invoice",
             description = "Changes the password for the specified user.",
@@ -60,6 +62,7 @@ public class InvoiceControllerV1 {
     }
 
     @PutMapping("/updateInvoice")
+    @PreAuthorize("#invoiceDto.userId == authentication.principal.id")
     public ApiResponse<InvoiceDto> updateInvoice(@Valid @RequestBody InvoiceDto invoiceDto, @AuthenticationPrincipal UserDto userDto) {
         try {
             InvoiceDto updatedProduct = invoiceService.updateInvoice(invoiceDto, userDto);

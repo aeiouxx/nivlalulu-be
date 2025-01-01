@@ -51,7 +51,7 @@ public class ProductServiceTest {
     @Test
     public void newProduct() {
         InvoiceItem productDto = new InvoiceItem("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
-        InvoiceItemDto createdProduct = invoiceItemService.createInvoiceItem(mapper.convertToDto(productDto));
+        InvoiceItemDto createdProduct = invoiceItemService.createInvoiceItem(mapper.convertToDto(productDto), null);
 
         assertNotNull(createdProduct);
         assertEquals(productDto.getName(), createdProduct.getName());
@@ -61,10 +61,10 @@ public class ProductServiceTest {
     @Test
     public void duplicatedProduct() {
         InvoiceItem newProduct = new InvoiceItem("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
-        InvoiceItemDto newProductDto = invoiceItemService.createInvoiceItem(mapper.convertToDto(newProduct));
+        InvoiceItemDto newProductDto = invoiceItemService.createInvoiceItem(mapper.convertToDto(newProduct), null);
 
         InvoiceItem duplicatedProduct = new InvoiceItem("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
-        InvoiceItemDto existingProduct = invoiceItemService.createInvoiceItem(mapper.convertToDto(duplicatedProduct));
+        InvoiceItemDto existingProduct = invoiceItemService.createInvoiceItem(mapper.convertToDto(duplicatedProduct), null);
 
         assertNotNull(newProductDto);
         assertEquals(newProductDto.getId(), existingProduct.getId());
@@ -78,7 +78,7 @@ public class ProductServiceTest {
         IInvoiceRepository.save(product);
 
         InvoiceItemDto updateDto = new InvoiceItemDto(product.getId(), "Updated Product", 7, new BigDecimal("15.00"), new BigDecimal("1.50"), new BigDecimal("16.50"), null);
-        InvoiceItemDto updatedProduct = invoiceItemService.updateInvoiceItem(updateDto);
+        InvoiceItemDto updatedProduct = invoiceItemService.updateInvoiceItem(updateDto, null);
 
         assertNotNull(updatedProduct);
         assertEquals("Updated Product", updatedProduct.getName());
@@ -90,7 +90,7 @@ public class ProductServiceTest {
         InvoiceItem product = new InvoiceItem("Test Product", 10, new BigDecimal("20.00"), new BigDecimal("2.00"), new BigDecimal("22.00"));
         IInvoiceRepository.save(product);
 
-        InvoiceItemDto deletedProduct = invoiceItemService.deleteInvoiceItem(product.getId());
+        InvoiceItemDto deletedProduct = invoiceItemService.deleteInvoiceItem(product.getId(), null);
 
         assertNotNull(deletedProduct);
         assertEquals(product.getName(), deletedProduct.getName());
