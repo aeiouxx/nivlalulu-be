@@ -1,7 +1,9 @@
 package com.nivlalulu.nnpro.dto.v1;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.nivlalulu.nnpro.common.controller.validation.OnCreate;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -45,6 +47,10 @@ public class InvoiceItemDto {
     @DecimalMin(value = "0.00", inclusive = true, message = "Total must be non-negative.")
     @Schema(description = "Total price of the product", example = "121.00")
     private BigDecimal totalPrice;
+
+    @NotNull(groups = OnCreate.class, message = "Invoice cannot be null")
+    @Valid
+    private InvoiceDto invoice;
 
     // Custom validation logic
     @AssertTrue(message = "Raw price plus tax must match total price")

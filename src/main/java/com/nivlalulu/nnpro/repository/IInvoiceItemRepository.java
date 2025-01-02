@@ -2,6 +2,10 @@ package com.nivlalulu.nnpro.repository;
 
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.InvoiceItem;
+import com.nivlalulu.nnpro.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,9 +20,10 @@ public interface IInvoiceItemRepository extends JpaRepository<InvoiceItem, UUID>
 
     List<InvoiceItem> findAllByUnitPrice(BigDecimal price);
 
-    List<InvoiceItem> findAllByNameContaining(String name);
+    Page<InvoiceItem> findByInvoice(Invoice invoice, Pageable pageable);
 
-    List<InvoiceItem> findByIdIn(List<UUID> productLists);
+    List<InvoiceItem> findByInvoice(Invoice invoice);
 
-    Optional<InvoiceItem> findProductByNameAndUnitPrice(String name, BigDecimal price);
+    @EntityGraph(value = Invoice.WITH_ITEMS_GRAPH, type = EntityGraph.EntityGraphType.FETCH)
+    Optional<InvoiceItem> findByIdAndInvoice(UUID id, Invoice invoice);
 }

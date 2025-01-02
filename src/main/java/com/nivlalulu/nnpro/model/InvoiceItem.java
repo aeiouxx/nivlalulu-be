@@ -52,4 +52,18 @@ public class InvoiceItem {
         this.taxPrice = taxPrice;
         this.totalPrice = totalPrice;
     }
+
+    public InvoiceItem(String name,
+                       Integer quantity,
+                       BigDecimal unitPrice,
+                       BigDecimal taxPrice,
+                       BigDecimal totalPrice,
+                       Invoice invoice) {
+        this.name = name;
+        this.quantity = quantity;
+        this.unitPrice = unitPrice;
+        this.taxPrice = taxPrice;
+        this.totalPrice = totalPrice;
+        this.invoice = invoice;
+    }
 }
