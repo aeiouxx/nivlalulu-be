@@ -2,6 +2,11 @@ databaseChangeLog:
   - include:
       file: 2024/db.changelog-initial.xml
       relativeToChangelogFile: true
+
   - includeAll:
       path: 2024/12/
+      relativeToChangelogFile: true
+
+  - includeAll:
+      path: 2025/01/
       relativeToChangelogFile: true

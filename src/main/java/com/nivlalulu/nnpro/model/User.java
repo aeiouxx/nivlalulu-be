@@ -40,9 +40,6 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Invoice> invoices;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<InvoiceItem> invoiceItems;
-
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;

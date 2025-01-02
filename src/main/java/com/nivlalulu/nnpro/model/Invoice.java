@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -16,14 +17,15 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "invoices")
+@NamedEntityGraph(
+        name = Invoice.WITH_ITEMS_GRAPH,
+        attributeNodes = @NamedAttributeNode("items"))
 public class Invoice {
+    public static final String WITH_ITEMS_GRAPH = "invoice-with-items";
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
-
-    @Column(nullable = false, unique = true)
-    private UUID invoiceNumber;
 
     @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private Instant createdAt;
@@ -38,7 +40,7 @@ public class Invoice {
     private String variableSymbol;
 
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<InvoiceItem> invoiceItemList;
+    private Set<InvoiceItem> items = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
@@ -52,22 +54,26 @@ public class Invoice {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @Column
-    private String contactPerson;
+    @Column(name = "contact")
+    private String contact;
 
     public Invoice(Instant created,
                    Instant expiration,
                    PaymentMethod paymentMethod,
                    String variableSymbol,
-                   Set<InvoiceItem> invoiceItemList,
+                   Set<InvoiceItem> items,
                    Party customer,
-                   Party supplier) {
+                   Party supplier,
+                   String contact,
+                   User user) {
         this.createdAt = created;
         this.expiresAt = expiration;
         this.paymentMethod = paymentMethod;
         this.variableSymbol = variableSymbol;
-        this.invoiceItemList = invoiceItemList;
+        this.items = items;
         this.customer = customer;
         this.supplier = supplier;
+        this.contact = contact;
+        this.user = user;
     }
 }

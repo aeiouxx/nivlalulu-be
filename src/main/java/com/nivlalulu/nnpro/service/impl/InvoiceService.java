@@ -1,44 +1,56 @@
 package com.nivlalulu.nnpro.service.impl;
 
-import com.nivlalulu.nnpro.common.mapping.impl.GenericModelMapper;
-import com.nivlalulu.nnpro.repository.IInvoiceRepository;
 import com.nivlalulu.nnpro.common.exceptions.NotFoundException;
+import com.nivlalulu.nnpro.common.mapping.impl.GenericModelMapper;
+import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
+import com.nivlalulu.nnpro.dto.v1.PartyDto;
+import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.InvoiceItem;
 import com.nivlalulu.nnpro.model.Party;
 import com.nivlalulu.nnpro.model.User;
-import com.nivlalulu.nnpro.repository.IUserRepository;
-import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
-import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
-
-import com.nivlalulu.nnpro.model.Invoice;
+import com.nivlalulu.nnpro.repository.IInvoiceRepository;
+import com.nivlalulu.nnpro.repository.IPartyRepository;
 import com.nivlalulu.nnpro.service.IInvoiceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class InvoiceService implements IInvoiceService {
     private final IInvoiceRepository invoiceRepository;
-    private final InvoiceItemService invoiceItemService;
+    private final IPartyRepository partyRepository;
     private final GenericModelMapper mapper;
-    private final IUserRepository IUserRepository;
-    private final UserService userService;
 
     @Override
-    public Page<InvoiceDto> findInvoices(Pageable pageable) {
-        return invoiceRepository
-                .findAll(pageable)
-                .map(mapper::convertToDto);
+    @Transactional(readOnly = true)
+    public Page<InvoiceDto> findForUser(User user, Pageable pageable) {
+        return invoiceRepository.findByUser(user, pageable).map(mapper::convertToDto);
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<InvoiceDto> findForUser(User user) {
+        return invoiceRepository.findByUser(user)
+                .stream()
+                .map(mapper::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public InvoiceDto findInvoiceByIdForUser(UUID id, User user) {
         Optional<Invoice> invoice = invoiceRepository.findByIdAndUser(id, user);
         if (invoice.isEmpty()) {
@@ -47,97 +59,95 @@ public class InvoiceService implements IInvoiceService {
         return mapper.convertToDto(invoice.get());
     }
 
-
     @Override
-    public InvoiceDto createInvoice(InvoiceDto invoiceDto) {
-        Set<InvoiceItem> invoiceItemList = invoiceDto.getProducts().stream().map(mapper::convertToEntity).collect(Collectors.toSet());
-        Party customer = mapper.convertToEntity(invoiceDto.getCustomer());
-        Party supplier = mapper.convertToEntity(invoiceDto.getSupplier());
-        User user = userService.findUserById(invoiceDto.getUserId());
-
-        Invoice invoice = new Invoice(invoiceDto.getIssueDate(), invoiceDto.getDueDate(),
-                invoiceDto.getPaymentMethod(), invoiceDto.getVariableSymbol(), invoiceItemList, customer, supplier);
-        invoiceItemList.forEach(product -> invoiceItemService.createInvoiceItem(mapper.convertToDto(product)));
-        user.getInvoices().add(invoice);
-        IUserRepository.save(user);
-        return mapper.convertToDto(invoiceRepository.save(invoice));
+    public InvoiceDto createInvoice(InvoiceDto invoiceDto, User user) {
+        var items = invoiceDto.getProducts()
+                .stream()
+                .map(mapper::convertToEntity)
+                .collect(Collectors.toSet());
+        var customer = getCreateParty(invoiceDto.getCustomer(), user);
+        var supplier = getCreateParty(invoiceDto.getSupplier(), user);
+        var invoice = new Invoice(
+                invoiceDto.getCreatedAt(),
+                invoiceDto.getExpiresAt(),
+                invoiceDto.getPaymentMethod(),
+                invoiceDto.getVariableSymbol(),
+                items,
+                customer,
+                supplier,
+                invoiceDto.getContact(),
+                user
+        );
+        items.forEach(item -> item.setInvoice(invoice));
+        var created = invoiceRepository.save(invoice);
+        var dto = mapper.convertToDto(created);
+        return dto;
     }
 
     @Override
-    public InvoiceDto updateInvoice(InvoiceDto invoiceUpdated) {
-        Invoice invoice = checkIfInvoiceExisting(invoiceUpdated.getId());
+    public InvoiceDto updateInvoice(InvoiceDto invoiceUpdated, User user) {
+        // cleanest code of all time Q_Q
+        var invoice = invoiceRepository.findByIdAndUser(invoiceUpdated.getId(), user)
+                .orElseThrow(() -> new NotFoundException("Invoice", "id", invoiceUpdated.getId().toString()));
+        if (invoiceUpdated.getCreatedAt() != null) {
+            invoice.setCreatedAt(invoiceUpdated.getCreatedAt());
+        }
 
-        invoice.setInvoiceItemList(invoiceUpdated.getProducts().stream().map(mapper::convertToEntity).collect(Collectors.toSet()));
-        invoice.setExpiresAt(invoiceUpdated.getDueDate());
+        if (invoiceUpdated.getExpiresAt() != null) {
+            invoice.setExpiresAt(invoiceUpdated.getExpiresAt());
+        }
 
-        return mapper.convertToDto(invoiceRepository.save(invoice));
+        if (invoiceUpdated.getPaymentMethod() != null) {
+            invoice.setPaymentMethod(invoiceUpdated.getPaymentMethod());
+        }
+
+        if (invoiceUpdated.getVariableSymbol() != null) {
+            invoice.setVariableSymbol(invoiceUpdated.getVariableSymbol());
+        }
+
+        if (invoiceUpdated.getContact() != null) {
+            invoice.setContact(invoiceUpdated.getContact());
+        }
+
+        if (invoiceUpdated.getCustomer() != null) {
+            var customer = getCreateParty(invoiceUpdated.getCustomer(), user);
+            invoice.setCustomer(customer);
+        }
+
+        if (invoiceUpdated.getSupplier() != null) {
+            var supplier = getCreateParty(invoiceUpdated.getSupplier(), user);
+            invoice.setSupplier(supplier);
+        }
+
+        if (invoiceUpdated.getProducts() != null && !invoiceUpdated.getProducts().isEmpty()) {
+            invoice.getItems().clear();
+            Set<InvoiceItem> newItems = invoiceUpdated.getProducts()
+                    .stream()
+                    .map(mapper::convertToEntity) // InvoiceItemDto -> InvoiceItem
+                    .collect(Collectors.toSet());
+            newItems.forEach(item -> item.setInvoice(invoice));
+            invoice.getItems().addAll(newItems);
+        }
+
+        var updated = invoiceRepository.save(invoice);
+        return mapper.convertToDto(updated);
     }
 
     @Override
     public InvoiceDto deleteInvoice(UUID id) {
-        Invoice invoice = checkIfInvoiceExisting(id);
-        User user = userService.findUserById(invoice.getUser().getId());
-        user.getInvoices().remove(invoice);
-        IUserRepository.save(user);
+        var invoice = invoiceRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Invoice", "id", id.toString()));
         invoiceRepository.delete(invoice);
         return mapper.convertToDto(invoice);
     }
 
-    @Override
-    public InvoiceDto addInvoiceItemToInvoice(UUID invoiceId, List<InvoiceItemDto> productsIds) {
-        Invoice existingInvoice = checkIfInvoiceExisting(invoiceId);
-        existingInvoice.getInvoiceItemList().addAll(validateInvoiceItemForInvoice(productsIds));
-        return updateInvoice(mapper.convertToDto(existingInvoice));
+
+    private Party getCreateParty(PartyDto party, User user) {
+        return partyRepository.findByTaxIdOrCompanyId(party.getTaxId(), party.getCompanyId())
+                .orElseGet(() -> {
+                    var entity = mapper.convertToEntity(party);
+                    entity.setUser(user);
+                    return partyRepository.save(entity);
+                });
     }
-
-    public InvoiceDto removeInvoiceItemFromInvoice(UUID invoiceId, List<InvoiceItemDto> productsIds) {
-        Invoice existingInvoice = checkIfInvoiceExisting(invoiceId);
-        validateInvoiceItemForInvoice(productsIds).forEach(existingInvoice.getInvoiceItemList()::remove);
-        return updateInvoice(mapper.convertToDto(existingInvoice));
-    }
-
-
-    @Override
-    public InvoiceDto findInvoiceDtoById(UUID id) {
-        Invoice invoice = checkIfInvoiceExisting(id);
-        return mapper.convertToDto(invoice);
-    }
-
-    @Override
-    public Optional<Invoice> findInvoiceById(UUID id) {
-        return invoiceRepository.findById(id);
-    }
-
-    @Override
-    public List<InvoiceDto> findAllInvoices() {
-        return invoiceRepository
-                .findAll()
-                .stream()
-                .map(mapper::convertToDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Invoice> findAllContainsInvoiceItem(InvoiceItem invoiceItem) {
-        return invoiceRepository.findAllByInvoiceItemListContains(invoiceItem);
-    }
-
-    public List<InvoiceItem> validateInvoiceItemForInvoice(List<InvoiceItemDto> productsIds) {
-        List<InvoiceItem> invoiceItems = new ArrayList<>();
-        for (InvoiceItemDto productId : productsIds) {
-            InvoiceItem existingProduct = invoiceItemService.findProductById(productId.getId());
-            invoiceItems.add(existingProduct);
-        }
-        return invoiceItems;
-    }
-
-    public Invoice checkIfInvoiceExisting(UUID invoiceId) {
-        Optional<Invoice> existingInvoice = findInvoiceById(invoiceId);
-        if (existingInvoice.isEmpty()) {
-            throw new NotFoundException("Invoice", "id", invoiceId.toString());
-        } else {
-            return existingInvoice.get();
-        }
-    }
-
 }

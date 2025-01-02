@@ -12,7 +12,6 @@ import java.util.UUID;
 
 @Repository
 public interface IInvoiceItemRepository extends JpaRepository<InvoiceItem, UUID> {
-
     Optional<InvoiceItem> findById(UUID id);
 
     List<InvoiceItem> findAllByUnitPrice(BigDecimal price);
@@ -22,5 +21,4 @@ public interface IInvoiceItemRepository extends JpaRepository<InvoiceItem, UUID>
     List<InvoiceItem> findByIdIn(List<UUID> productLists);
 
     Optional<InvoiceItem> findProductByNameAndUnitPrice(String name, BigDecimal price);
-
 }

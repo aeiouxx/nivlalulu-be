@@ -35,9 +35,9 @@ public class InvoiceItemService {
         Optional<InvoiceItem> isProductExisting = IInvoiceItemRepository.findProductByNameAndUnitPrice(invoiceItemDto.getName(), invoiceItemDto.getUnitPrice());
         if (isProductExisting.isPresent()) {
             if (!duplicityCheck(isProductExisting.get(), invoiceItemDto)) {
-                User user = userService.findUserById(invoiceItemDto.getUserId());
-                user.getInvoiceItems().add(isProductExisting.get());
-                IUserRepository.save(user);
+//                User user = userService.findUserById(invoiceItemDto.getUserId());
+//                user.getInvoiceItems().add(isProductExisting.get());
+//                IUserRepository.save(user);
                 mapper.convertToDto(IInvoiceItemRepository.save(isProductExisting.get()));
             } else {
                 return mapper.convertToDto(isProductExisting.get());
@@ -66,15 +66,15 @@ public class InvoiceItemService {
         InvoiceItem invoiceItem = IInvoiceItemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Product", "id", id.toString()));
 
-        List<Invoice> listWhichContainsProduct = IInvoiceRepository.findAllByInvoiceItemListContains(invoiceItem);
-
-        if (!listWhichContainsProduct.isEmpty()) {
-            throw new RuntimeException(String.format("Product with id %s can't be deleted, is in invoices", id));
-        }
-
-        User user = userService.findUserById(invoiceItem.getUser().getId());
-        user.getInvoiceItems().remove(invoiceItem);
-        IUserRepository.save(user);
+//        List<Invoice> listWhichContainsProduct = IInvoiceRepository.findAllByInvoiceItemListContains(invoiceItem);
+//
+//        if (!listWhichContainsProduct.isEmpty()) {
+//            throw new RuntimeException(String.format("Product with id %s can't be deleted, is in invoices", id));
+//        }
+//
+//        User user = userService.findUserById(invoiceItem.getUser().getId());
+//        user.getInvoiceItems().remove(invoiceItem);
+//        IUserRepository.save(user);
 
         IInvoiceItemRepository.delete(invoiceItem);
         return mapper.convertToDto(invoiceItem);

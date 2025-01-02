@@ -75,17 +75,17 @@ public class PartyService implements IPartyService {
     public PartyDto deleteParty(UUID id) {
         Party party = partyRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Party", "id", id.toString()));
-
-        if (!party.getCustomerInvoices().isEmpty()) {
-            throw new RuntimeException("Can't delete party because is in some Invoice as customer!");
-        }
-        if (!party.getSupplierInvoices().isEmpty()) {
-            throw new RuntimeException("Can't delete party because is in some Invoice as supplier!");
-        }
-
-        User user = userService.findUserById(party.getUser().getId());
-        user.getInvoiceItems().remove(user);
-        userRepository.save(user);
+//
+//        if (!party.getCustomerInvoices().isEmpty()) {
+//            throw new RuntimeException("Can't delete party because is in some Invoice as customer!");
+//        }
+//        if (!party.getSupplierInvoices().isEmpty()) {
+//            throw new RuntimeException("Can't delete party because is in some Invoice as supplier!");
+//        }
+//
+//        User user = userService.findUserById(party.getUser().getId());
+//        user.getInvoiceItems().remove(user);
+//        userRepository.save(user);
 
         partyRepository.delete(party);
         return mapper.convertToDto(party);

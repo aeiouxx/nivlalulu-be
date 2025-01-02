@@ -17,7 +17,7 @@ import java.util.UUID;
 @Entity(name = "parties")
 public class Party {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
 
@@ -45,12 +45,6 @@ public class Party {
     @Column(nullable = false)
     private String email;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-    private List<Invoice> customerInvoices;
-
-    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL)
-    private List<Invoice> supplierInvoices;
-
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
@@ -73,8 +67,6 @@ public class Party {
         this.taxId = taxId;
         this.telephone = telephone;
         this.email = email;
-        this.customerInvoices = customerInvoices;
-        this.supplierInvoices = supplierInvoices;
     }
 
     public Party(String organizationName,
@@ -93,7 +85,5 @@ public class Party {
         this.taxId = taxId;
         this.telephone = telephone;
         this.email = email;
-        this.customerInvoices = new ArrayList<>();
-        this.supplierInvoices = new ArrayList<>();
     }
 }
