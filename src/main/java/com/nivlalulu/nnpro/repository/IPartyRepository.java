@@ -4,6 +4,7 @@ import com.nivlalulu.nnpro.model.Party;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,10 +13,12 @@ public interface IPartyRepository extends JpaRepository<Party, UUID> {
 
     Optional<Party> findById(UUID id);
 
-    Optional<Party> findByTaxId(String taxId);
+    Optional<Party> findByTaxIdAndUserId(String taxId, Long userId);
 
-    Optional<Party> findByTaxIdOrCompanyId(String taxId, String companyId);
+    Optional<Party> findByTaxIdOrCompanyIdAndUserId(String taxId, String companyId, Long userId);
 
-    Optional<Party> findByCompanyId(String companyId);
+    Optional<Party> findByCompanyIdAndUserId(String companyId, Long userId);
+
+    List<Party> findPartiesByUser(Long userId);
 
 }
