@@ -86,4 +86,24 @@ public class Party {
         this.telephone = telephone;
         this.email = email;
     }
+
+    public Party(String organizationName,
+                 String personName,
+                 String address,
+                 String country,
+                 String companyId,
+                 String taxId,
+                 String telephone,
+                 String email,
+                 User user) {
+        this.organizationName = organizationName;
+        this.personName = personName;
+        this.address = address;
+        this.country = country;
+        this.companyId = companyId;
+        this.taxId = taxId;
+        this.telephone = telephone;
+        this.email = email;
+        this.user = user;
+    }
 }

@@ -9,7 +9,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public class InvoiceServiceTest {
 
     private InvoiceService invoiceService;
-    private InvoiceItemService invoiceItemService;
 
     private GenericModelMapper mapper;
 
