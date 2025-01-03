@@ -7,7 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -16,80 +17,63 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "invoices")
+@NamedEntityGraph(
+        name = Invoice.WITH_ITEMS_GRAPH,
+        attributeNodes = @NamedAttributeNode("items"))
 public class Invoice {
+    public static final String WITH_ITEMS_GRAPH = "invoice-with-items";
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
 
-    @Column(nullable = false, unique = true)
-    private UUID invoiceNumber;
+    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private Instant createdAt;
 
-    @Column(nullable = false)
-    private Timestamp created;
-
-    @Column(nullable = false)
-    private Timestamp expiration;
+    @Column(name="expires_at", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private Instant expiresAt;
 
     @Column(nullable = false)
     private PaymentMethod paymentMethod;
 
-    @ManyToMany
-    @JoinTable(
-            name = "invoices_products",
-            joinColumns = @JoinColumn(name = "invoice_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private Set<Product> productList;
+    @Column(nullable = false)
+    private String variableSymbol;
 
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<InvoiceItem> items = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
-    private User customer;
-
-    @Column
-    private String customerOrganizationName;
-
-    @Column
-    private String customerAddress;
-
-    @Column
-    private String customerCountry;
-
-    @Column
-    private String customerCompanyId;
-
-    @Column
-    private String customerTaxId;
+    private Party customer;
 
     @ManyToOne
     @JoinColumn(name = "supplier_id", referencedColumnName = "id")
-    private User supplier;
+    private Party supplier;
 
-    @Column
-    private String supplierOrganizationName;
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
-    @Column
-    private String supplierAddress;
+    @Column(name = "contact")
+    private String contact;
 
-    @Column
-    private String supplierCountry;
-
-    @Column
-    private String contactPerson;
-
-    @Column
-    private String supplierCompanyId;
-
-    @Column
-    private String supplierTaxId;
-
-    public Invoice(Timestamp created, Timestamp expiration, PaymentMethod paymentMethod, Set<Product> productList, User customer, User supplier) {
-        this.created = created;
-        this.expiration = expiration;
+    public Invoice(Instant created,
+                   Instant expiration,
+                   PaymentMethod paymentMethod,
+                   String variableSymbol,
+                   Set<InvoiceItem> items,
+                   Party customer,
+                   Party supplier,
+                   String contact,
+                   User user) {
+        this.createdAt = created;
+        this.expiresAt = expiration;
         this.paymentMethod = paymentMethod;
-        this.productList = productList;
+        this.variableSymbol = variableSymbol;
+        this.items = items;
         this.customer = customer;
         this.supplier = supplier;
+        this.contact = contact;
+        this.user = user;
     }
 }

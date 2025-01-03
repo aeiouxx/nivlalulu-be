@@ -4,6 +4,7 @@ server:
   servlet:
     context-path: "/api"
 
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/nivlalulu_db
@@ -40,4 +41,7 @@ mail:
         auth: true
         starttls:
           enable: true
-
+logging:
+  level:
+    com:
+      nivlalulu: DEBUG
