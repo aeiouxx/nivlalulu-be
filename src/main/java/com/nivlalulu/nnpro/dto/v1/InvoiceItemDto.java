@@ -48,10 +48,6 @@ public class InvoiceItemDto {
     @Schema(description = "Total price of the product", example = "121.00")
     private BigDecimal totalPrice;
 
-    @NotNull(groups = OnCreate.class, message = "Invoice cannot be null")
-    @Valid
-    private InvoiceDto invoice;
-
     // Custom validation logic
     @AssertTrue(message = "Raw price plus tax must match total price")
     public boolean isTotalValid() {

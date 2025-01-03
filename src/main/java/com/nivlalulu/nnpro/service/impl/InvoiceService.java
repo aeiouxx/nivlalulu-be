@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -51,16 +50,14 @@ public class InvoiceService implements IInvoiceService {
     @Override
     @Transactional(readOnly = true)
     public InvoiceDto findInvoiceByIdForUser(UUID id, User user) {
-        Optional<Invoice> invoice = invoiceRepository.findByIdAndUser(id, user);
-        if (invoice.isEmpty()) {
-            throw new NotFoundException("Invoice", "id", id.toString());
-        }
-        return mapper.convertToDto(invoice.get());
+        return invoiceRepository.findByIdAndUser(id, user)
+                .map(mapper::convertToDto)
+                .orElseThrow(() -> new NotFoundException("Invoice", "id", id.toString()));
     }
 
     @Override
     public InvoiceDto createInvoice(InvoiceDto invoiceDto, User user) {
-        var items = invoiceDto.getProducts()
+        var items = invoiceDto.getItems()
                 .stream()
                 .map(mapper::convertToEntity)
                 .collect(Collectors.toSet());
@@ -118,9 +115,9 @@ public class InvoiceService implements IInvoiceService {
             invoice.setSupplier(supplier);
         }
 
-        if (invoiceUpdated.getProducts() != null && !invoiceUpdated.getProducts().isEmpty()) {
+        if (invoiceUpdated.getItems() != null && !invoiceUpdated.getItems().isEmpty()) {
             invoice.getItems().clear();
-            Set<InvoiceItem> newItems = invoiceUpdated.getProducts()
+            Set<InvoiceItem> newItems = invoiceUpdated.getItems()
                     .stream()
                     .map(mapper::convertToEntity) // InvoiceItemDto -> InvoiceItem
                     .collect(Collectors.toSet());

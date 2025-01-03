@@ -40,7 +40,7 @@ public class InvoiceDto {
 
     @NotNull(groups = OnCreate.class, message = "Products cannot be null")
     @NotEmpty(groups = OnCreate.class, message = "Products cannot be empty")
-    private List<@Valid InvoiceItemDto> products;
+    private List<@Valid InvoiceItemDto> items;
 
     @NotNull(groups = OnCreate.class, message = "Payment method cannot be null")
     @Schema(description = "Payment method", example = "P")
