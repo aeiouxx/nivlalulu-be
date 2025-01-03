@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -35,14 +36,27 @@ public class InvoiceControllerV1 {
     private final IInvoiceService invoiceService;
 
     @Operation(
-            summary = "List invoices (paginated)",
-            description = "Returns a page of invoices along with pagination metadata."
+            summary = "List invoices (optionally paginated)",
+            description = """
+            Returns a (paginated) list of invoices.
+            Supports sorting by the following fields:
+            - `createdAt`
+            - `expiresAt`
+            - `contact`.
+            
+            Sort format: `fieldName,asc|desc`.
+            """
     )
     @GetMapping
     @PageableAsQueryParam
     public Page<InvoiceDto> getInvoices(
             @AuthenticationPrincipal User user,
-            final Pageable pageable) {
+            @RequestParam(required = false)
+            Pageable pageable) {
+        if (pageable == null) {
+            log.debug("No paging information provided. Returning all invoices.");
+            pageable = Pageable.unpaged();
+        }
         log.info("User '{}' requested invoices with paging: {}", user.getUsername(), pageable);
         return invoiceService.findForUser(user, pageable);
     }

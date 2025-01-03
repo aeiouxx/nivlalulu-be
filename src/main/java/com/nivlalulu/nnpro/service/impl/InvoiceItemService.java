@@ -10,6 +10,7 @@ import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
 import com.nivlalulu.nnpro.service.IInvoiceItemService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -55,57 +56,64 @@ public class InvoiceItemService implements IInvoiceItemService {
 
     @Override
     public InvoiceItemDto createInvoiceItem(InvoiceItemDto invoiceItemDto) {
-        var invoice = invoiceRepository.findById(invoiceItemDto.getInvoice().getId())
-                .orElseThrow(() -> new NotFoundException("Invoice", "id", invoiceItemDto.getInvoice().getId().toString()));
-        var invoiceItem = new InvoiceItem(
-                invoiceItemDto.getName(),
-                invoiceItemDto.getQuantity(),
-                invoiceItemDto.getUnitPrice(),
-                invoiceItemDto.getTaxPrice(),
-                invoiceItemDto.getTotalPrice(),
-                invoice
-        );
-
-        var created = invoiceItemRepository.save(invoiceItem);
-        return mapper.convertToDto(created);
+//        var invoice = invoiceRepository.findById(invoiceItemDto.getInvoice().getId())
+//                .orElseThrow(() -> new NotFoundException("Invoice", "id", invoiceItemDto.getInvoice().getId().toString()));
+//        var invoiceItem = new InvoiceItem(
+//                invoiceItemDto.getName(),
+//                invoiceItemDto.getQuantity(),
+//                invoiceItemDto.getUnitPrice(),
+//                invoiceItemDto.getTaxPrice(),
+//                invoiceItemDto.getTotalPrice(),
+//                invoice
+//        );
+//
+//        var created = invoiceItemRepository.save(invoiceItem);
+//        return mapper.convertToDto(created);
+        throw new NotImplementedException("There is no point to this as a direct call from a controller, imo," +
+                "could be called by InvoiceService to handle stuff, but we don't need dtos for that");
     }
 
     @Override
     public InvoiceItemDto updateInvoiceItem(InvoiceItemDto invoiceItemUpdated) {
-        var invoiceItem = invoiceItemRepository.findByIdAndInvoice(invoiceItemUpdated.getId(),
-                        mapper.convertToEntity(invoiceItemUpdated.getInvoice()))
-                .orElseThrow(() -> new NotFoundException("Invoice item", "id", invoiceItemUpdated.getId().toString()));
-
-        if (invoiceItemUpdated.getName() != null) {
-            invoiceItem.setName(invoiceItemUpdated.getName());
-        }
-
-        if (invoiceItemUpdated.getUnitPrice() != null) {
-            invoiceItem.setUnitPrice(invoiceItemUpdated.getUnitPrice());
-        }
-
-        if (invoiceItemUpdated.getTaxPrice() != null) {
-            invoiceItem.setTaxPrice(invoiceItemUpdated.getTaxPrice());
-        }
-
-        if (invoiceItemUpdated.getTotalPrice() != null) {
-            invoiceItem.setTotalPrice(invoiceItemUpdated.getTotalPrice());
-        }
-
-        if (invoiceItemUpdated.getQuantity() != null) {
-            invoiceItem.setQuantity(invoiceItemUpdated.getQuantity());
-        }
-
-        var updated = invoiceItemRepository.save(invoiceItem);
-        return mapper.convertToDto(updated);
+//        var invoiceItem = invoiceItemRepository.findByIdAndInvoice(invoiceItemUpdated.getId(),
+//                        mapper.convertToEntity(invoiceItemUpdated.getInvoice()))
+//                .orElseThrow(() -> new NotFoundException("Invoice item", "id", invoiceItemUpdated.getId().toString()));
+//
+//        if (invoiceItemUpdated.getName() != null) {
+//            invoiceItem.setName(invoiceItemUpdated.getName());
+//        }
+//
+//        if (invoiceItemUpdated.getUnitPrice() != null) {
+//            invoiceItem.setUnitPrice(invoiceItemUpdated.getUnitPrice());
+//        }
+//
+//        if (invoiceItemUpdated.getTaxPrice() != null) {
+//            invoiceItem.setTaxPrice(invoiceItemUpdated.getTaxPrice());
+//        }
+//
+//        if (invoiceItemUpdated.getTotalPrice() != null) {
+//            invoiceItem.setTotalPrice(invoiceItemUpdated.getTotalPrice());
+//        }
+//
+//        if (invoiceItemUpdated.getQuantity() != null) {
+//            invoiceItem.setQuantity(invoiceItemUpdated.getQuantity());
+//        }
+//
+//        var updated = invoiceItemRepository.save(invoiceItem);
+//        return mapper.convertToDto(updated);
+        throw new NotImplementedException("There is no point to this as a direct call from a controller, imo," +
+                "could be called by InvoiceService to handle stuff, but we don't need dtos for that");
     }
 
     @Override
     public InvoiceItemDto deleteInvoiceItem(UUID id) {
-        var invoiceItem = invoiceItemRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Invoice item", "id", id.toString()));
-        invoiceItemRepository.delete(invoiceItem);
-        return mapper.convertToDto(invoiceItem);
+//        var invoiceItem = invoiceItemRepository.findById(id)
+//                .orElseThrow(() -> new NotFoundException("Invoice item", "id", id.toString()));
+//        invoiceItemRepository.delete(invoiceItem);
+//        return mapper.convertToDto(invoiceItem);
+
+        throw new NotImplementedException("There is no point to this as a direct call from a controller, imo," +
+                "could be called by InvoiceService to handle stuff, but we don't need dtos for that");
     }
 
     public List<InvoiceItemDto> findAllByPrice(BigDecimal price) {
