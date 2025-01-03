@@ -18,6 +18,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -35,9 +38,29 @@ import java.util.UUID;
 public class PartyControllerV1 {
     private final IPartyService partyService;
 
-    @GetMapping("/all")
-    public ApiResponse<List<PartyDto>> getParties() {
-        return new ApiResponse<>(HttpStatus.OK.value(), "All parties", partyService.findAllParties());
+    @Operation(
+            summary = "List parties (optionally paginated)",
+            description = """
+            Returns a (paginated) list of parties.
+            Supports sorting by the following fields:
+            - `createdAt`
+            - `expiresAt`
+            - `contact`.
+            
+            Sort format: `fieldName,asc|desc`.
+            """
+    )
+    @GetMapping
+    @PageableAsQueryParam
+    public Page<PartyDto> getParties(
+            @AuthenticationPrincipal User user,
+            @RequestParam(required = false) Pageable pageable) {
+        if (pageable == null) {
+            log.debug("No paging information provided. Returning all parties.");
+            pageable = Pageable.unpaged();
+        }
+        log.info("User '{}' requested parties with paging: {}", user.getUsername(), pageable);
+        return partyService.findForUser(user, pageable);
     }
 
     @Operation(
