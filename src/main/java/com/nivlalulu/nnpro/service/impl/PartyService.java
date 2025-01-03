@@ -10,7 +10,10 @@ import com.nivlalulu.nnpro.repository.IUserRepository;
 import com.nivlalulu.nnpro.service.IPartyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -101,6 +104,12 @@ public class PartyService implements IPartyService {
     public PartyDto findById(UUID id) {
         Party party = checkIfInvoiceExisting(id);
         return mapper.convertToDto(party);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<PartyDto> findForUser(User user, Pageable pageable) {
+        return partyRepository.findByUser(user, pageable).map(mapper::convertToDto);
     }
 
     @Override
