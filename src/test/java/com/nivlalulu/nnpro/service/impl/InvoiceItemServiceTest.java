@@ -1,13 +1,17 @@
 package com.nivlalulu.nnpro.service.impl;
 
 import com.nivlalulu.nnpro.common.mapping.impl.GenericModelMapper;
+import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.InvoiceItem;
+import com.nivlalulu.nnpro.model.User;
 import com.nivlalulu.nnpro.repository.IInvoiceItemRepository;
 import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
+import com.nivlalulu.nnpro.repository.IInvoiceRepository;
 import com.nivlalulu.nnpro.service.IInvoiceItemService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -18,7 +22,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -26,10 +29,13 @@ import static org.junit.Assert.assertEquals;
 public class InvoiceItemServiceTest {
 
     @Autowired
-    private IInvoiceItemService invoiceService;
+    private IInvoiceItemService invoiceItemService;
 
     @Autowired
-    private IInvoiceItemRepository IInvoiceItemRepository;
+    private IInvoiceItemRepository invoiceItemRepository;
+
+    @Autowired
+    private IInvoiceRepository invoiceRepository;
 
     @Autowired
     private GenericModelMapper mapper;
@@ -48,22 +54,4 @@ public class InvoiceItemServiceTest {
         registry.add("spring.datasource.password", postgresContainer::getPassword);
         registry.add("spring.datasource.driver-class-name", postgresContainer::getDriverClassName);
     }
-
-
-    @Test
-    public void testFindAllByPrice() {
-        InvoiceItem invoiceItem1 = new InvoiceItem("Product 1", 5, new BigDecimal("10.00"),
-                new BigDecimal("1.00"), new BigDecimal("11.00"));
-        InvoiceItem invoiceItem2 = new InvoiceItem("Product 2", 3, new BigDecimal("20.00"),
-                new BigDecimal("2.00"), new BigDecimal("22.00"));
-
-        IInvoiceItemRepository.save(invoiceItem1);
-        IInvoiceItemRepository.save(invoiceItem2);
-
-        List<InvoiceItemDto> products = invoiceService.findByPrice(new BigDecimal("10.00"));
-
-        assertEquals(1, products.size());
-        assertEquals("Product 1", products.get(0).getName());
-    }
-
 }

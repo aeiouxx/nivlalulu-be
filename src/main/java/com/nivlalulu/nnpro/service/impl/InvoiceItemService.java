@@ -46,12 +46,4 @@ public class InvoiceItemService implements IInvoiceItemService {
                 .map(mapper::convertToDto)
                 .orElseThrow(() -> new NotFoundException("InvoiceItem", "id", id.toString()));
     }
-
-    @Override
-    public List<InvoiceItemDto> findByPrice(BigDecimal price) {
-        return invoiceItemRepository.findAllByUnitPrice(price)
-                .stream()
-                .map(mapper::convertToDto)
-                .collect(Collectors.toList());
-    }
 }

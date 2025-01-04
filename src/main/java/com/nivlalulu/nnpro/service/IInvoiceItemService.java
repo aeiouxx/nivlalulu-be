@@ -25,6 +25,4 @@ public interface IInvoiceItemService {
      * Finds an invoice item by its ID for the given user.
      */
     InvoiceItemDto findInvoiceItemByIdForInvoice(UUID id, Invoice invoice);
-
-    List<InvoiceItemDto> findByPrice(BigDecimal price);
 }
