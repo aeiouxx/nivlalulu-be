@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional
 public class InvoiceService implements IInvoiceService, IInvoiceItemService {
-    private final ModelMapper modelMapper;
     private final IInvoiceRepository invoiceRepository;
     private final IInvoiceItemRepository invoiceItemRepository;
     private final IPartyRepository partyRepository;
@@ -185,7 +184,6 @@ public class InvoiceService implements IInvoiceService, IInvoiceItemService {
                 invoiceItemDto.getUnitPrice(),
                 invoiceItemDto.getTaxPrice(),
                 invoiceItemDto.getTotalPrice(),
-                modelMapper.map(invoiceDto, Invoice.class)
         );
 
         var created = invoiceItemRepository.save(invoiceItem);
