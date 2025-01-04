@@ -1,7 +1,6 @@
 package com.nivlalulu.nnpro.service;
 
 
-import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
 import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
 import com.nivlalulu.nnpro.model.Invoice;
 import org.springframework.data.domain.Page;
@@ -25,16 +24,4 @@ public interface IInvoiceItemService {
      * Finds an invoice item by its ID for the given user.
      */
     InvoiceItemDto findInvoiceItemByIdForInvoice(UUID id, Invoice invoice);
-
-    /**
-     * Creates a new invoice item for the specified user.
-     * Expects a fully populated InvoiceDto per the OnCreate validation rules.
-     */
-    InvoiceItemDto createInvoiceItem(InvoiceItemDto invoiceItemDto, InvoiceDto invoiceDto);
-
-    /**
-     * Deletes the invoice item with the given ID.
-     * Returns the deleted invoice item as a DTO for confirmation.
-     */
-    InvoiceItemDto deleteInvoiceItem(UUID id);
 }
