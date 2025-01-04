@@ -15,7 +15,7 @@ import java.util.Base64;
 @Component
 @Slf4j
 public class Sha256Provider implements IHashProvider {
-    private static String DIGEST_ALGORITHM = "SHA-256";
+    private static final String DIGEST_ALGORITHM = "SHA-256";
 
     public String hash(String input) {
         try {

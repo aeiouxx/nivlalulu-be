@@ -89,7 +89,7 @@ public class JwtTokenService implements IJwtTokenService {
         String newRefreshTokenData = jwtTokenProvider.generateRefreshToken(user, newRefreshTokenId);
         var newRefreshToken = new RefreshToken(
                 newRefreshTokenId,
-                Instant.now().plus(jwtTokenProvider.REFRESH_EXPIRATION_TIME),
+                Instant.now().plus(JwtTokenProvider.REFRESH_EXPIRATION_TIME),
                 user
         );
         refreshTokenRepository.save(newRefreshToken);
