@@ -8,6 +8,7 @@ import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.InvoiceItem;
 import com.nivlalulu.nnpro.model.Party;
 import com.nivlalulu.nnpro.model.User;
+import com.nivlalulu.nnpro.repository.IInvoiceItemRepository;
 import com.nivlalulu.nnpro.repository.IInvoiceRepository;
 import com.nivlalulu.nnpro.repository.IPartyRepository;
 import com.nivlalulu.nnpro.service.IInvoiceService;
