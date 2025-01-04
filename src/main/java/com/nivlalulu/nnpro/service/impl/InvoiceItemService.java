@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -44,5 +45,13 @@ public class InvoiceItemService implements IInvoiceItemService {
         return invoiceItemRepository.findByIdAndInvoice(id, invoice)
                 .map(mapper::convertToDto)
                 .orElseThrow(() -> new NotFoundException("InvoiceItem", "id", id.toString()));
+    }
+
+    @Override
+    public List<InvoiceItemDto> findByPrice(BigDecimal price) {
+        return invoiceItemRepository.findAllByUnitPrice(price)
+                .stream()
+                .map(mapper::convertToDto)
+                .collect(Collectors.toList());
     }
 }

@@ -31,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final IJwtTokenService jwtTokenService;
     private final PathMatcher pathMatcher = new AntPathMatcher();
 
-    private static List<String> NO_AUTH_PATHS = List.of(
+    private static final List<String> NO_AUTH_PATHS = List.of(
             "/api/swagger-ui/**",
             "/api/v3/api-docs/**",
             "/api/public/**"

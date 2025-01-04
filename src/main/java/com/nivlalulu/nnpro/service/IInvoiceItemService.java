@@ -6,6 +6,7 @@ import com.nivlalulu.nnpro.model.Invoice;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,4 +25,6 @@ public interface IInvoiceItemService {
      * Finds an invoice item by its ID for the given user.
      */
     InvoiceItemDto findInvoiceItemByIdForInvoice(UUID id, Invoice invoice);
+
+    List<InvoiceItemDto> findByPrice(BigDecimal price);
 }
