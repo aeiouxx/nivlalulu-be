@@ -33,6 +33,7 @@ public class PartyService implements IPartyService {
     public PartyDto createParty(PartyDto partyDto, User user) {
         Optional<Party> existingParty = partyRepository.findByTaxIdOrCompanyId(partyDto.getTaxId(),
                 partyDto.getCompanyId());
+
         if (existingParty.isPresent()) {
             if (!duplicityCheck(partyDto, existingParty.get())) {
 //                User user = userService.findUserById(existingParty.get().getUser().getId());

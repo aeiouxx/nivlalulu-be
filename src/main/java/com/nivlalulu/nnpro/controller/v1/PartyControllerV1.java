@@ -34,7 +34,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Validated
 @Slf4j
-@Tag(name = "Party management", description = "Operations related to managing parties.")
+@Tag(name = "Party management", description = "Operations related to global management of user parties.")
 public class PartyControllerV1 {
     private final IPartyService partyService;
 
