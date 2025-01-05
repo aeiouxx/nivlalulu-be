@@ -18,10 +18,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity(name = "invoices")
 @NamedEntityGraph(
-        name = Invoice.WITH_ITEMS_GRAPH,
+        name = Invoice.WITH_ITEMS_AND_PARTIES_GRAPH,
         attributeNodes = @NamedAttributeNode("items"))
 public class Invoice {
-    public static final String WITH_ITEMS_GRAPH = "invoice-with-items";
+    public static final String WITH_ITEMS_AND_PARTIES_GRAPH = "invoice-with-items-and-parties";
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, unique = true)
@@ -42,13 +42,46 @@ public class Invoice {
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<InvoiceItem> items = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private Party customer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "supplier_id", referencedColumnName = "id")
     private Party supplier;
+
+    // This data is denormalized on purpose,
+    // we want to keep a "snapshot" of the supplier / customer information
+    // at the time of the invoice creation.
+    // If we edit the supplier / customer information, the invoice should not be affected.
+    // On the other hand keeping a party table allows for autocompletion etc...
+    // ----------------------------------------------------------------------------------------------------
+    @Column(name = "supplier_name", nullable = false)
+    private String supplierName;
+    @Column(name = "supplier_address", nullable = false)
+    private String supplierAddress;
+    @Column(name = "supplier_country", nullable = false)
+    private String supplierCountry;
+    @Column(name = "supplier_ic_tax", nullable = false)
+    private String supplierIcTax;
+    @Column(name = "supplier_dic_tax", nullable = false)
+    private String supplierDicTax;
+    @Column(name = "supplier_telephone", nullable = false)
+    private String supplierTelephone;
+    @Column(name = "supplier_email", nullable = false)
+    private String supplierEmail;
+
+    @Column(name = "customer_name", nullable = false)
+    private String customerName;
+    @Column(name = "customer_address", nullable = false)
+    private String customerAddress;
+    @Column(name = "customer_country", nullable = false)
+    private String customerCountry;
+    @Column(name = "customer_ic_tax", nullable = false)
+    private String customerIcTax;
+    @Column(name = "customer_dic_tax", nullable = false)
+    private String customerDicTax;
+    // ----------------------------------------------------------------------------------------------------
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -75,5 +108,27 @@ public class Invoice {
         this.supplier = supplier;
         this.contact = contact;
         this.user = user;
+
+        snapshotSupplier(supplier);
+        snapshotCustomer(customer);
     }
+
+    public void snapshotSupplier(Party supplier) {
+        this.supplierName = supplier.getName();
+        this.supplierAddress = supplier.getAddress();
+        this.supplierCountry = supplier.getCountry();
+        this.supplierIcTax = supplier.getIcTax();
+        this.supplierDicTax = supplier.getDicTax();
+        this.supplierTelephone = supplier.getTelephone();
+        this.supplierEmail = supplier.getEmail();
+    }
+
+    public void snapshotCustomer(Party customer) {
+        this.customerName = customer.getName();
+        this.customerAddress = customer.getAddress();
+        this.customerCountry = customer.getCountry();
+        this.customerIcTax = customer.getIcTax();
+        this.customerDicTax = customer.getDicTax();
+    }
+
 }

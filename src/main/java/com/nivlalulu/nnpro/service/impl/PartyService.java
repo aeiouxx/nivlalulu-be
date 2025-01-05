@@ -15,46 +15,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class PartyService implements IPartyService {
     private final IPartyRepository partyRepository;
-    private final IUserRepository userRepository;
-    private final UserService userService;
     private final GenericModelMapper mapper;
 
     @Override
     public PartyDto createParty(PartyDto partyDto, User user) {
-        Optional<Party> existingParty = partyRepository.findByTaxIdOrCompanyId(partyDto.getTaxId(),
-                partyDto.getCompanyId());
-
-        if (existingParty.isPresent()) {
-            if (!duplicityCheck(partyDto, existingParty.get())) {
-//                User user = userService.findUserById(existingParty.get().getUser().getId());
-//                user.getParties().add(existingParty.get());
-//                userRepository.save(user);
-//                mapper.convertToDto(partyRepository.save(existingParty.get()));
-            } else {
-                return mapper.convertToDto(existingParty.get());
-            }
-        }
-
-        Party party = new Party(
-                partyDto.getOrganizationName(),
-                partyDto.getPersonName(),
-                partyDto.getAddress(),
-                partyDto.getCountry(),
-                partyDto.getCompanyId(),
-                partyDto.getTaxId(),
-                partyDto.getTelephone(),
-                partyDto.getEmail(),
-                user);
+        var party = mapper.convertToEntity(partyDto);
+        party.setUser(user);
         var created = partyRepository.save(party);
         return mapper.convertToDto(created);
     }
@@ -64,11 +38,8 @@ public class PartyService implements IPartyService {
         var party = partyRepository.findByIdAndUser(partyUpdated.getId(), user)
                 .orElseThrow(() -> new NotFoundException("Party", "id", partyUpdated.getId().toString()));
 
-        if (partyUpdated.getOrganizationName() != null) {
-            party.setOrganizationName(partyUpdated.getOrganizationName());
-        }
-        if (partyUpdated.getPersonName() != null) {
-            party.setPersonName(partyUpdated.getPersonName());
+        if (partyUpdated.getName() != null) {
+            party.setName(partyUpdated.getName());
         }
         if (partyUpdated.getAddress() != null) {
             party.setAddress(partyUpdated.getAddress());
@@ -76,11 +47,11 @@ public class PartyService implements IPartyService {
         if (partyUpdated.getCountry() != null) {
             party.setCountry(partyUpdated.getCountry());
         }
-        if (partyUpdated.getCompanyId() != null) {
-            party.setCompanyId(partyUpdated.getCompanyId());
+        if (partyUpdated.getIcTax() != null) {
+            party.setIcTax(partyUpdated.getIcTax());
         }
-        if (partyUpdated.getTaxId() != null) {
-            party.setTaxId(partyUpdated.getTaxId());
+        if (partyUpdated.getDicTax() != null) {
+            party.setDicTax(partyUpdated.getDicTax());
         }
         if (partyUpdated.getTelephone() != null) {
             party.setTelephone(partyUpdated.getTelephone());
@@ -113,29 +84,9 @@ public class PartyService implements IPartyService {
         return partyRepository.findByUser(user, pageable).map(mapper::convertToDto);
     }
 
-    @Override
-    public Optional<PartyDto> findByTaxId(String taxId) {
-        Optional<Party> party = partyRepository.findByTaxId(taxId);
-        return party.map(value -> Optional.of(mapper.convertToDto(value))).orElse(null);
-    }
-
-    @Override
-    public Optional<PartyDto> findByCompanyId(String companyId) {
-        Optional<Party> party = partyRepository.findByCompanyId(companyId);
-        return party.map(value -> Optional.of(mapper.convertToDto(value))).orElse(null);
-    }
-
-    @Override
-    public List<PartyDto> findAllParties() {
-        return partyRepository.findAll()
-                .stream()
-                .map(mapper::convertToDto)
-                .collect(Collectors.toList());
-    }
-
     private boolean duplicityCheck(PartyDto partyDto, Party party) {
-        boolean isTaxIdMatching = partyDto.getTaxId().equals(party.getTaxId());
-        boolean isCompanyIdMatching = partyDto.getCompanyId().equals(party.getCompanyId());
+        boolean isTaxIdMatching = partyDto.getDicTax().equals(party.getDicTax());
+        boolean isCompanyIdMatching = partyDto.getIcTax().equals(party.getIcTax());
         return isTaxIdMatching && isCompanyIdMatching;
     }
 

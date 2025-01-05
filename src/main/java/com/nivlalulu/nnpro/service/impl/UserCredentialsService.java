@@ -30,7 +30,6 @@ public class UserCredentialsService implements IUserCredentialsService {
     private final PasswordEncoder passwordEncoder;
     private final IMailSender mailSender;
     private final IHashProvider hashProvider;
-    private final IGenericMapper mapper;
 
     @Override
     @Transactional

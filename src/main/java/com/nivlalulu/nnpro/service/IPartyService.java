@@ -21,11 +21,5 @@ public interface IPartyService {
 
     Page<PartyDto> findForUser(User user, Pageable pageable);
 
-    Optional<PartyDto> findByTaxId(String taxId);
-
-    Optional<PartyDto> findByCompanyId(String companyId);
-
-    List<PartyDto> findAllParties();
-
     Party checkIfInvoiceExisting(UUID partyId);
 }

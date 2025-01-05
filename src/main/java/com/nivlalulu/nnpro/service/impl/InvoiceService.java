@@ -8,7 +8,6 @@ import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.InvoiceItem;
 import com.nivlalulu.nnpro.model.Party;
 import com.nivlalulu.nnpro.model.User;
-import com.nivlalulu.nnpro.repository.IInvoiceItemRepository;
 import com.nivlalulu.nnpro.repository.IInvoiceRepository;
 import com.nivlalulu.nnpro.repository.IPartyRepository;
 import com.nivlalulu.nnpro.service.IInvoiceService;
@@ -20,8 +19,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Service
@@ -106,15 +107,8 @@ public class InvoiceService implements IInvoiceService {
             invoice.setContact(invoiceUpdated.getContact());
         }
 
-        if (invoiceUpdated.getCustomer() != null) {
-            var customer = getCreateParty(invoiceUpdated.getCustomer(), user);
-            invoice.setCustomer(customer);
-        }
-
-        if (invoiceUpdated.getSupplier() != null) {
-            var supplier = getCreateParty(invoiceUpdated.getSupplier(), user);
-            invoice.setSupplier(supplier);
-        }
+        handlePartyUpdate(invoiceUpdated.getSupplier(), invoice::setSupplier, invoice::snapshotSupplier, user);
+        handlePartyUpdate(invoiceUpdated.getCustomer(), invoice::setCustomer, invoice::snapshotCustomer, user);
 
         if (invoiceUpdated.getItems() != null && !invoiceUpdated.getItems().isEmpty()) {
             invoice.getItems().clear();
@@ -138,13 +132,35 @@ public class InvoiceService implements IInvoiceService {
         return mapper.convertToDto(invoice);
     }
 
-
     private Party getCreateParty(PartyDto party, User user) {
-        return partyRepository.findByTaxIdOrCompanyId(party.getTaxId(), party.getCompanyId())
-                .orElseGet(() -> {
-                    var entity = mapper.convertToEntity(party);
-                    entity.setUser(user);
-                    return partyRepository.save(entity);
-                });
+        Optional<Party> found = Optional.empty();
+        if (party.getIcTax() != null) {
+            found = partyRepository.findByIcTaxAndUser(party.getIcTax(), user);
+        }
+        else if (party.getDicTax() != null) {
+            found = partyRepository.findByDicTaxAndUser(party.getDicTax(), user);
+        }
+        return found.orElseGet(() -> {
+            var entity = mapper.convertToEntity(party);
+            entity.setUser(user);
+            return partyRepository.save(entity);
+        });
+    }
+
+    // If we're editing a historical invoice, the state of the update contact information does not
+    // have to reflect the state of the party in the party table, we might be migrating
+    // from one snapshot to another, but both might be out of date with the current state of the party.
+    // We don't validate on purpose to preserve the archival nature of the invoice.
+    private void handlePartyUpdate(PartyDto partyDto,
+                                   Consumer<Party> setReference,
+                                   Consumer<Party> takeSnapshot,
+                                   User user) {
+        if (partyDto == null) {
+            return;
+        }
+        var reference = getCreateParty(partyDto, user);
+        setReference.accept(reference);
+        Party party = mapper.convertToEntity(partyDto);
+        takeSnapshot.accept(party);
     }
 }
