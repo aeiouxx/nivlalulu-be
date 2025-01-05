@@ -1,5 +1,6 @@
 package com.nivlalulu.nnpro.model;
 
+import com.nivlalulu.nnpro.dto.v1.PartySnapshotDto;
 import com.nivlalulu.nnpro.enums.PaymentMethod;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -42,19 +43,18 @@ public class Invoice {
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<InvoiceItem> items = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private Party customer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "supplier_id", referencedColumnName = "id")
     private Party supplier;
 
     // This data is denormalized on purpose,
     // we want to keep a "snapshot" of the supplier / customer information
     // at the time of the invoice creation.
-    // If we edit the supplier / customer information, the invoice should not be affected.
-    // On the other hand keeping a party table allows for autocompletion etc...
+    // If we edit the supplier / customer information, the invoice should not be affected (unless we want it to be).
     // ----------------------------------------------------------------------------------------------------
     @Column(name = "supplier_name", nullable = false)
     private String supplierName;
@@ -130,5 +130,4 @@ public class Invoice {
         this.customerIcTax = customer.getIcTax();
         this.customerDicTax = customer.getDicTax();
     }
-
 }

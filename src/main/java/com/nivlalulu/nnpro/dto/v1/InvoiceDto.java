@@ -53,11 +53,11 @@ public class InvoiceDto {
 
     @NotNull(groups = OnCreate.class, message = "Customer cannot be null")
     @Valid
-    private PartyDto customer;
+    private PartySnapshotDto customer;
 
     @NotNull(groups = OnCreate.class, message = "Supplier cannot be null")
     @Valid
-    private PartyDto supplier;
+    private PartySnapshotDto supplier;
 
     @JsonProperty("raw_value")
     @NotNull(groups = OnCreate.class, message = "Raw value cannot be null")
@@ -94,7 +94,6 @@ public class InvoiceDto {
             groups = {OnUpdate.class},
             message = "Raw value plus tax value must match total value")
     public boolean onUpdateTotalValueValidIfIncluded() {
-        // todo: Could use a database constraint to handle partial updates
         if (rawValue == null || taxValue == null || totalValue == null) {
             return true;
         }

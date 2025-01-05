@@ -36,7 +36,7 @@ public interface IInvoiceService {
      * If products is present (non-empty), does a full replace of items.
      * If customer / supplier is present, updates references.
      */
-    InvoiceDto updateInvoice(InvoiceDto invoiceDto, User user);
+    InvoiceDto updateInvoice(UUID id, InvoiceDto invoiceDto, User user);
 
     /**
     * Deletes the invoice with the given ID.

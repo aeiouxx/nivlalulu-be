@@ -4,12 +4,14 @@ import com.nivlalulu.nnpro.common.exceptions.NotFoundException;
 import com.nivlalulu.nnpro.common.mapping.impl.GenericModelMapper;
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
 import com.nivlalulu.nnpro.dto.v1.PartyDto;
+import com.nivlalulu.nnpro.dto.v1.PartySnapshotDto;
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.InvoiceItem;
 import com.nivlalulu.nnpro.model.Party;
 import com.nivlalulu.nnpro.model.User;
 import com.nivlalulu.nnpro.repository.IInvoiceRepository;
 import com.nivlalulu.nnpro.repository.IPartyRepository;
+import com.nivlalulu.nnpro.security.ownership.IsOwnedByUser;
 import com.nivlalulu.nnpro.service.IInvoiceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +52,7 @@ public class InvoiceService implements IInvoiceService {
     }
 
     @Override
+    @IsOwnedByUser(entityClass = Invoice.class)
     @Transactional(readOnly = true)
     public InvoiceDto findInvoiceByIdForUser(UUID id, User user) {
         return invoiceRepository.findByIdAndUser(id, user)
@@ -83,7 +86,10 @@ public class InvoiceService implements IInvoiceService {
     }
 
     @Override
-    public InvoiceDto updateInvoice(InvoiceDto invoiceUpdated, User user) {
+    @IsOwnedByUser(entityClass = Invoice.class)
+    public InvoiceDto updateInvoice(UUID id,
+                                    InvoiceDto invoiceUpdated,
+                                    User user) {
         // cleanest code of all time Q_Q
         var invoice = invoiceRepository.findByIdAndUser(invoiceUpdated.getId(), user)
                 .orElseThrow(() -> new NotFoundException("Invoice", "id", invoiceUpdated.getId().toString()));
@@ -125,6 +131,7 @@ public class InvoiceService implements IInvoiceService {
     }
 
     @Override
+    @IsOwnedByUser(entityClass = Invoice.class)
     public InvoiceDto deleteInvoice(UUID id) {
         var invoice = invoiceRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Invoice", "id", id.toString()));
@@ -132,16 +139,16 @@ public class InvoiceService implements IInvoiceService {
         return mapper.convertToDto(invoice);
     }
 
-    private Party getCreateParty(PartyDto party, User user) {
+    private Party getCreateParty(PartySnapshotDto party, User user) {
         Optional<Party> found = Optional.empty();
-        if (party.getIcTax() != null) {
-            found = partyRepository.findByIcTaxAndUser(party.getIcTax(), user);
+        if (party.icTax() != null) {
+            found = partyRepository.findByIcTaxAndUser(party.icTax(), user);
         }
-        else if (party.getDicTax() != null) {
-            found = partyRepository.findByDicTaxAndUser(party.getDicTax(), user);
+        else if (party.dicTax() != null) {
+            found = partyRepository.findByDicTaxAndUser(party.dicTax(), user);
         }
         return found.orElseGet(() -> {
-            var entity = mapper.convertToEntity(party);
+            var entity = mapper.snapshotToEntity(party);
             entity.setUser(user);
             return partyRepository.save(entity);
         });
@@ -151,16 +158,23 @@ public class InvoiceService implements IInvoiceService {
     // have to reflect the state of the party in the party table, we might be migrating
     // from one snapshot to another, but both might be out of date with the current state of the party.
     // We don't validate on purpose to preserve the archival nature of the invoice.
-    private void handlePartyUpdate(PartyDto partyDto,
+    // We're not updating the party table, we're updating the invoice.
+    private void handlePartyUpdate(PartySnapshotDto partyDto,
                                    Consumer<Party> setReference,
                                    Consumer<Party> takeSnapshot,
                                    User user) {
         if (partyDto == null) {
             return;
         }
-        var reference = getCreateParty(partyDto, user);
+
+        // set the reference to the party
+        Party reference = getCreateParty(partyDto, user);
         setReference.accept(reference);
-        Party party = mapper.convertToEntity(partyDto);
+
+        // but persist information supplied by the DTO instead of up to date information we retrieved in the
+        // reference
+        Party party = mapper.snapshotToEntity(partyDto);
+        party.setUser(user);
         takeSnapshot.accept(party);
     }
 }

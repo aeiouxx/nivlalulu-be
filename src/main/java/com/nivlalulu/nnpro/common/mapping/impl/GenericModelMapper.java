@@ -1,10 +1,7 @@
 package com.nivlalulu.nnpro.common.mapping.impl;
 
 import com.nivlalulu.nnpro.common.mapping.IGenericMapper;
-import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
-import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
-import com.nivlalulu.nnpro.dto.v1.PartyDto;
-import com.nivlalulu.nnpro.dto.v1.UserDto;
+import com.nivlalulu.nnpro.dto.v1.*;
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.InvoiceItem;
 import com.nivlalulu.nnpro.model.Party;
@@ -68,4 +65,12 @@ public class GenericModelMapper implements IGenericMapper {
         return modelMapper.map(partyDto, Party.class);
     }
 
+
+    public Party snapshotToEntity(PartySnapshotDto snapshot) {
+        return modelMapper.map(snapshot, Party.class);
+    }
+
+    public PartySnapshotDto entityToSnapshot(Party party) {
+        return modelMapper.map(party, PartySnapshotDto.class);
+    }
 }

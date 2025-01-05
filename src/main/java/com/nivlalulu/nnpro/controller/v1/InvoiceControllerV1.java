@@ -2,9 +2,7 @@ package com.nivlalulu.nnpro.controller.v1;
 
 import com.nivlalulu.nnpro.common.controller.validation.OnCreate;
 import com.nivlalulu.nnpro.common.controller.validation.OnUpdate;
-import com.nivlalulu.nnpro.security.ownership.IsOwnedByUser;
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
-import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.User;
 import com.nivlalulu.nnpro.service.IInvoiceService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -66,7 +63,6 @@ public class InvoiceControllerV1 {
             description = "Returns the invoice with the specified customer facing identifier."
     )
     @GetMapping("/{id}")
-    @IsOwnedByUser(entityClass = Invoice.class)
     public InvoiceDto getInvoice(
             @AuthenticationPrincipal User user,
             @PathVariable UUID id) {
@@ -104,21 +100,19 @@ public class InvoiceControllerV1 {
             summary = "Update an invoice",
             description = "Updates an existing invoice."
     )
-    @IsOwnedByUser(entityClass = Invoice.class)
     @PutMapping("/{id}")
     public InvoiceDto updateInvoice(
             @AuthenticationPrincipal User user,
             @PathVariable UUID id,
             @Validated(OnUpdate.class) @RequestBody InvoiceDto invoiceDto) {
         log.info("User '{}' requested to update invoice with id: {}", user.getUsername(), id);
-        return invoiceService.updateInvoice(invoiceDto, user);
+        return invoiceService.updateInvoice(id, invoiceDto, user);
     }
 
     @Operation(
             summary = "Delete an invoice",
             description = "Deletes an existing invoice."
     )
-    @IsOwnedByUser(entityClass = Invoice.class)
     @DeleteMapping("/{id}")
     public InvoiceDto deleteInvoice(
             @AuthenticationPrincipal User user,
