@@ -1,11 +1,11 @@
 package com.nivlalulu.nnpro.configuration;
 
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
-import com.nivlalulu.nnpro.dto.v1.InvoiceItemDto;
 import com.nivlalulu.nnpro.dto.v1.PartySnapshotDto;
 import com.nivlalulu.nnpro.model.Invoice;
-import com.nivlalulu.nnpro.model.InvoiceItem;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,63 +15,82 @@ public class ModelMapperConfiguration {
     @Bean
     public ModelMapper modelMapper(){
         var mapper = new ModelMapper();
-        MapInvoiceItemToInvoiceItemDto(mapper);
         MapInvoiceToInvoiceDto(mapper);
         MapInvoiceDtoToInvoice(mapper);
         return mapper;
     }
 
-    private static void MapInvoiceItemToInvoiceItemDto(ModelMapper mapper) {
-        mapper.typeMap(InvoiceItem.class, InvoiceItemDto.class);
-    }
-
     private static void MapInvoiceToInvoiceDto(ModelMapper mapper) {
-        mapper.typeMap(Invoice.class, InvoiceDto.class).addMappings(m -> {
+        TypeMap<Invoice, InvoiceDto> typeMap = mapper.emptyTypeMap(Invoice.class, InvoiceDto.class);
+        typeMap.addMappings(m -> {
             m.map(Invoice::getItems, InvoiceDto::setItems);
-            m.map(src -> new PartySnapshotDto(
-                    src.getSupplierName(),
-                    src.getSupplierAddress(),
-                    src.getSupplierCountry(),
-                    src.getSupplierIcTax(),
-                    src.getSupplierDicTax(),
-                    src.getSupplierTelephone(),
-                    src.getSupplierEmail()
-            ), InvoiceDto::setSupplier);
-            m.map(src -> new PartySnapshotDto(
-                    src.getCustomerName(),
-                    src.getCustomerAddress(),
-                    src.getCustomerCountry(),
-                    src.getCustomerIcTax(),
-                    src.getCustomerDicTax(),
+            m.skip(InvoiceDto::setSupplier);
+            m.skip(InvoiceDto::setCustomer);
+        });
+        typeMap.implicitMappings();
+        typeMap.setPostConverter(ctx -> {
+            Invoice source = ctx.getSource();
+            InvoiceDto destination = ctx.getDestination();
+
+            PartySnapshotDto supplier = new PartySnapshotDto(
+                    source.getSupplierName(),
+                    source.getSupplierAddress(),
+                    source.getSupplierCountry(),
+                    source.getSupplierIcTax(),
+                    source.getSupplierDicTax(),
+                    source.getSupplierTelephone(),
+                    source.getSupplierEmail()
+            );
+            destination.setSupplier(supplier);
+
+            PartySnapshotDto customer = new PartySnapshotDto(
+                    source.getCustomerName(),
+                    source.getCustomerAddress(),
+                    source.getCustomerCountry(),
+                    source.getCustomerIcTax(),
+                    source.getCustomerDicTax(),
                     null,
                     null
-            ), InvoiceDto::setCustomer);
+            );
+            destination.setCustomer(customer);
+
+            return destination;
         });
     }
 
     private static void MapInvoiceDtoToInvoice(ModelMapper mapper) {
-        mapper.typeMap(InvoiceDto.class, Invoice.class).addMappings(m -> {
-            m.map(InvoiceDto::getSupplier, (dest, value) -> {
-                if (value instanceof PartySnapshotDto snapshot) {
-                    dest.setSupplierName(snapshot.name());
-                    dest.setSupplierAddress(snapshot.address());
-                    dest.setSupplierCountry(snapshot.country());
-                    dest.setSupplierIcTax(snapshot.icTax());
-                    dest.setSupplierDicTax(snapshot.dicTax());
-                    dest.setSupplierTelephone(snapshot.telephone());
-                    dest.setSupplierEmail(snapshot.email());
-                }
-            });
-            m.map(InvoiceDto::getCustomer, (dest, value) -> {
-                if (value instanceof PartySnapshotDto snapshot) {
-                    dest.setCustomerName(snapshot.name());
-                    dest.setCustomerAddress(snapshot.address());
-                    dest.setCustomerCountry(snapshot.country());
-                    dest.setCustomerIcTax(snapshot.icTax());
-                    dest.setCustomerDicTax(snapshot.dicTax());
-                }
-            });
-        });
+       TypeMap<InvoiceDto, Invoice> typeMap = mapper.emptyTypeMap(InvoiceDto.class, Invoice.class);
+       typeMap.addMappings(m -> {
+           m.skip(Invoice::setSupplier);
+           m.skip(Invoice::setCustomer);
+       });
+       typeMap.implicitMappings();
+       typeMap.setPostConverter(ctx -> {
+           InvoiceDto source = ctx.getSource();
+           Invoice destination = ctx.getDestination();
+
+           PartySnapshotDto supplier = source.getSupplier();
+           if (supplier != null) {
+               destination.setSupplierName(supplier.getName());
+               destination.setSupplierAddress(supplier.getAddress());
+               destination.setSupplierCountry(supplier.getCountry());
+               destination.setSupplierIcTax(supplier.getIcTax());
+               destination.setSupplierDicTax(supplier.getDicTax());
+               destination.setSupplierTelephone(supplier.getTelephone());
+               destination.setSupplierEmail(supplier.getEmail());
+           }
+
+           PartySnapshotDto customer = source.getCustomer();
+           if (customer != null) {
+               destination.setCustomerName(customer.getName());
+               destination.setCustomerAddress(customer.getAddress());
+               destination.setCustomerCountry(customer.getCountry());
+               destination.setCustomerIcTax(customer.getIcTax());
+               destination.setCustomerDicTax(customer.getDicTax());
+           }
+
+           return destination;
+       });
     }
 
 }

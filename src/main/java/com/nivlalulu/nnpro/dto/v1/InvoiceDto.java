@@ -1,5 +1,6 @@
 package com.nivlalulu.nnpro.dto.v1;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nivlalulu.nnpro.common.controller.validation.OnCreate;
 import com.nivlalulu.nnpro.common.controller.validation.OnUpdate;
@@ -12,7 +13,9 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -40,7 +43,7 @@ public class InvoiceDto {
 
     @NotNull(groups = OnCreate.class, message = "Products cannot be null")
     @NotEmpty(groups = OnCreate.class, message = "Products cannot be empty")
-    private List<@Valid InvoiceItemDto> items;
+    private Collection<@Valid InvoiceItemDto> items;
 
     @NotNull(groups = OnCreate.class, message = "Payment method cannot be null")
     @Schema(description = "Payment method", example = "P")

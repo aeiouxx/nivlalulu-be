@@ -14,7 +14,7 @@ public @interface IsOwnedByUser {
 
 
     /**
-     * The name of the method parameter that has the resource ID,
+     * The getName of the method parameter that has the resource ID,
      * typically "id" if you have @PathVariable UUID id.
      */
     String resourceIdParam() default "id";

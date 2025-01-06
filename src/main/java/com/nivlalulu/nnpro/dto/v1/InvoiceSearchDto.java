@@ -8,6 +8,7 @@ import com.nivlalulu.nnpro.specification.InvoiceSpecification;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.web.bind.annotation.BindParam;
 
 import java.time.Instant;
 import java.util.List;
@@ -63,22 +64,22 @@ public class InvoiceSearchDto {
     @Schema(
             description = "Variable symbol",
             example = "123456")
-    @JsonProperty("variable_symbol")
+    @BindParam("variable_symbol")
     private String variableSymbol;
 
     @Schema(
             description = "Search for invoices with this supplier name",
             example = "John Doe")
-    @JsonProperty("supplier_name")
+    @BindParam("supplier_name")
     private String supplierName;
 
     @Schema(
             description = "Search for invoices with this customer name",
             example = "Customer One")
-    @JsonProperty("customer_name")
+    @BindParam("customer_name")
     private String customerName;
 
-    @JsonProperty("payment_method")
+    @BindParam("payment_method")
     @Schema(description = "Payment method", example = "P")
     private PaymentMethod paymentMethod;
 
@@ -87,7 +88,7 @@ public class InvoiceSearchDto {
                     "if null and `created_at_end` is specified," +
                     "will match all invoices created before the end date (inclusive)",
             example = "2021-01-01T00:00:00Z")
-    @JsonProperty("created_at_start")
+    @BindParam("created_at_start")
     private Instant createdAtStart;
 
     @Schema(
@@ -95,7 +96,7 @@ public class InvoiceSearchDto {
                     "if null and `created_at_start` is specified," +
                     "will match all invoices created after the start date (inclusive)",
             example = "2021-01-01T00:00:00Z")
-    @JsonProperty("created_at_end")
+    @BindParam("created_at_end")
     private Instant createdAtEnd;
 
 
@@ -104,7 +105,7 @@ public class InvoiceSearchDto {
                     "if null and `expires_at_end` is specified," +
                     "will match all invoices expiring before the end date (inclusive)",
             example = "2021-01-01T00:00:00Z")
-    @JsonProperty("expires_at_start")
+    @BindParam("expires_at_start")
     private Instant expiresAtStart;
 
     @Schema(
@@ -112,7 +113,7 @@ public class InvoiceSearchDto {
                     "if null and `expires_at_start` is specified," +
                     "will match all invoices expiring after the start date (inclusive)",
             example = "2021-01-01T00:00:00Z")
-    @JsonProperty("expires_at_end")
+    @BindParam("expires_at_end")
     private Instant expiresAtEnd;
 
     @Schema(
@@ -123,6 +124,6 @@ public class InvoiceSearchDto {
     @Schema(
             description = "Search for invoices with items containing any of these names, meaning a single match suffices",
             example = "Product One")
-    @JsonProperty("item_names")
+    @BindParam("item_names")
     private List<String> itemNames;
 }

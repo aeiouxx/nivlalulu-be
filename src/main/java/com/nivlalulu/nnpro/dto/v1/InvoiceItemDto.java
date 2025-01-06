@@ -49,6 +49,7 @@ public class InvoiceItemDto {
     private BigDecimal totalPrice;
 
     // Custom validation logic
+    @JsonIgnore
     @AssertTrue(message = "Raw price plus tax must match total price")
     public boolean isTotalValid() {
         return unitPrice != null && taxPrice != null && totalPrice != null

@@ -5,7 +5,6 @@ import com.nivlalulu.nnpro.common.mapping.impl.GenericModelMapper;
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
 import com.nivlalulu.nnpro.dto.v1.InvoiceSearchDto;
 import com.nivlalulu.nnpro.dto.v1.PartySnapshotDto;
-import com.nivlalulu.nnpro.enums.PaymentMethod;
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.InvoiceItem;
 import com.nivlalulu.nnpro.model.Party;
@@ -14,7 +13,6 @@ import com.nivlalulu.nnpro.repository.IInvoiceRepository;
 import com.nivlalulu.nnpro.repository.IPartyRepository;
 import com.nivlalulu.nnpro.security.ownership.IsOwnedByUser;
 import com.nivlalulu.nnpro.service.IInvoiceService;
-import com.nivlalulu.nnpro.specification.InvoiceSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,7 +23,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -44,7 +41,7 @@ public class InvoiceService implements IInvoiceService {
 
 
     @Override
-    @Transactional(readOnly = true)
+
     public Page<InvoiceDto> search(User user, InvoiceSearchDto criteria, Pageable pageable, Sort sort) {
         Specification<Invoice> specification = criteria.toSpecification(user);
 
@@ -164,11 +161,11 @@ public class InvoiceService implements IInvoiceService {
 
     private Party getCreateParty(PartySnapshotDto party, User user) {
         Optional<Party> found = Optional.empty();
-        if (party.icTax() != null) {
-            found = partyRepository.findByIcTaxAndUser(party.icTax(), user);
+        if (party.getIcTax() != null) {
+            found = partyRepository.findByIcTaxAndUser(party.getIcTax(), user);
         }
-        else if (party.dicTax() != null) {
-            found = partyRepository.findByDicTaxAndUser(party.dicTax(), user);
+        else if (party.getDicTax() != null) {
+            found = partyRepository.findByDicTaxAndUser(party.getDicTax(), user);
         }
         return found.orElseGet(() -> {
             var entity = mapper.snapshotToEntity(party);

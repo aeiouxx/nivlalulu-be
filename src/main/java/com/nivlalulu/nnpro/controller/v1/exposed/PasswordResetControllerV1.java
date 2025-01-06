@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class PasswordResetControllerV1 {
     private final IUserCredentialsService userCredentialsService;
-    private final IGenericMapper mapper;
 
    @Operation(
         summary = "Create Password Reset Token",
