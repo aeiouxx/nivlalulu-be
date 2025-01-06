@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - JwtTokenIntegrationTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>JwtTokenIntegrationTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/com.nivlalulu.nnpro.service.impl.html">com.nivlalulu.nnpro.service.impl</a> &gt; JwtTokenIntegrationTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">2</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">0.373s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">testRefreshTokenInvalid()</td>
+<td class="success">0.101s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testRefreshTokenSuccess()</td>
+<td class="success">0.272s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>2025-01-06T03:39:08.666Z  INFO 2009 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.nivlalulu.nnpro.service.impl.JwtTokenIntegrationTest]: JwtTokenIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2025-01-06T03:39:08.668Z  INFO 2009 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.nivlalulu.nnpro.Application for test class com.nivlalulu.nnpro.service.impl.JwtTokenIntegrationTest
+2025-01-06T03:39:08.671Z  INFO 2009 --- [    Test worker] tc.postgres:latest                       : Creating container for image: postgres:latest
+2025-01-06T03:39:08.698Z  INFO 2009 --- [    Test worker] tc.postgres:latest                       : Container postgres:latest is starting: b3bcb8e36bec31856663d55344cbf8565be8da38f9bb3eb85f5e65ba46252c8a
+2025-01-06T03:39:09.977Z  INFO 2009 --- [    Test worker] tc.postgres:latest                       : Container postgres:latest started in PT1.306645685S
+2025-01-06T03:39:09.978Z  INFO 2009 --- [    Test worker] tc.postgres:latest                       : Container is started (JDBC URL: jdbc:postgresql://localhost:32770/test_db?loggerLevel=OFF)
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.4)
+
+2025-01-06T03:39:10.006Z  INFO 2009 --- [    Test worker] c.n.n.s.impl.JwtTokenIntegrationTest     : Starting JwtTokenIntegrationTest using Java 21.0.5 with PID 2009 (started by runner in /home/runner/work/nivlalulu-be/nivlalulu-be)
+2025-01-06T03:39:10.006Z  INFO 2009 --- [    Test worker] c.n.n.s.impl.JwtTokenIntegrationTest     : The following 1 profile is active: &quot;test&quot;
+2025-01-06T03:39:10.253Z  INFO 2009 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-01-06T03:39:10.254Z  INFO 2009 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-01-06T03:39:10.274Z  INFO 2009 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 20 ms. Found 6 JPA repository interfaces.
+2025-01-06T03:39:10.279Z  INFO 2009 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-01-06T03:39:10.279Z  INFO 2009 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-01-06T03:39:10.285Z  INFO 2009 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.nivlalulu.nnpro.repository.IInvoiceItemRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-01-06T03:39:10.286Z  INFO 2009 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.nivlalulu.nnpro.repository.IInvoiceRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-01-06T03:39:10.286Z  INFO 2009 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.nivlalulu.nnpro.repository.IPartyRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-01-06T03:39:10.287Z  INFO 2009 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.nivlalulu.nnpro.repository.IPasswordResetTokenRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-01-06T03:39:10.287Z  INFO 2009 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.nivlalulu.nnpro.repository.IRefreshTokenRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-01-06T03:39:10.287Z  INFO 2009 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.nivlalulu.nnpro.repository.IUserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-01-06T03:39:10.287Z  INFO 2009 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 7 ms. Found 0 Redis repository interfaces.
+2025-01-06T03:39:10.428Z  INFO 2009 --- [    Test worker] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 0 (http)
+2025-01-06T03:39:10.429Z  INFO 2009 --- [    Test worker] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-01-06T03:39:10.429Z  INFO 2009 --- [    Test worker] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-01-06T03:39:10.449Z  INFO 2009 --- [    Test worker] o.a.c.c.C.[Tomcat-1].[localhost].[/api]  : Initializing Spring embedded WebApplicationContext
+2025-01-06T03:39:10.449Z  INFO 2009 --- [    Test worker] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 440 ms
+2025-01-06T03:39:10.507Z  INFO 2009 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2025-01-06T03:39:10.531Z  INFO 2009 --- [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@2863bf74
+2025-01-06T03:39:10.531Z  INFO 2009 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2025-01-06T03:39:10.540Z  INFO 2009 --- [    Test worker] liquibase.database                       : Set default schema name to public
+2025-01-06T03:39:10.665Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/2024/12/12-02-add-refresh-tokens.xml
+2025-01-06T03:39:10.703Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/2024/12/14-01-add-password-reset-token.xml
+2025-01-06T03:39:10.738Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/2024/12/15-01-add-parties.xml
+2025-01-06T03:39:10.804Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/2024/12/15-01-invoices.xml
+2025-01-06T03:39:10.873Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/2025/01/02-01-add-invoice-items.xml
+2025-01-06T03:39:10.902Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Creating database history table with name: public.databasechangelog
+2025-01-06T03:39:10.909Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Reading from public.databasechangelog
+2025-01-06T03:39:10.952Z  INFO 2009 --- [    Test worker] liquibase.lockservice                    : Successfully acquired change log lock
+2025-01-06T03:39:10.953Z  INFO 2009 --- [    Test worker] liquibase.command                        : Using deploymentId: 6134750953
+2025-01-06T03:39:10.954Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Reading from public.databasechangelog
+Running Changeset: db/changelog/2024/db.changelog-initial.xml::1732762339778-1::liquibase (generated)
+2025-01-06T03:39:11.045Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Table users created
+2025-01-06T03:39:11.045Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/db.changelog-initial.xml::1732762339778-1::liquibase (generated) ran successfully in 20ms
+Running Changeset: db/changelog/2024/db.changelog-initial.xml::1732762339778-2::liquibase (generated)
+2025-01-06T03:39:11.055Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Unique constraint added to users(email)
+2025-01-06T03:39:11.057Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/db.changelog-initial.xml::1732762339778-2::liquibase (generated) ran successfully in 5ms
+Running Changeset: db/changelog/2024/db.changelog-initial.xml::1732762339778-3::liquibase (generated)
+2025-01-06T03:39:11.064Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Unique constraint added to users(username)
+2025-01-06T03:39:11.066Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/db.changelog-initial.xml::1732762339778-3::liquibase (generated) ran successfully in 4ms
+Running Changeset: db/changelog/2024/12/12-02-add-refresh-tokens.xml::create-refresh-tokens::aeiox
+2025-01-06T03:39:11.090Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Table refresh_tokens created
+2025-01-06T03:39:11.092Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Unique constraint added to refresh_tokens(token_id)
+2025-01-06T03:39:11.111Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Foreign key constraint added to refresh_tokens (user_id)
+2025-01-06T03:39:11.113Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/12-02-add-refresh-tokens.xml::create-refresh-tokens::aeiox ran successfully in 35ms
+Running Changeset: db/changelog/2024/12/14-01-add-password-reset-token.xml::add-password-reset-token::aeiox
+2025-01-06T03:39:11.133Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Table password_reset_token created
+2025-01-06T03:39:11.135Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Unique constraint added to password_reset_token(token_hash)
+2025-01-06T03:39:11.137Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Unique constraint added to password_reset_token(user_id)
+2025-01-06T03:39:11.141Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Foreign key constraint added to password_reset_token (user_id)
+2025-01-06T03:39:11.142Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/14-01-add-password-reset-token.xml::add-password-reset-token::aeiox ran successfully in 14ms
+Running Changeset: db/changelog/2024/12/15-01-add-parties.xml::parties-table-create::aeiox
+2025-01-06T03:39:11.156Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Table parties created
+2025-01-06T03:39:11.157Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/15-01-add-parties.xml::parties-table-create::aeiox ran successfully in 7ms
+Running Changeset: db/changelog/2024/12/15-01-add-parties.xml::parties-company-id-uc::aeiox
+2025-01-06T03:39:11.162Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Unique constraint added to parties(ic_tax)
+2025-01-06T03:39:11.163Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/15-01-add-parties.xml::parties-company-id-uc::aeiox ran successfully in 3ms
+Running Changeset: db/changelog/2024/12/15-01-add-parties.xml::parties-tax-id-uc::aeiox
+2025-01-06T03:39:11.167Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Unique constraint added to parties(dic_tax)
+2025-01-06T03:39:11.168Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/15-01-add-parties.xml::parties-tax-id-uc::aeiox ran successfully in 2ms
+Running Changeset: db/changelog/2024/12/15-01-add-parties.xml::parties-user-fk::aeiox
+2025-01-06T03:39:11.174Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Foreign key constraint added to parties (user_id)
+2025-01-06T03:39:11.174Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/15-01-add-parties.xml::parties-user-fk::aeiox ran successfully in 3ms
+Running Changeset: db/changelog/2024/12/15-01-invoices.xml::invoices-create-table::aeiox
+2025-01-06T03:39:11.184Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Table invoices created
+2025-01-06T03:39:11.185Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/15-01-invoices.xml::invoices-create-table::aeiox ran successfully in 6ms
+Running Changeset: db/changelog/2024/12/15-01-invoices.xml::invoices-customer-fk::aeiox
+2025-01-06T03:39:11.191Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Foreign key constraint added to invoices (customer_id)
+2025-01-06T03:39:11.191Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/15-01-invoices.xml::invoices-customer-fk::aeiox ran successfully in 3ms
+Running Changeset: db/changelog/2024/12/15-01-invoices.xml::invoices-supplier-fk::aeiox
+2025-01-06T03:39:11.197Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Foreign key constraint added to invoices (supplier_id)
+2025-01-06T03:39:11.198Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/15-01-invoices.xml::invoices-supplier-fk::aeiox ran successfully in 2ms
+Running Changeset: db/changelog/2024/12/15-01-invoices.xml::invoices-user-fk::aeiox
+2025-01-06T03:39:11.203Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Foreign key constraint added to invoices (user_id)
+2025-01-06T03:39:11.204Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/15-01-invoices.xml::invoices-user-fk::aeiox ran successfully in 3ms
+Running Changeset: db/changelog/2025/01/02-01-add-invoice-items.xml::add-invoice-items::aeiouxx
+2025-01-06T03:39:11.212Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Table invoice_items created
+2025-01-06T03:39:11.214Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : Foreign key constraint added to invoice_items (invoice_id)
+2025-01-06T03:39:11.214Z  INFO 2009 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2025/01/02-01-add-invoice-items.xml::add-invoice-items::aeiouxx ran successfully in 6ms
+2025-01-06T03:39:11.216Z  INFO 2009 --- [    Test worker] liquibase.util                           : UPDATE SUMMARY
+2025-01-06T03:39:11.217Z  INFO 2009 --- [    Test worker] liquibase.util                           : Run:                         14
+2025-01-06T03:39:11.217Z  INFO 2009 --- [    Test worker] liquibase.util                           : Previously run:               0
+2025-01-06T03:39:11.217Z  INFO 2009 --- [    Test worker] liquibase.util                           : Filtered out:                 0
+2025-01-06T03:39:11.217Z  INFO 2009 --- [    Test worker] liquibase.util                           : -------------------------------
+2025-01-06T03:39:11.217Z  INFO 2009 --- [    Test worker] liquibase.util                           : Total change sets:           14
+2025-01-06T03:39:11.217Z  INFO 2009 --- [    Test worker] liquibase.util                           : Update summary generated
+2025-01-06T03:39:11.217Z  INFO 2009 --- [    Test worker] liquibase.command                        : Update command completed successfully.
+Liquibase: Update has been successful. Rows affected: 14
+2025-01-06T03:39:11.219Z  INFO 2009 --- [    Test worker] liquibase.lockservice                    : Successfully released change log lock
+2025-01-06T03:39:11.220Z  INFO 2009 --- [    Test worker] liquibase.command                        : Command execution complete
+2025-01-06T03:39:11.242Z  INFO 2009 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-01-06T03:39:11.244Z  INFO 2009 --- [    Test worker] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-01-06T03:39:11.248Z  INFO 2009 --- [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-01-06T03:39:11.437Z  INFO 2009 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-01-06T03:39:11.437Z  INFO 2009 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+DEBUG: setDebug: Jakarta Mail version 2.0.1
+2025-01-06T03:39:11.870Z  WARN 2009 --- [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-01-06T03:39:11.973Z  INFO 2009 --- [    Test worker] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@5e5d887c, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@25b6f6ab, org.springframework.security.web.context.SecurityContextHolderFilter@7f12ed44, org.springframework.security.web.header.HeaderWriterFilter@4433bb94, org.springframework.web.filter.CorsFilter@5c308ed1, org.springframework.security.web.authentication.logout.LogoutFilter@267bad79, com.nivlalulu.nnpro.security.JwtAuthenticationFilter@2c0d9366, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@2e8fc0a1, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@773921ff, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@5c488f98, org.springframework.security.web.session.SessionManagementFilter@1f44d5e0, org.springframework.security.web.access.ExceptionTranslationFilter@287f2669, org.springframework.security.web.access.intercept.AuthorizationFilter@48291a3d]
+2025-01-06T03:39:12.253Z  INFO 2009 --- [    Test worker] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 34079 (http) with context path '/api'
+2025-01-06T03:39:12.257Z  INFO 2009 --- [    Test worker] c.n.n.s.impl.JwtTokenIntegrationTest     : Started JwtTokenIntegrationTest in 2.277 seconds (process running for 31.545)
+2025-01-06T03:39:12.350Z  INFO 2009 --- [o-auto-2-exec-1] o.a.c.c.C.[Tomcat-1].[localhost].[/api]  : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-01-06T03:39:12.350Z  INFO 2009 --- [o-auto-2-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-01-06T03:39:12.351Z  INFO 2009 --- [o-auto-2-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-01-06T03:39:12.563Z  INFO 2009 --- [o-auto-2-exec-3] o.apache.tomcat.util.http.parser.Cookie  : A cookie header was received [Expires=Mon, 13 Jan 2025 03:39:12 GMT;] that contained an invalid cookie. That cookie will be ignored.
+ Note: further occurrences of this error will be logged at DEBUG level.
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 8.9</a> at Jan 6, 2025, 3:39:17 AM</p>
+</div>
+</div>
+</body>
+</html>

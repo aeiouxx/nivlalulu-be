@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GenericModelMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.common.mapping.impl</a> &gt; <span class="el_source">GenericModelMapper.java</span></div><h1>GenericModelMapper.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.common.mapping.impl;
+
+import com.nivlalulu.nnpro.common.mapping.IGenericMapper;
+import com.nivlalulu.nnpro.dto.v1.*;
+import com.nivlalulu.nnpro.model.Invoice;
+import com.nivlalulu.nnpro.model.InvoiceItem;
+import com.nivlalulu.nnpro.model.Party;
+import com.nivlalulu.nnpro.model.User;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Component;
+
+@Component
+<span class="fc" id="L14">@RequiredArgsConstructor</span>
+public class GenericModelMapper implements IGenericMapper {
+    private final ModelMapper modelMapper;
+    // Sadly, because we don't have reified generics in java we can't do cool stuff
+    // like this: collection.stream().map(mapper::map&lt;DtoType, EntityType&gt;)
+    // instead we have to use: collection.stream().map(item -&gt; mapper.map(item, EntityType.class))
+    // because the infered type of the lambda is Object and not the actual type of the item Q_Q
+    // and obviously polluting the interface with a bunch of methods like mapProductToDto, mapUserToDto, etc
+    // is garbage
+
+    /**
+     * Maps a source object to a destination object
+     *
+     * @param from
+     * @param toClass
+     * @return TTo
+     */
+    @Override
+    public &lt;TFrom, TTo&gt; TTo map(TFrom from, Class&lt;TTo&gt; toClass) {
+<span class="fc" id="L33">        return modelMapper.map(from, toClass);</span>
+    }
+
+    public UserDto convertToDto(User user) {
+<span class="nc" id="L37">        return map(user, UserDto.class);</span>
+    }
+
+    public InvoiceDto convertToDto(Invoice invoice) {
+<span class="fc" id="L41">        return map(invoice, InvoiceDto.class);</span>
+    }
+
+    public Invoice convertToEntity(InvoiceDto invoiceDto) {
+<span class="fc" id="L45">        return map(invoiceDto, Invoice.class);</span>
+    }
+
+    public User convertToEntity(UserDto userDto) {
+<span class="nc" id="L49">        return map(userDto, User.class);</span>
+    }
+
+    public InvoiceItemDto convertToDto(InvoiceItem invoiceItem) {
+<span class="nc" id="L53">        return modelMapper.map(invoiceItem, InvoiceItemDto.class);</span>
+    }
+
+    public PartyDto convertToDto(Party party) {
+<span class="nc" id="L57">        return modelMapper.map(party, PartyDto.class);</span>
+    }
+
+    public InvoiceItem convertToEntity(InvoiceItemDto invoiceItemDto) {
+<span class="nc" id="L61">        return modelMapper.map(invoiceItemDto, InvoiceItem.class);</span>
+    }
+
+    public Party convertToEntity(PartyDto partyDto) {
+<span class="nc" id="L65">        return modelMapper.map(partyDto, Party.class);</span>
+    }
+
+
+    public Party snapshotToEntity(PartySnapshotDto snapshot) {
+<span class="nc" id="L70">        return modelMapper.map(snapshot, Party.class);</span>
+    }
+
+    public PartySnapshotDto entityToSnapshot(Party party) {
+<span class="nc" id="L74">        return modelMapper.map(party, PartySnapshotDto.class);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

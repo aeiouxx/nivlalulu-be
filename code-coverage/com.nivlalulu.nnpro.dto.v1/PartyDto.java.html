@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PartyDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.dto.v1</a> &gt; <span class="el_source">PartyDto.java</span></div><h1>PartyDto.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.dto.v1;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.AssertTrue;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.UUID;
+
+<span class="nc" id="L13">@AllArgsConstructor</span>
+<span class="nc" id="L14">@NoArgsConstructor</span>
+<span class="nc bnc" id="L15" title="All 70 branches missed.">@Data</span>
+public class PartyDto {
+    @JsonIgnore
+<span class="nc" id="L18">    private UUID id;</span>
+
+    @Schema(description = &quot;Organization or person name&quot;, example = &quot;Placeholder s.r.o.&quot;)
+<span class="nc" id="L21">    private String name;</span>
+
+    @Schema(description = &quot;Address&quot;, example = &quot;123 Main St.&quot;)
+<span class="nc" id="L24">    private String address;</span>
+
+    @Schema(description = &quot;City&quot;, example = &quot;New York&quot;)
+<span class="nc" id="L27">    private String country;</span>
+
+    @JsonProperty(&quot;ic_tax&quot;)
+    @Schema(description = &quot;IC number&quot;, example = &quot;123456&quot;)
+<span class="nc" id="L31">    private String icTax;</span>
+
+    @JsonProperty(&quot;dic_tax&quot;)
+    @Schema(description = &quot;DIC number&quot;, example = &quot;123456&quot;)
+<span class="nc" id="L35">    private String dicTax;</span>
+
+    @Schema(description = &quot;Telephone number&quot;, example = &quot;+1234567890&quot;)
+<span class="nc" id="L38">    private String telephone;</span>
+
+    @Schema(description = &quot;Email address&quot;, example = &quot;nivlalulu@nivlalulu.cz&quot;)
+<span class="nc" id="L41">    private String email;</span>
+
+    @AssertTrue(message = &quot;Only one of IC or DIC number can be provided&quot;)
+    private boolean isIcOrDicProvided() {
+<span class="nc bnc" id="L45" title="All 6 branches missed.">        return (icTax == null) != (dicTax == null);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

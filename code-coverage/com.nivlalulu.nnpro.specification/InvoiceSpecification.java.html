@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InvoiceSpecification.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.specification</a> &gt; <span class="el_source">InvoiceSpecification.java</span></div><h1>InvoiceSpecification.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.specification;
+
+import com.nivlalulu.nnpro.enums.PaymentMethod;
+import com.nivlalulu.nnpro.model.Invoice;
+import jakarta.persistence.criteria.Predicate;
+import org.springframework.data.jpa.domain.Specification;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
+
+<span class="nc" id="L12">public class InvoiceSpecification {</span>
+
+    public static Specification&lt;Invoice&gt; hasId(UUID id) {
+<span class="nc" id="L15">        return (root, query, criteriaBuilder) -&gt; criteriaBuilder.equal(root.get(&quot;id&quot;), id);</span>
+    }
+
+    public static Specification&lt;Invoice&gt; hasVariableSymbol(String variableSymbol) {
+<span class="nc" id="L19">        return (root, query, criteriaBuilder) -&gt; criteriaBuilder.equal(root.get(&quot;variableSymbol&quot;), variableSymbol);</span>
+    }
+
+    public static Specification&lt;Invoice&gt; hasSupplierNameLike(String supplierName) {
+<span class="nc" id="L23">        return (r, q, c) -&gt; {</span>
+<span class="nc" id="L24">            return c.like(c.lower(r.get(&quot;supplierName&quot;)), &quot;%&quot; + supplierName.toLowerCase() + &quot;%&quot;);</span>
+        };
+    }
+
+    public static Specification&lt;Invoice&gt; hasCustomerNameLike(String customerName) {
+<span class="nc" id="L29">        return (r, q, c) -&gt; {</span>
+<span class="nc" id="L30">            return c.like(c.lower(r.get(&quot;customerName&quot;)), &quot;%&quot; + customerName.toLowerCase() + &quot;%&quot;);</span>
+        };
+    }
+
+    public static Specification&lt;Invoice&gt; hasPaymentMethod(PaymentMethod paymentMethod) {
+<span class="nc" id="L35">        return (root, query, criteriaBuilder) -&gt; criteriaBuilder.equal(root.get(&quot;paymentMethod&quot;), paymentMethod);</span>
+    }
+
+    /**
+     * Filter invoices by creation date, if the start date is null, it will be ignored.
+     * If the end date is null, it will be ignored.
+     *
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public static Specification&lt;Invoice&gt; createdBetween(Instant startDate, Instant endDate) {
+<span class="nc" id="L47">        return (root, query, criteriaBuilder) -&gt; {</span>
+<span class="nc bnc" id="L48" title="All 4 branches missed.">            if (startDate != null &amp;&amp; endDate != null) {</span>
+<span class="nc" id="L49">                return criteriaBuilder.between(root.get(&quot;createdAt&quot;), startDate, endDate);</span>
+<span class="nc bnc" id="L50" title="All 2 branches missed.">            } else if (startDate != null) {</span>
+<span class="nc" id="L51">                return criteriaBuilder.greaterThanOrEqualTo(root.get(&quot;createdAt&quot;), startDate);</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">            } else if (endDate != null) {</span>
+<span class="nc" id="L53">                return criteriaBuilder.lessThanOrEqualTo(root.get(&quot;createdAt&quot;), endDate);</span>
+            } else {
+<span class="nc" id="L55">                return null;</span>
+            }
+        };
+    }
+
+    /**
+     * Filter invoices by expirtaion date, if the start date is null, it will be ignored.
+     * If the end date is null, it will be ignored.
+     *
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public static Specification&lt;Invoice&gt; expiresBetween(Instant startDate, Instant endDate) {
+<span class="nc" id="L69">        return (root, query, criteriaBuilder) -&gt; {</span>
+<span class="nc bnc" id="L70" title="All 4 branches missed.">            if (startDate != null &amp;&amp; endDate != null) {</span>
+<span class="nc" id="L71">                return criteriaBuilder.between(root.get(&quot;expiresAt&quot;), startDate, endDate);</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">            } else if (startDate != null) {</span>
+<span class="nc" id="L73">                return criteriaBuilder.greaterThanOrEqualTo(root.get(&quot;expiresAt&quot;), startDate);</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">            } else if (endDate != null) {</span>
+<span class="nc" id="L75">                return criteriaBuilder.lessThanOrEqualTo(root.get(&quot;expiresAt&quot;), endDate);</span>
+            } else {
+<span class="nc" id="L77">                return null;</span>
+            }
+        };
+    }
+
+    public static Specification&lt;Invoice&gt; hasContactLike(String contact) {
+<span class="nc" id="L83">        return (r, q, c) -&gt; {</span>
+<span class="nc" id="L84">            return c.like(c.lower(r.get(&quot;contact&quot;)), &quot;%&quot; + contact.toLowerCase() + &quot;%&quot;);</span>
+        };
+    }
+
+    public static Specification&lt;Invoice&gt; anyItemNamesLike(List&lt;String&gt; itemNames) {
+<span class="nc" id="L89">        return (root, query, criteriaBuilder) -&gt; {</span>
+<span class="nc bnc" id="L90" title="All 4 branches missed.">            if (itemNames == null || itemNames.isEmpty()) {</span>
+<span class="nc" id="L91">                return criteriaBuilder.conjunction(); // No filter applied</span>
+            }
+<span class="nc" id="L93">            query.distinct(true);</span>
+
+<span class="nc" id="L95">            var itemJoin = root.join(&quot;items&quot;);</span>
+
+<span class="nc" id="L97">            List&lt;String&gt; lowerCaseItemNames = itemNames.stream()</span>
+<span class="nc" id="L98">                    .map(String::toLowerCase)</span>
+<span class="nc" id="L99">                    .toList();</span>
+
+<span class="nc" id="L101">            return criteriaBuilder.or(</span>
+<span class="nc" id="L102">                    lowerCaseItemNames.stream()</span>
+<span class="nc" id="L103">                            .map(itemName -&gt; criteriaBuilder.like(</span>
+<span class="nc" id="L104">                                    criteriaBuilder.lower(itemJoin.get(&quot;name&quot;)), &quot;%&quot; + itemName + &quot;%&quot;))</span>
+<span class="nc" id="L105">                            .toArray(Predicate[]::new)</span>
+            );
+        };
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
