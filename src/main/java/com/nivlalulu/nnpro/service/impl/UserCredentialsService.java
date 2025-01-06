@@ -30,7 +30,6 @@ public class UserCredentialsService implements IUserCredentialsService {
     private final PasswordEncoder passwordEncoder;
     private final IMailSender mailSender;
     private final IHashProvider hashProvider;
-    private final IGenericMapper mapper;
 
     @Override
     @Transactional
@@ -108,7 +107,7 @@ public class UserCredentialsService implements IUserCredentialsService {
                 .orElseThrow(() -> new NotFoundException("User", "username", username));
         if (userRepository.existsByEmail(newEmail)) {
             log.info("Email {} already exists", newEmail);
-            throw new ConflictException("User", "email", newEmail);
+            throw new ConflictException("User", "getEmail", newEmail);
         }
         user.setEmail(newEmail);
         var saved = userRepository.save(user);

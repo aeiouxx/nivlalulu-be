@@ -12,9 +12,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -28,11 +29,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsService userDetailsService;
     private final IJwtTokenService jwtTokenService;
+    private final PathMatcher pathMatcher = new AntPathMatcher();
 
-    private static final List<String> NO_AUTH_URLS = List.of(
-            "/api/public/"
+    private static final List<String> NO_AUTH_PATHS = List.of(
+            "/api/swagger-ui/**",
+            "/api/v3/api-docs/**",
+            "/api/public/**"
     );
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -41,7 +44,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         var uri = request.getRequestURI();
         if (isExcluded(uri)) {
-            log.debug("Excluded URL: {}", uri);
             filterChain.doFilter(request, response);
             return;
         }
@@ -106,14 +108,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private boolean isExcluded(String uri) {
-        for (String url : NO_AUTH_URLS) {
-            if (uri.contains(url)) {
-                // shouldn't even be getting triggered if the configuration is correct
-                log.error("[WRONG CONFIGURATION!!!] Excluded URL: {}", uri);
-                return true;
-            }
-        }
-        return false;
+        var isExcluded = NO_AUTH_PATHS.stream()
+                        .anyMatch(url -> pathMatcher.match(url, uri));
+        log.debug("Request URI: '{}', excluded: {}", uri, isExcluded);
+        return isExcluded;
     }
 
     private String extractAccessToken(HttpServletRequest request) {

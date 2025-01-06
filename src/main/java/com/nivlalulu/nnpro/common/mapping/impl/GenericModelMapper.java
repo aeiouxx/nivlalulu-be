@@ -1,11 +1,10 @@
 package com.nivlalulu.nnpro.common.mapping.impl;
 
 import com.nivlalulu.nnpro.common.mapping.IGenericMapper;
-import com.nivlalulu.nnpro.dto.UserDto;
-import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
-import com.nivlalulu.nnpro.dto.v1.ProductDto;
+import com.nivlalulu.nnpro.dto.v1.*;
 import com.nivlalulu.nnpro.model.Invoice;
-import com.nivlalulu.nnpro.model.Product;
+import com.nivlalulu.nnpro.model.InvoiceItem;
+import com.nivlalulu.nnpro.model.Party;
 import com.nivlalulu.nnpro.model.User;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -21,8 +20,10 @@ public class GenericModelMapper implements IGenericMapper {
     // because the infered type of the lambda is Object and not the actual type of the item Q_Q
     // and obviously polluting the interface with a bunch of methods like mapProductToDto, mapUserToDto, etc
     // is garbage
+
     /**
      * Maps a source object to a destination object
+     *
      * @param from
      * @param toClass
      * @return TTo
@@ -30,10 +31,6 @@ public class GenericModelMapper implements IGenericMapper {
     @Override
     public <TFrom, TTo> TTo map(TFrom from, Class<TTo> toClass) {
         return modelMapper.map(from, toClass);
-    }
-
-    public ProductDto convertToDto(Product product) {
-        return map(product, ProductDto.class);
     }
 
     public UserDto convertToDto(User user) {
@@ -44,15 +41,36 @@ public class GenericModelMapper implements IGenericMapper {
         return map(invoice, InvoiceDto.class);
     }
 
-    public Product convertToEntity(ProductDto productDto) {
-        return map(productDto, Product.class);
-    }
-
     public Invoice convertToEntity(InvoiceDto invoiceDto) {
         return map(invoiceDto, Invoice.class);
     }
 
     public User convertToEntity(UserDto userDto) {
         return map(userDto, User.class);
+    }
+
+    public InvoiceItemDto convertToDto(InvoiceItem invoiceItem) {
+        return modelMapper.map(invoiceItem, InvoiceItemDto.class);
+    }
+
+    public PartyDto convertToDto(Party party) {
+        return modelMapper.map(party, PartyDto.class);
+    }
+
+    public InvoiceItem convertToEntity(InvoiceItemDto invoiceItemDto) {
+        return modelMapper.map(invoiceItemDto, InvoiceItem.class);
+    }
+
+    public Party convertToEntity(PartyDto partyDto) {
+        return modelMapper.map(partyDto, Party.class);
+    }
+
+
+    public Party snapshotToEntity(PartySnapshotDto snapshot) {
+        return modelMapper.map(snapshot, Party.class);
+    }
+
+    public PartySnapshotDto entityToSnapshot(Party party) {
+        return modelMapper.map(party, PartySnapshotDto.class);
     }
 }

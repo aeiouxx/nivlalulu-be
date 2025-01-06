@@ -1,5 +1,6 @@
 package com.nivlalulu.nnpro.model;
 
+import com.nivlalulu.nnpro.dto.v1.PartySnapshotDto;
 import com.nivlalulu.nnpro.enums.PaymentMethod;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,7 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -16,80 +18,116 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "invoices")
+@NamedEntityGraph(
+        name = Invoice.WITH_ITEMS_AND_PARTIES_GRAPH,
+        attributeNodes = @NamedAttributeNode("items"))
 public class Invoice {
+    public static final String WITH_ITEMS_AND_PARTIES_GRAPH = "invoice-with-items-and-parties";
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false, unique = true)
     private UUID id;
 
-    @Column(nullable = false, unique = true)
-    private UUID invoiceNumber;
+    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private Instant createdAt;
 
-    @Column(nullable = false)
-    private Timestamp created;
-
-    @Column(nullable = false)
-    private Timestamp expiration;
+    @Column(name="expires_at", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private Instant expiresAt;
 
     @Column(nullable = false)
     private PaymentMethod paymentMethod;
 
-    @ManyToMany
-    @JoinTable(
-            name = "invoices_products",
-            joinColumns = @JoinColumn(name = "invoice_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private Set<Product> productList;
+    @Column(nullable = false)
+    private String variableSymbol;
 
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<InvoiceItem> items = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
-    private User customer;
+    private Party customer;
 
-    @Column
-    private String customerOrganizationName;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "supplier_id", referencedColumnName = "id")
+    private Party supplier;
 
-    @Column
+    // This data is denormalized on purpose,
+    // we want to keep a "snapshot" of the supplier / customer information
+    // at the time of the invoice creation.
+    // If we edit the supplier / customer information, the invoice should not be affected (unless we want it to be).
+    // ----------------------------------------------------------------------------------------------------
+    @Column(name = "supplier_name", nullable = false)
+    private String supplierName;
+    @Column(name = "supplier_address", nullable = false)
+    private String supplierAddress;
+    @Column(name = "supplier_country", nullable = false)
+    private String supplierCountry;
+    @Column(name = "supplier_ic_tax", nullable = false)
+    private String supplierIcTax;
+    @Column(name = "supplier_dic_tax", nullable = false)
+    private String supplierDicTax;
+    @Column(name = "supplier_telephone", nullable = false)
+    private String supplierTelephone;
+    @Column(name = "supplier_email", nullable = false)
+    private String supplierEmail;
+
+    @Column(name = "customer_name", nullable = false)
+    private String customerName;
+    @Column(name = "customer_address", nullable = false)
     private String customerAddress;
-
-    @Column
+    @Column(name = "customer_country", nullable = false)
     private String customerCountry;
-
-    @Column
-    private String customerCompanyId;
-
-    @Column
-    private String customerTaxId;
+    @Column(name = "customer_ic_tax", nullable = false)
+    private String customerIcTax;
+    @Column(name = "customer_dic_tax", nullable = false)
+    private String customerDicTax;
+    // ----------------------------------------------------------------------------------------------------
 
     @ManyToOne
-    @JoinColumn(name = "supplier_id", referencedColumnName = "id")
-    private User supplier;
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
-    @Column
-    private String supplierOrganizationName;
+    @Column(name = "contact")
+    private String contact;
 
-    @Column
-    private String supplierAddress;
-
-    @Column
-    private String supplierCountry;
-
-    @Column
-    private String contactPerson;
-
-    @Column
-    private String supplierCompanyId;
-
-    @Column
-    private String supplierTaxId;
-
-    public Invoice(Timestamp created, Timestamp expiration, PaymentMethod paymentMethod, Set<Product> productList, User customer, User supplier) {
-        this.created = created;
-        this.expiration = expiration;
+    public Invoice(Instant created,
+                   Instant expiration,
+                   PaymentMethod paymentMethod,
+                   String variableSymbol,
+                   Set<InvoiceItem> items,
+                   Party customer,
+                   Party supplier,
+                   String contact,
+                   User user) {
+        this.createdAt = created;
+        this.expiresAt = expiration;
         this.paymentMethod = paymentMethod;
-        this.productList = productList;
+        this.variableSymbol = variableSymbol;
+        this.items = items;
         this.customer = customer;
         this.supplier = supplier;
+        this.contact = contact;
+        this.user = user;
+
+        snapshotSupplier(supplier);
+        snapshotCustomer(customer);
+    }
+
+    public void snapshotSupplier(Party supplier) {
+        this.supplierName = supplier.getName();
+        this.supplierAddress = supplier.getAddress();
+        this.supplierCountry = supplier.getCountry();
+        this.supplierIcTax = supplier.getIcTax();
+        this.supplierDicTax = supplier.getDicTax();
+        this.supplierTelephone = supplier.getTelephone();
+        this.supplierEmail = supplier.getEmail();
+    }
+
+    public void snapshotCustomer(Party customer) {
+        this.customerName = customer.getName();
+        this.customerAddress = customer.getAddress();
+        this.customerCountry = customer.getCountry();
+        this.customerIcTax = customer.getIcTax();
+        this.customerDicTax = customer.getDicTax();
     }
 }

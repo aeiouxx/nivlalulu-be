@@ -22,11 +22,14 @@ public class SecurityConfiguration {
     public static final String AUTH_HEADER = "Authorization";
     public static final String AUTH_TOKEN_PREFIX = "Bearer ";
 
-    private static String[] NO_AUTH = new String[] {
+    public static final String[] NO_AUTH_RELATIVE = new String[] {
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/public/**",
     };
+
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -38,7 +41,7 @@ public class SecurityConfiguration {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers(NO_AUTH).permitAll()
+                        auth.requestMatchers(NO_AUTH_RELATIVE).permitAll()
                                 .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

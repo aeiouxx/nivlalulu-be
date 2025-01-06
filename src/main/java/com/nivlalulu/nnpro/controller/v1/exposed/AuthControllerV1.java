@@ -62,7 +62,7 @@ public class AuthControllerV1 {
                     description = "User registration failed because of invalid request format.",
                     responseCode = "400"),
             @ApiResponse(
-                    description = "User with provided username or email already exists.",
+                    description = "User with provided username or getEmail already exists.",
                     responseCode = "409")
     })
     @PostMapping("/register")

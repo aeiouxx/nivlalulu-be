@@ -1,4 +1,4 @@
-package com.nivlalulu.nnpro.controller.v1;
+package com.nivlalulu.nnpro.controller.v1.exposed;
 
 import com.nivlalulu.nnpro.common.mapping.IGenericMapper;
 import com.nivlalulu.nnpro.dto.v1.CreatePasswordResetTokenDto;
@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class PasswordResetControllerV1 {
     private final IUserCredentialsService userCredentialsService;
-    private final IGenericMapper mapper;
 
    @Operation(
         summary = "Create Password Reset Token",

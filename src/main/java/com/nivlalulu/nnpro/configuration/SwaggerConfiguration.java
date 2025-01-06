@@ -23,7 +23,7 @@ public class SwaggerConfiguration {
                 .info(new Info()
                         .title("Nivlalulu API")
                         .description("API for Nivlalulu project")
-                        .version("1.0"))
+                        .version("0.2"))
                 .components(new Components()
                         .addSecuritySchemes(SECURITY_SCHEME_KEY,
                                 new SecurityScheme()

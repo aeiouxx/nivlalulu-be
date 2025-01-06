@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="parties-table-create" author="aeiox" labels="parties">
+        <createTable tableName="parties">
+            <column name="id" type="UUID">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_parties"/>
+            </column>
+
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="address" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="country" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="ic_tax" type="VARCHAR(255)"/>
+
+            <column name="dic_tax" type="VARCHAR(255)"/>
+
+            <column name="telephone" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="user_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="parties-company-id-uc" author="aeiox" labels="parties">
+        <addUniqueConstraint columnNames="ic_tax" constraintName="uc_parties_ic_tax" tableName="parties"/>
+    </changeSet>
+    <changeSet id="parties-tax-id-uc" author="aeiox" labels="parties">
+        <addUniqueConstraint columnNames="dic_tax" constraintName="uc_parties_dic_tax" tableName="parties"/>
+    </changeSet>
+    <changeSet id="parties-user-fk" author="aeiox" labels="parties">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="parties" constraintName="FK_PARTIES_ON_USER"
+                                 referencedColumnNames="id" referencedTableName="users"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
 
-    private static String[] ALLOWED_ORIGINS = {
+    private static final String[] ALLOWED_ORIGINS = {
             "http://localhost:5000",
     };
 
