@@ -1,14 +1,24 @@
 package com.nivlalulu.nnpro.service;
 
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
+import com.nivlalulu.nnpro.dto.v1.InvoiceSearchDto;
+import com.nivlalulu.nnpro.enums.PaymentMethod;
 import com.nivlalulu.nnpro.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
 public interface IInvoiceService {
+    /**
+     * Searches invoices with filters and pagination.
+     */
+    Page<InvoiceDto> search(User user, InvoiceSearchDto criteria, Pageable pageable, Sort sort);
+
     /**
      * Finds all invoices (paged) for the given user.
      */

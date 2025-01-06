@@ -3,8 +3,9 @@ package com.nivlalulu.nnpro.service.impl;
 import com.nivlalulu.nnpro.common.exceptions.NotFoundException;
 import com.nivlalulu.nnpro.common.mapping.impl.GenericModelMapper;
 import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
-import com.nivlalulu.nnpro.dto.v1.PartyDto;
+import com.nivlalulu.nnpro.dto.v1.InvoiceSearchDto;
 import com.nivlalulu.nnpro.dto.v1.PartySnapshotDto;
+import com.nivlalulu.nnpro.enums.PaymentMethod;
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.InvoiceItem;
 import com.nivlalulu.nnpro.model.Party;
@@ -13,13 +14,18 @@ import com.nivlalulu.nnpro.repository.IInvoiceRepository;
 import com.nivlalulu.nnpro.repository.IPartyRepository;
 import com.nivlalulu.nnpro.security.ownership.IsOwnedByUser;
 import com.nivlalulu.nnpro.service.IInvoiceService;
+import com.nivlalulu.nnpro.specification.InvoiceSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -35,6 +41,23 @@ public class InvoiceService implements IInvoiceService {
     private final IInvoiceRepository invoiceRepository;
     private final IPartyRepository partyRepository;
     private final GenericModelMapper mapper;
+
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<InvoiceDto> search(User user, InvoiceSearchDto criteria, Pageable pageable, Sort sort) {
+        Specification<Invoice> specification = criteria.toSpecification(user);
+
+        if (pageable == null) {
+            pageable = sort == null
+                    ? Pageable.unpaged()
+                    : Pageable.unpaged(sort);
+        } else if (sort != null) {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        }
+
+        return invoiceRepository.findAll(specification, pageable).map(mapper::convertToDto);
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -158,7 +181,6 @@ public class InvoiceService implements IInvoiceService {
     // have to reflect the state of the party in the party table, we might be migrating
     // from one snapshot to another, but both might be out of date with the current state of the party.
     // We don't validate on purpose to preserve the archival nature of the invoice.
-    // We're not updating the party table, we're updating the invoice.
     private void handlePartyUpdate(PartySnapshotDto partyDto,
                                    Consumer<Party> setReference,
                                    Consumer<Party> takeSnapshot,
