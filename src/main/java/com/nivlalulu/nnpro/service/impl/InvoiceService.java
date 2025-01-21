@@ -86,19 +86,18 @@ public class InvoiceService implements IInvoiceService {
                 .stream()
                 .map(mapper::convertToEntity)
                 .collect(Collectors.toSet());
-        var customer = getCreateParty(invoiceDto.getCustomer(), user);
-        var supplier = getCreateParty(invoiceDto.getSupplier(), user);
         var invoice = new Invoice(
                 invoiceDto.getCreatedAt(),
                 invoiceDto.getExpiresAt(),
                 invoiceDto.getPaymentMethod(),
                 invoiceDto.getVariableSymbol(),
                 items,
-                customer,
-                supplier,
                 invoiceDto.getContact(),
                 user
         );
+        // set customer and supplier references + snapshots
+        handlePartyUpdate(invoiceDto.getSupplier(), invoice::setSupplier, invoice::snapshotSupplier, user);
+        handlePartyUpdate(invoiceDto.getCustomer(), invoice::setCustomer, invoice::snapshotCustomer, user);
         items.forEach(item -> item.setInvoice(invoice));
         var created = invoiceRepository.save(invoice);
         var dto = mapper.convertToDto(created);
