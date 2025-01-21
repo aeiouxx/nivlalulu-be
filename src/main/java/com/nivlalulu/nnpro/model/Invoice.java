@@ -95,6 +95,22 @@ public class Invoice {
                    PaymentMethod paymentMethod,
                    String variableSymbol,
                    Set<InvoiceItem> items,
+                   String contact,
+                   User user) {
+        this.createdAt = created;
+        this.expiresAt = expiration;
+        this.paymentMethod = paymentMethod;
+        this.variableSymbol = variableSymbol;
+        this.items = items;
+        this.contact = contact;
+        this.user = user;
+    }
+
+    public Invoice(Instant created,
+                   Instant expiration,
+                   PaymentMethod paymentMethod,
+                   String variableSymbol,
+                   Set<InvoiceItem> items,
                    Party customer,
                    Party supplier,
                    String contact,
