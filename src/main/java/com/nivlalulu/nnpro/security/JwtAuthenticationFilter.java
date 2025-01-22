@@ -61,13 +61,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            Optional<UserDetails> userDetails = fetchDetailsIfAccessTokenValid(accessToken);
-            if (userDetails.isEmpty()) {
+            Optional<UserDetails> userDetailsOpt = fetchDetailsIfAccessTokenValid(accessToken);
+            if (userDetailsOpt.isEmpty()) {
                 log.debug("Invalid token, rejecting request");
                 denyRequestInvalidToken(response);
                 return;
             }
-            setSecurityContext(request, accessToken, userDetails.get());
+            var details = userDetailsOpt.get();
+            if (isUserDetailsInvalidSetErrorResponse(details, response)) {
+                return;
+            }
+            setSecurityContext(request, accessToken, details);
             log.debug("Security context set, proceeding with request: {}", uri);
         } catch (Exception e) {
             log.error("Error occurred while setting security context", e);
@@ -75,6 +79,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         filterChain.doFilter(request, response);
+    }
+
+    /**
+     *  Checks whether the user details object is valid for authentication, i.e. not expired / locked / disabled...
+     * @param details User details to check
+     * @param response If user details are incorrect, sets the response status and message
+     * @return true if request was denied, false if request should proceed
+     */
+    private boolean isUserDetailsInvalidSetErrorResponse(UserDetails details,
+                                                         HttpServletResponse response) throws IOException {
+        if (!details.isAccountNonExpired()) {
+            log.debug("Account expired, rejecting request");
+            denyRequestAccountExpired(response);
+            return true;
+        }
+
+        if (!details.isAccountNonLocked()) {
+            log.debug("Account locked, rejecting request");
+            denyRequestAccountLocked(response);
+            return true;
+        }
+
+        if (!details.isCredentialsNonExpired()) {
+            log.debug("Credentials expired, rejecting request");
+            denyRequestCredentialsExpired(response);
+            return true;
+        }
+
+        if (!details.isEnabled()) {
+            log.debug("Account disabled, rejecting request");
+            denyRequestAccountDisabled(response);
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -98,18 +137,62 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private void denyRequestInvalidToken(HttpServletResponse response) throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        setErrorResponse(
+                response,
+                HttpServletResponse.SC_UNAUTHORIZED,
+                "invalid_token",
+                "The provided token is invalid"
+        );
+    }
+    private void denyRequestAccountExpired(HttpServletResponse response) throws IOException {
+        setErrorResponse(response,
+                HttpServletResponse.SC_FORBIDDEN,
+                "account_expired",
+                "User account has expired.");
+    }
+    private void denyRequestAccountLocked(HttpServletResponse response) throws IOException {
+        setErrorResponse(response,
+                HttpServletResponse.SC_FORBIDDEN,
+                "account_locked",
+                "User account is locked.");
+    }
+    private void denyRequestAccountDisabled(HttpServletResponse response) throws IOException {
+        setErrorResponse(response,
+                HttpServletResponse.SC_FORBIDDEN,
+                "account_disabled",
+                "User account is disabled.");
+    }
+    private void denyRequestCredentialsExpired(HttpServletResponse response) throws IOException {
+        setErrorResponse(response,
+                HttpServletResponse.SC_FORBIDDEN,
+                "credentials_expired",
+                "User credentials have expired.");
+    }
+
+    private void setErrorResponse(HttpServletResponse response,
+                                  int statusCode,
+                                  String errorCode,
+                                  String errorMessage) throws IOException {
+        response.setStatus(statusCode);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+
+        String responseBody = String.format(
+            "{\"error\": \"%s\", \"message\": \"%s\"}",
+            errorCode,
+            errorMessage
+        );
+
         try (final var writer = response.getWriter()) {
-            writer.write("Invalid token");
+            writer.write(responseBody);
             writer.flush();
         }
     }
 
+    // todo: could use shouldNotFilter instead?
     private boolean isExcluded(String uri) {
         var isExcluded = NO_AUTH_PATHS.stream()
-                        .anyMatch(url -> pathMatcher.match(url, uri));
+                .anyMatch(url -> pathMatcher.match(url, uri));
         log.debug("Request URI: '{}', excluded: {}", uri, isExcluded);
         return isExcluded;
     }
