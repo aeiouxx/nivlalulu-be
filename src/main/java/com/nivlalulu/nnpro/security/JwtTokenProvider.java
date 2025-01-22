@@ -42,7 +42,7 @@ public class JwtTokenProvider {
             String refreshToken) {
         Cookie cookie = new Cookie(COOKIE_REFRESH_KEY, refreshToken);
         cookie.setHttpOnly(true);
-        cookie.setSecure(false);
+        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge((int) REFRESH_EXPIRATION_TIME.toSeconds());
         cookie.setAttribute("SameSite", "None");

@@ -9,6 +9,7 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     private static final String[] ALLOWED_ORIGINS = {
             "http://localhost:5000",
+            "http://frontend:5000",
     };
 
     @Override
