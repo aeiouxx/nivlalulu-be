@@ -28,9 +28,6 @@ public class SecurityConfiguration {
             "/public/**",
     };
 
-
-
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

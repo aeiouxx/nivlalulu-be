@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="add-user-details"
+               author="aeiox">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="users"/>
+        </preConditions>
+
+        <addColumn tableName="users">
+            <column name="account_non_expired" type="BOOLEAN"/>
+            <column name="account_non_locked" type="BOOLEAN"/>
+            <column name="credentials_non_expired" type="BOOLEAN"/>
+            <column name="enabled" type="BOOLEAN"/>
+        </addColumn>
+
+        <!-- Set columns to true for users with null values -->
+        <update tableName="users">
+            <column name="account_non_expired" valueBoolean="true"/>
+            <where>account_non_expired IS NULL</where>
+        </update>
+        <update tableName="users">
+            <column name="account_non_locked" valueBoolean="true"/>
+            <where>account_non_locked IS NULL</where>
+        </update>
+        <update tableName="users">
+            <column name="credentials_non_expired" valueBoolean="true"/>
+            <where>credentials_non_expired IS NULL</where>
+        </update>
+        <update tableName="users">
+            <column name="enabled" valueBoolean="true"/>
+            <where>enabled IS NULL</where>
+        </update>
+        <!-- Set columns to true for users with null values -->
+
+        <addNotNullConstraint columnName="account_non_expired" tableName="users"/>
+        <addNotNullConstraint columnName="account_non_locked" tableName="users"/>
+        <addNotNullConstraint columnName="credentials_non_expired" tableName="users"/>
+        <addNotNullConstraint columnName="enabled" tableName="users"/>
+    </changeSet>
+</databaseChangeLog>
