@@ -27,7 +27,7 @@ public class PartySnapshotDto {
 
     @AssertTrue(
             groups = {OnCreate.class},
-            message = "Either IC or DIC tax must be present"
+            message = "Only one of IC or DIC tax must be provided"
     )
     private boolean isExactlyOnePresent() {
         boolean isOnlyOnePresent = (getIcTax() == null) != (getDicTax() == null);
