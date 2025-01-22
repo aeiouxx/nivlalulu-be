@@ -1,5 +1,6 @@
 package com.nivlalulu.nnpro.service.impl;
 
+import com.nivlalulu.nnpro.common.exceptions.ExpiredTokenException;
 import com.nivlalulu.nnpro.common.exceptions.InvalidTokenException;
 import com.nivlalulu.nnpro.common.exceptions.NotFoundException;
 import com.nivlalulu.nnpro.dto.v1.TokenDto;
@@ -27,12 +28,6 @@ public class JwtTokenService implements IJwtTokenService {
     private final IRefreshTokenRepository refreshTokenRepository;
     private final IUserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
-
-    private boolean isTokenValid(String tokenId, String username) {
-        return refreshTokenRepository.findByTokenId(tokenId)
-                .filter(token -> token.getUser().getUsername().equals(username) && !token.isExpired())
-                .isPresent();
-    }
 
     @Override
     public TokenDto refresh(HttpServletRequest request) {
@@ -76,11 +71,23 @@ public class JwtTokenService implements IJwtTokenService {
         log.debug("Received refresh token: {}", refreshToken);
         String tokenId = jwtTokenProvider.extractRefreshTokenId(refreshToken);
         String username = jwtTokenProvider.extractUsername(refreshToken, JwtTokenType.REFRESH);
-        if (!isTokenValid(tokenId, username)) {
-            throw new InvalidTokenException("Invalid refresh token");
-        }
+
         var user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException("User", "username", username));
+
+        var token = refreshTokenRepository.findByTokenId(tokenId)
+                .orElseThrow(() -> new NotFoundException(RefreshToken.class));
+
+        if (!token.getUser().getUsername().equals(username)) {
+            log.debug("Token {} is invalid", tokenId);
+            throw new InvalidTokenException("Invalid token");
+        }
+
+        if (token.isExpired()) {
+            log.debug("Token {} is expired", tokenId);
+            throw new ExpiredTokenException("Refresh token expired");
+        }
+
         TokenData tokenData = new TokenData(tokenId, user);
         return tokenData;
     }

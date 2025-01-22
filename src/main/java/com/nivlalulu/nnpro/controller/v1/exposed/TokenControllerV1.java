@@ -3,6 +3,7 @@ package com.nivlalulu.nnpro.controller.v1.exposed;
 import com.nivlalulu.nnpro.dto.v1.TokenDto;
 import com.nivlalulu.nnpro.service.IJwtTokenService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +26,9 @@ public class TokenControllerV1 {
             description = "Reissue the access token using the refresh token."
     )
     @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Refresh ok"),
+            @ApiResponse(responseCode = "404", description = "User or token not found"),
+            @ApiResponse(responseCode = "401", description = "Token is invalid or expired"),
     })
     @PostMapping("/refresh")
     public TokenDto refreshAccessToken(HttpServletRequest request) {

@@ -73,6 +73,13 @@ public class GlobalControllerAdvice {
                 .body(e.getMessage());
     }
 
+    @ExceptionHandler(ExpiredTokenException.class)
+    public ResponseEntity<?> handleInvalidTokenException(ExpiredTokenException e) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(e.getMessage());
+    }
+
     @ExceptionHandler(HttpMessageConversionException.class)
     public ResponseEntity<?> handleHttpMessageConversionException(HttpMessageConversionException e) {
         return ResponseEntity
