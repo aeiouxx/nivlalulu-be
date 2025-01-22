@@ -2,7 +2,7 @@ package com.nivlalulu.nnpro.service.impl;
 
 import com.nivlalulu.nnpro.common.exceptions.InvalidTokenException;
 import com.nivlalulu.nnpro.common.exceptions.NotFoundException;
-import com.nivlalulu.nnpro.dto.v1.RefreshTokenResponseDto;
+import com.nivlalulu.nnpro.dto.v1.TokenDto;
 import com.nivlalulu.nnpro.model.RefreshToken;
 import com.nivlalulu.nnpro.model.User;
 import com.nivlalulu.nnpro.repository.IRefreshTokenRepository;
@@ -35,30 +35,36 @@ public class JwtTokenService implements IJwtTokenService {
     }
 
     @Override
-    @Transactional
-    public RefreshTokenResponseDto refreshAndRotate(HttpServletRequest request, HttpServletResponse response) {
-        TokenData tokenData = extractTokenData(request);
-        invalidateRefreshToken(tokenData.tokenId);
-        var newRefreshTokenData = generateNewRefreshToken(tokenData.user);
-        jwtTokenProvider.attachRefreshTokenToCookie(response, newRefreshTokenData);
-        var newAccessToken = jwtTokenProvider.generateAccessToken(tokenData.user);
-        return new RefreshTokenResponseDto(newAccessToken);
+    public TokenDto refresh(HttpServletRequest request) {
+        TokenData data = extractTokenData(request);
+        var token = jwtTokenProvider.generateAccessToken(data.user);
+        return token;
     }
 
     @Override
     @Transactional
-    public String refreshAndRotate(String username,
-                                   HttpServletRequest request,
-                                   HttpServletResponse response) {
+    public TokenDto refreshAndInvalidate(String username,
+                                       HttpServletRequest request,
+                                       HttpServletResponse response) {
         log.debug("Refreshing token for user with changed username: {}", username);
         var token = jwtTokenProvider.extractRefreshTokenFromCookie(request);
         String tokenId = jwtTokenProvider.extractRefreshTokenId(token);
         var user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException("User", "username", username));
         invalidateRefreshToken(tokenId);
-        var newRefreshTokenData = generateNewRefreshToken(user);
-        jwtTokenProvider.attachRefreshTokenToCookie(response, newRefreshTokenData);
+        jwtTokenProvider.invalidateRefreshTokenCookie(response);
         return jwtTokenProvider.generateAccessToken(user);
+    }
+
+    @Override
+    public void logout(User user, HttpServletRequest request, HttpServletResponse response) {
+        log.debug("User {} logged out", user.getUsername());
+        var token = jwtTokenProvider.extractRefreshTokenFromCookie(request);
+        String tokenId = jwtTokenProvider.extractRefreshTokenId(token);
+        invalidateRefreshToken(tokenId);
+        jwtTokenProvider.invalidateRefreshTokenCookie(response);
+
+        // could blacklist access token here
     }
 
     private record TokenData(String tokenId, User user) { }

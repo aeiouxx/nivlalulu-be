@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import com.nivlalulu.nnpro.common.exceptions.InvalidTokenException;
+import com.nivlalulu.nnpro.dto.v1.TokenDto;
 import com.nivlalulu.nnpro.model.RefreshToken;
 import com.nivlalulu.nnpro.model.User;
 import com.nivlalulu.nnpro.repository.IRefreshTokenRepository;
@@ -45,8 +46,31 @@ class JwtTokenServiceTest {
     }
 
     @Test
-    // I hate mocking so much
-    void refreshAndRotate_ShouldSucceed() {
+    void refresh_ShouldSucceed() {
+        var newAccessToken = new TokenDto("I-WAS-REFRESHED", Instant.now(), Instant.now(), 0);
+        var refreshToken = new RefreshToken("tokenId", Instant.now().plusSeconds(3600), user);
+
+        when(jwtTokenProvider.extractRefreshTokenFromCookie(request))
+                .thenReturn("refreshToken");
+        when(jwtTokenProvider.extractRefreshTokenId("refreshToken"))
+                .thenReturn("tokenId");
+        when(jwtTokenProvider.extractUsername("refreshToken", JwtTokenType.REFRESH))
+                .thenReturn("testuser");
+        when(userRepository.findByUsername("testuser"))
+                .thenReturn(Optional.of(user));
+        when(refreshTokenRepository.findByTokenId("tokenId"))
+                .thenReturn(Optional.of(refreshToken));
+
+        when(jwtTokenProvider.generateAccessToken(user))
+                .thenReturn(newAccessToken);
+
+        var result = jwtTokenService.refresh(request);
+        assertEquals(newAccessToken.content(), result.content());
+    }
+
+    @Test
+    void refreshAndInvalidate_ShouldSucceed() {
+        var newAccessToken = new TokenDto("I-WAS-REFRESHED", Instant.now(), Instant.now(), 0);
         var refreshToken = new RefreshToken("tokenId", Instant.now().plusSeconds(3600), user);
         when(jwtTokenProvider.extractRefreshTokenFromCookie(request))
                 .thenReturn("refreshToken");
@@ -59,27 +83,19 @@ class JwtTokenServiceTest {
         when(refreshTokenRepository.findByTokenId("tokenId"))
                 .thenReturn(Optional.of(refreshToken));
 
-        when(jwtTokenProvider.generateRefreshToken(eq(user), anyString()))
-                .thenReturn("newRefreshTokenData");
-        when(jwtTokenService.generateNewRefreshToken(user))
-                .thenReturn("newRefreshTokenData");
         when(jwtTokenProvider.generateAccessToken(user))
-                .thenReturn("newAccessToken");
+                .thenReturn(newAccessToken);
 
-        var result = jwtTokenService.refreshAndRotate(request, response);
-        assertEquals("newAccessToken", result.accessToken());
+        var result = jwtTokenService.refreshAndInvalidate("testuser", request, response);
+        assertEquals(newAccessToken.content(), result.content());
         verify(refreshTokenRepository)
                 .deleteByTokenId("tokenId");
-        verify(refreshTokenRepository)
-                .save(any(RefreshToken.class));
         verify(jwtTokenProvider)
-                .attachRefreshTokenToCookie(
-                        eq(response),
-                        eq("newRefreshTokenData"));
+                .invalidateRefreshTokenCookie(response);
     }
 
     @Test
-    void refreshAndRotateInvalidToken_ShouldThrow() {
+    void refreshInvalidToken_ShouldThrow() {
         when(jwtTokenProvider.extractRefreshTokenFromCookie(request))
                 .thenReturn("refreshToken");
         when(jwtTokenProvider.extractRefreshTokenId("refreshToken"))
@@ -90,6 +106,6 @@ class JwtTokenServiceTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(InvalidTokenException.class,
-                () -> jwtTokenService.refreshAndRotate(request, response));
+                () -> jwtTokenService.refresh(request));
     }
 }
