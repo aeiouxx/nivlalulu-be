@@ -41,7 +41,7 @@ public class AccountControllerV1 {
             @ApiResponse(responseCode = "200", description = "User logged out"),
 
     })
-    @PostMapping
+    @PostMapping("/logout")
     public void logout(@AuthenticationPrincipal User user,
                        HttpServletRequest request,
                        HttpServletResponse response) {

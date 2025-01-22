@@ -53,7 +53,6 @@ public class JwtTokenService implements IJwtTokenService {
 
     @Override
     public void logout(User user, HttpServletRequest request, HttpServletResponse response) {
-        log.debug("User {} logged out", user.getUsername());
         var token = jwtTokenProvider.extractRefreshTokenFromCookie(request);
         String tokenId = jwtTokenProvider.extractRefreshTokenId(token);
         invalidateRefreshToken(tokenId);
