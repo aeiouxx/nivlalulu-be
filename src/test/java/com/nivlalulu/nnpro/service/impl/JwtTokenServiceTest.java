@@ -3,7 +3,9 @@ package com.nivlalulu.nnpro.service.impl;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.nivlalulu.nnpro.common.exceptions.ExpiredTokenException;
 import com.nivlalulu.nnpro.common.exceptions.InvalidTokenException;
+import com.nivlalulu.nnpro.common.exceptions.NotFoundException;
 import com.nivlalulu.nnpro.dto.v1.TokenDto;
 import com.nivlalulu.nnpro.model.RefreshToken;
 import com.nivlalulu.nnpro.model.User;
@@ -95,7 +97,7 @@ class JwtTokenServiceTest {
     }
 
     @Test
-    void refreshInvalidToken_ShouldThrow() {
+    void refreshNonExistentToken_ShouldThrow() {
         when(jwtTokenProvider.extractRefreshTokenFromCookie(request))
                 .thenReturn("refreshToken");
         when(jwtTokenProvider.extractRefreshTokenId("refreshToken"))
@@ -105,7 +107,26 @@ class JwtTokenServiceTest {
         when(refreshTokenRepository.findByTokenId("tokenId"))
                 .thenReturn(Optional.empty());
 
-        assertThrows(InvalidTokenException.class,
+        assertThrows(NotFoundException.class,
+                () -> jwtTokenService.refresh(request));
+    }
+
+    @Test
+    void refreshExpiredToken_ShouldThrow() {
+        var expiredToken = new RefreshToken("tokenId", Instant.now().minusSeconds(1000), user);
+
+        when(jwtTokenProvider.extractRefreshTokenFromCookie(request))
+                .thenReturn("refreshToken");
+        when(jwtTokenProvider.extractRefreshTokenId("refreshToken"))
+                .thenReturn("tokenId");
+        when(jwtTokenProvider.extractUsername("refreshToken", JwtTokenType.REFRESH))
+                .thenReturn("testuser");
+        when(userRepository.findByUsername("testuser"))
+                .thenReturn(Optional.of(user));
+        when(refreshTokenRepository.findByTokenId("tokenId"))
+                .thenReturn(Optional.of(expiredToken));
+
+        assertThrows(ExpiredTokenException.class,
                 () -> jwtTokenService.refresh(request));
     }
 }
