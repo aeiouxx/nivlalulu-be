@@ -6,7 +6,6 @@ import com.nivlalulu.nnpro.dto.v1.PartyDto;
 import com.nivlalulu.nnpro.model.Party;
 import com.nivlalulu.nnpro.model.User;
 import com.nivlalulu.nnpro.repository.IPartyRepository;
-import com.nivlalulu.nnpro.repository.IUserRepository;
 import com.nivlalulu.nnpro.service.IPartyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

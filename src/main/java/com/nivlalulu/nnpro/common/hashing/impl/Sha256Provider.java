@@ -1,7 +1,6 @@
 package com.nivlalulu.nnpro.common.hashing.impl;
 
 import com.nivlalulu.nnpro.common.hashing.IHashProvider;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

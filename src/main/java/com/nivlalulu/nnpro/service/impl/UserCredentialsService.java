@@ -5,7 +5,6 @@ import com.nivlalulu.nnpro.common.exceptions.ConflictException;
 import com.nivlalulu.nnpro.common.exceptions.NotFoundException;
 import com.nivlalulu.nnpro.common.exceptions.UnauthorizedException;
 import com.nivlalulu.nnpro.common.hashing.IHashProvider;
-import com.nivlalulu.nnpro.common.mapping.IGenericMapper;
 import com.nivlalulu.nnpro.model.PasswordResetToken;
 import com.nivlalulu.nnpro.repository.IPasswordResetTokenRepository;
 import com.nivlalulu.nnpro.repository.IUserRepository;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
-import java.util.Date;
 
 @Service
 @Slf4j

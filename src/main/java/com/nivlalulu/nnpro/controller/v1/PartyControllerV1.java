@@ -2,10 +2,7 @@ package com.nivlalulu.nnpro.controller.v1;
 
 import com.nivlalulu.nnpro.common.controller.validation.OnCreate;
 import com.nivlalulu.nnpro.common.controller.validation.OnUpdate;
-import com.nivlalulu.nnpro.dto.ApiResponse;
-import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
 import com.nivlalulu.nnpro.dto.v1.PartyDto;
-import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.Party;
 import com.nivlalulu.nnpro.model.User;
 import com.nivlalulu.nnpro.security.ownership.IsOwnedByUser;
@@ -15,18 +12,15 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController

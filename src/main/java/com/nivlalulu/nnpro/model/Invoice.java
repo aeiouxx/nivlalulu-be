@@ -1,6 +1,5 @@
 package com.nivlalulu.nnpro.model;
 
-import com.nivlalulu.nnpro.dto.v1.PartySnapshotDto;
 import com.nivlalulu.nnpro.enums.PaymentMethod;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
