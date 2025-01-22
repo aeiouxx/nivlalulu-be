@@ -1,6 +1,5 @@
 package com.nivlalulu.nnpro.controller.v1.exposed;
 
-import com.nivlalulu.nnpro.common.mapping.IGenericMapper;
 import com.nivlalulu.nnpro.dto.v1.CreatePasswordResetTokenDto;
 import com.nivlalulu.nnpro.dto.v1.ResetPasswordRequestDto;
 import com.nivlalulu.nnpro.service.IUserCredentialsService;
@@ -11,7 +10,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/public/v1/password-reset")

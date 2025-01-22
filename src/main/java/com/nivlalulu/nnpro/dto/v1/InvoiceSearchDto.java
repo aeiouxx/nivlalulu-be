@@ -1,6 +1,5 @@
 package com.nivlalulu.nnpro.dto.v1;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nivlalulu.nnpro.enums.PaymentMethod;
 import com.nivlalulu.nnpro.model.Invoice;
 import com.nivlalulu.nnpro.model.User;

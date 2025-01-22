@@ -1,15 +1,12 @@
 package com.nivlalulu.nnpro.dto.v1;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.nivlalulu.nnpro.common.controller.validation.OnCreate;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 
 import java.math.BigDecimal;
 import java.util.UUID;
