@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,10 +27,27 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/v1/account")
 @RequiredArgsConstructor
+@Slf4j
 @Tag(name = "Account controller", description = "Operations for managing a users account")
 public class AccountControllerV1 {
     private final IUserCredentialsService credentialsService;
     private final IJwtTokenService jwtTokenService;
+
+    @Operation(
+            summary = "User logout",
+            description = "Logs out the user by invalidating the `access token` and the `refresh_token`."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User logged out"),
+
+    })
+    @PostMapping
+    public void logout(@AuthenticationPrincipal User user,
+                       HttpServletRequest request,
+                       HttpServletResponse response) {
+        log.debug("User {} logged out", user.getUsername());
+        jwtTokenService.logout(user, request, response);
+    }
 
     @Operation(
             summary = "Change password",
@@ -75,8 +93,8 @@ public class AccountControllerV1 {
                                HttpServletResponse response,
                                @AuthenticationPrincipal User user) {
         var newUsername = credentialsService.changeUsername(user.getUsername(), dto.newUsername());
-        var newAccessToken = jwtTokenService.refreshAndRotate(newUsername, request, response);
-        return new ChangeUsernameResponseDto(newUsername, newAccessToken);
+        var newTokenDto = jwtTokenService.refreshAndInvalidate(newUsername, request, response);
+        return new ChangeUsernameResponseDto(newUsername, newTokenDto);
     }
 
     @Operation(

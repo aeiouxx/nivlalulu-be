@@ -2,7 +2,7 @@ package com.nivlalulu.nnpro.service.impl;
 
 import com.nivlalulu.nnpro.dto.v1.AuthenticationResponseDto;
 import com.nivlalulu.nnpro.dto.v1.LoginRequestDto;
-import com.nivlalulu.nnpro.dto.v1.RefreshTokenResponseDto;
+import com.nivlalulu.nnpro.dto.v1.TokenDto;
 import com.nivlalulu.nnpro.model.User;
 import com.nivlalulu.nnpro.repository.IRefreshTokenRepository;
 import com.nivlalulu.nnpro.repository.IUserRepository;
@@ -86,9 +86,10 @@ public class JwtTokenIntegrationTest {
         var refreshResponse = restTemplate.exchange("/public/v1/token/refresh",
                 HttpMethod.POST,
                 requestEntity,
-                RefreshTokenResponseDto.class);
+                TokenDto.class);
+
         assertEquals(HttpStatus.OK, refreshResponse.getStatusCode());
-        assertNotNull(refreshResponse.getBody().accessToken());
+        assertNotNull(refreshResponse.getBody().content());
     }
 
     @Test

@@ -1,6 +1,5 @@
 package com.nivlalulu.nnpro.security;
 
-import com.nivlalulu.nnpro.dto.v1.RefreshTokenResponseDto;
 import com.nivlalulu.nnpro.service.IJwtTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -114,26 +113,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         return false;
-    }
-
-    /**
-     * @deprecated This method is deprecated and will be removed in the future, clients should attempt a silent
-     * refresh via the refresh token endpoint instead.
-     * @param request
-     * @param response
-     * @return
-     */
-    @Deprecated(forRemoval = true)
-    private boolean tryTokenRefresh(HttpServletRequest request, HttpServletResponse response) {
-        log.debug("Attempting to refresh token");
-        try {
-            RefreshTokenResponseDto refreshTokenResponse = jwtTokenService.refreshAndRotate(request, response);
-            response.setHeader("Authorization", "Bearer " + refreshTokenResponse.accessToken());
-            return true;
-        } catch (Exception e) {
-            log.error("Error occurred while refreshing token", e);
-            return false;
-        }
     }
 
     private void denyRequestInvalidToken(HttpServletResponse response) throws IOException {

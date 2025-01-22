@@ -9,10 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -67,7 +64,7 @@ public class AuthIntegrationTest {
                 AuthenticationResponseDto.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody(), "Response body is null");
-        assertNotNull(response.getBody().accessToken());
+        assertNotNull(response.getBody().accessToken().content());
         assertEquals("testuser", response.getBody().username());
 
         // Check if refresh token cookie is set
