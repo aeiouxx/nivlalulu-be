@@ -42,9 +42,10 @@ public class JwtTokenProvider {
             String refreshToken) {
         Cookie cookie = new Cookie(COOKIE_REFRESH_KEY, refreshToken);
         cookie.setHttpOnly(true);
-        cookie.setSecure(false);
+        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge((int) REFRESH_EXPIRATION_TIME.toSeconds());
+        cookie.setAttribute("SameSite", "None");
         response.addCookie(cookie);
     }
 
@@ -61,6 +62,7 @@ public class JwtTokenProvider {
 
     public String extractRefreshTokenFromCookie(HttpServletRequest request) {
         if (request.getCookies() == null) {
+            log.debug("No cookies found in request, but were expected.");
             return null;
         }
         return Arrays.stream(request.getCookies())
