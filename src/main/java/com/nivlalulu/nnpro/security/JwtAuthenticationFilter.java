@@ -1,6 +1,5 @@
 package com.nivlalulu.nnpro.security;
 
-import com.nivlalulu.nnpro.configuration.SecurityConfiguration;
 import com.nivlalulu.nnpro.dto.v1.RefreshTokenResponseDto;
 import com.nivlalulu.nnpro.service.IJwtTokenService;
 import jakarta.servlet.FilterChain;
@@ -9,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,7 +19,6 @@ import org.springframework.util.PathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,7 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
             var details = userDetailsOpt.get();
-            if (denyRequestIfDetailsNonPermissive(details, response)) {
+            if (isUserDetailsInvalidSetErrorResponse(details, response)) {
                 return;
             }
             setSecurityContext(request, accessToken, details);
@@ -88,34 +85,35 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      *  Checks whether the user details object is valid for authentication, i.e. not expired / locked / disabled...
      * @param details User details to check
      * @param response If user details are incorrect, sets the response status and message
-     * @return true if valid, false otherwise
+     * @return true if request was denied, false if request should proceed
      */
-    private boolean denyRequestIfDetailsNonPermissive(UserDetails details, HttpServletResponse response) throws IOException {
+    private boolean isUserDetailsInvalidSetErrorResponse(UserDetails details,
+                                                         HttpServletResponse response) throws IOException {
         if (!details.isAccountNonExpired()) {
             log.debug("Account expired, rejecting request");
             denyRequestAccountExpired(response);
-            return false;
+            return true;
         }
 
         if (!details.isAccountNonLocked()) {
             log.debug("Account locked, rejecting request");
             denyRequestAccountLocked(response);
-            return false;
+            return true;
         }
 
         if (!details.isCredentialsNonExpired()) {
             log.debug("Credentials expired, rejecting request");
             denyRequestCredentialsExpired(response);
-            return false;
+            return true;
         }
 
         if (!details.isEnabled()) {
             log.debug("Account disabled, rejecting request");
             denyRequestAccountDisabled(response);
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     /**
