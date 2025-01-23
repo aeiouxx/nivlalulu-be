@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - AuthIntegrationTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>AuthIntegrationTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/com.nivlalulu.nnpro.service.impl.html">com.nivlalulu.nnpro.service.impl</a> &gt; AuthIntegrationTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">2</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">1.134s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">testLoginInvalidCredentials()</td>
+<td class="success">0.230s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testLoginSuccess()</td>
+<td class="success">0.904s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>11:58:22.673 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.nivlalulu.nnpro.service.impl.AuthIntegrationTest]: AuthIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+11:58:22.860 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.nivlalulu.nnpro.Application for test class com.nivlalulu.nnpro.service.impl.AuthIntegrationTest
+11:58:23.151 [Test worker] INFO org.testcontainers.images.PullPolicy -- Image pull policy will be performed by: DefaultPullPolicy()
+11:58:23.157 [Test worker] INFO org.testcontainers.utility.ImageNameSubstitutor -- Image name substitution will be performed by: DefaultImageNameSubstitutor (composite of 'ConfigurationFileImageNameSubstitutor' and 'PrefixingImageNameSubstitutor')
+11:58:24.179 [Test worker] INFO org.testcontainers.dockerclient.DockerClientProviderStrategy -- Found Docker environment with local Unix socket (unix:///var/run/docker.sock)
+11:58:24.189 [Test worker] INFO org.testcontainers.DockerClientFactory -- Docker host IP address is localhost
+11:58:24.212 [Test worker] INFO org.testcontainers.DockerClientFactory -- Connected to docker: 
+  Server Version: 26.1.3
+  API Version: 1.45
+  Operating System: Ubuntu 24.04.1 LTS
+  Total Memory: 15990 MB
+11:58:24.267 [Test worker] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling docker image: testcontainers/ryuk:0.6.0. Please be patient; this may take some time but only needs to be done once.
+11:58:25.359 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Starting to pull image
+11:58:25.397 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling image layers:  0 pending,  0 downloaded,  0 extracted, (0 bytes/0 bytes)
+11:58:25.919 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling image layers:  2 pending,  1 downloaded,  0 extracted, (67 KB/? MB)
+11:58:25.920 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling image layers:  1 pending,  2 downloaded,  0 extracted, (341 KB/? MB)
+11:58:25.928 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling image layers:  0 pending,  3 downloaded,  0 extracted, (341 KB/6 MB)
+11:58:26.031 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling image layers:  0 pending,  3 downloaded,  1 extracted, (3 MB/6 MB)
+11:58:26.996 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling image layers:  0 pending,  3 downloaded,  2 extracted, (3 MB/6 MB)
+11:58:27.052 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pulling image layers:  0 pending,  3 downloaded,  3 extracted, (6 MB/6 MB)
+11:58:27.064 [Test worker] INFO tc.testcontainers/ryuk:0.6.0 -- Image testcontainers/ryuk:0.6.0 pull took PT2.796195986S
+11:58:27.064 [docker-java-stream--591495615] INFO tc.testcontainers/ryuk:0.6.0 -- Pull complete. 3 layers, pulled in 1s (downloaded 6 MB at 6 MB/s)
+11:58:27.125 [Test worker] INFO tc.testcontainers/ryuk:0.6.0 -- Creating container for image: testcontainers/ryuk:0.6.0
+11:58:27.245 [Test worker] INFO tc.testcontainers/ryuk:0.6.0 -- Container testcontainers/ryuk:0.6.0 is starting: f7aedce3d7b9f215ae433a99994708b0e6bbaad859df9feed75f5f92b6608f6e
+11:58:27.676 [Test worker] INFO tc.testcontainers/ryuk:0.6.0 -- Container testcontainers/ryuk:0.6.0 started in PT0.551682608S
+11:58:27.682 [Test worker] INFO org.testcontainers.utility.RyukResourceReaper -- Ryuk started - will monitor and terminate Testcontainers containers on JVM exit
+11:58:27.682 [Test worker] INFO org.testcontainers.DockerClientFactory -- Checking the system...
+11:58:27.683 [Test worker] INFO org.testcontainers.DockerClientFactory -- ✔︎ Docker server version should be at least 1.6.0
+11:58:27.688 [Test worker] INFO tc.postgres:latest -- Pulling docker image: postgres:latest. Please be patient; this may take some time but only needs to be done once.
+11:58:28.699 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Starting to pull image
+11:58:28.701 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending,  0 downloaded,  0 extracted, (0 bytes/0 bytes)
+11:58:29.231 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers: 13 pending,  1 downloaded,  0 extracted, (336 KB/? MB)
+11:58:29.243 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers: 12 pending,  2 downloaded,  0 extracted, (336 KB/? MB)
+11:58:29.327 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers: 11 pending,  3 downloaded,  0 extracted, (336 KB/? MB)
+11:58:29.500 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers: 10 pending,  4 downloaded,  0 extracted, (4 MB/? MB)
+11:58:29.552 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  9 pending,  5 downloaded,  0 extracted, (4 MB/? MB)
+11:58:29.578 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  8 pending,  6 downloaded,  0 extracted, (4 MB/? MB)
+11:58:29.773 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  7 pending,  7 downloaded,  0 extracted, (10 MB/? MB)
+11:58:29.813 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  6 pending,  8 downloaded,  0 extracted, (10 MB/? MB)
+11:58:30.012 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  5 pending,  9 downloaded,  0 extracted, (42 MB/? MB)
+11:58:30.070 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  4 pending, 10 downloaded,  0 extracted, (59 MB/? MB)
+11:58:30.278 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  3 pending, 11 downloaded,  0 extracted, (115 MB/? MB)
+11:58:30.280 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  2 pending, 12 downloaded,  0 extracted, (115 MB/? MB)
+11:58:30.312 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  1 pending, 13 downloaded,  0 extracted, (115 MB/? MB)
+11:58:30.650 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  1 pending, 13 downloaded,  1 extracted, (116 MB/? MB)
+11:58:30.902 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  1 pending, 13 downloaded,  2 extracted, (116 MB/? MB)
+11:58:31.031 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  1 pending, 13 downloaded,  3 extracted, (120 MB/? MB)
+11:58:31.072 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  1 pending, 13 downloaded,  4 extracted, (122 MB/? MB)
+11:58:31.371 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  1 pending, 13 downloaded,  5 extracted, (129 MB/? MB)
+11:58:31.431 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  1 pending, 13 downloaded,  6 extracted, (130 MB/? MB)
+11:58:31.441 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  1 pending, 13 downloaded,  7 extracted, (130 MB/? MB)
+11:58:31.452 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  1 pending, 13 downloaded,  8 extracted, (130 MB/? MB)
+11:58:31.555 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending, 14 downloaded,  8 extracted, (130 MB/146 MB)
+11:58:34.302 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending, 14 downloaded,  9 extracted, (146 MB/146 MB)
+11:58:34.323 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending, 14 downloaded, 10 extracted, (146 MB/146 MB)
+11:58:34.338 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending, 14 downloaded, 11 extracted, (146 MB/146 MB)
+11:58:34.355 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending, 14 downloaded, 12 extracted, (146 MB/146 MB)
+11:58:34.370 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending, 14 downloaded, 13 extracted, (146 MB/146 MB)
+11:58:34.385 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pulling image layers:  0 pending, 14 downloaded, 14 extracted, (146 MB/146 MB)
+11:58:34.395 [docker-java-stream-1484271093] INFO tc.postgres:latest -- Pull complete. 14 layers, pulled in 5s (downloaded 146 MB at 29 MB/s)
+11:58:34.395 [Test worker] INFO tc.postgres:latest -- Image postgres:latest pull took PT6.705952004S
+11:58:34.398 [Test worker] INFO tc.postgres:latest -- Creating container for image: postgres:latest
+11:58:34.431 [Test worker] INFO tc.postgres:latest -- Container postgres:latest is starting: 7e09c35ddc05aafae47318257fcceed6582c572287fd28da352aaecfa6a1c31e
+11:58:35.711 [Test worker] INFO tc.postgres:latest -- Container postgres:latest started in PT1.312116264S
+11:58:35.711 [Test worker] INFO tc.postgres:latest -- Container is started (JDBC URL: jdbc:postgresql://localhost:32769/test_db?loggerLevel=OFF)
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.4)
+
+2025-01-23T11:58:36.301Z  INFO 2136 --- [    Test worker] c.n.n.service.impl.AuthIntegrationTest   : Starting AuthIntegrationTest using Java 21.0.5 with PID 2136 (started by runner in /home/runner/work/nivlalulu-be/nivlalulu-be)
+2025-01-23T11:58:36.304Z  INFO 2136 --- [    Test worker] c.n.n.service.impl.AuthIntegrationTest   : The following 1 profile is active: &quot;test&quot;
+2025-01-23T11:58:37.927Z  INFO 2136 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-01-23T11:58:37.931Z  INFO 2136 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-01-23T11:58:38.116Z  INFO 2136 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 174 ms. Found 6 JPA repository interfaces.
+2025-01-23T11:58:38.138Z  INFO 2136 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-01-23T11:58:38.140Z  INFO 2136 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-01-23T11:58:38.162Z  INFO 2136 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.nivlalulu.nnpro.repository.IInvoiceItemRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-01-23T11:58:38.163Z  INFO 2136 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.nivlalulu.nnpro.repository.IInvoiceRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-01-23T11:58:38.165Z  INFO 2136 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.nivlalulu.nnpro.repository.IPartyRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-01-23T11:58:38.165Z  INFO 2136 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.nivlalulu.nnpro.repository.IPasswordResetTokenRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-01-23T11:58:38.166Z  INFO 2136 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.nivlalulu.nnpro.repository.IRefreshTokenRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-01-23T11:58:38.166Z  INFO 2136 --- [    Test worker] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.nivlalulu.nnpro.repository.IUserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-01-23T11:58:38.166Z  INFO 2136 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 13 ms. Found 0 Redis repository interfaces.
+2025-01-23T11:58:39.452Z  INFO 2136 --- [    Test worker] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 0 (http)
+2025-01-23T11:58:39.490Z  INFO 2136 --- [    Test worker] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-01-23T11:58:39.491Z  INFO 2136 --- [    Test worker] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-01-23T11:58:39.573Z  INFO 2136 --- [    Test worker] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2025-01-23T11:58:39.575Z  INFO 2136 --- [    Test worker] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2949 ms
+2025-01-23T11:58:40.089Z  INFO 2136 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-01-23T11:58:40.535Z  INFO 2136 --- [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@49b9d1c
+2025-01-23T11:58:40.538Z  INFO 2136 --- [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-01-23T11:58:40.747Z  INFO 2136 --- [    Test worker] liquibase.database                       : Set default schema name to public
+2025-01-23T11:58:42.458Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/2024/12/12-02-add-refresh-tokens.xml
+2025-01-23T11:58:42.516Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/2024/12/14-01-add-password-reset-token.xml
+2025-01-23T11:58:42.569Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/2024/12/15-01-add-parties.xml
+2025-01-23T11:58:42.669Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/2024/12/15-01-invoices.xml
+2025-01-23T11:58:42.762Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/2025/01/02-01-add-invoice-items.xml
+2025-01-23T11:58:42.794Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Reading resource: db/changelog/2025/01/22-01-add-user-details.xml
+2025-01-23T11:58:42.881Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Creating database history table with name: public.databasechangelog
+2025-01-23T11:58:42.915Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Reading from public.databasechangelog
+2025-01-23T11:58:43.121Z  INFO 2136 --- [    Test worker] liquibase.lockservice                    : Successfully acquired change log lock
+2025-01-23T11:58:43.124Z  INFO 2136 --- [    Test worker] liquibase.command                        : Using deploymentId: 7633523124
+2025-01-23T11:58:43.127Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Reading from public.databasechangelog
+Running Changeset: db/changelog/2024/db.changelog-initial.xml::1732762339778-1::liquibase (generated)
+2025-01-23T11:58:43.257Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Table users created
+2025-01-23T11:58:43.258Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/db.changelog-initial.xml::1732762339778-1::liquibase (generated) ran successfully in 28ms
+Running Changeset: db/changelog/2024/db.changelog-initial.xml::1732762339778-2::liquibase (generated)
+2025-01-23T11:58:43.268Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Unique constraint added to users(email)
+2025-01-23T11:58:43.269Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/db.changelog-initial.xml::1732762339778-2::liquibase (generated) ran successfully in 5ms
+Running Changeset: db/changelog/2024/db.changelog-initial.xml::1732762339778-3::liquibase (generated)
+2025-01-23T11:58:43.275Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Unique constraint added to users(username)
+2025-01-23T11:58:43.276Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/db.changelog-initial.xml::1732762339778-3::liquibase (generated) ran successfully in 3ms
+Running Changeset: db/changelog/2024/12/12-02-add-refresh-tokens.xml::create-refresh-tokens::aeiox
+2025-01-23T11:58:43.298Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Table refresh_tokens created
+2025-01-23T11:58:43.300Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Unique constraint added to refresh_tokens(token_id)
+2025-01-23T11:58:43.303Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Foreign key constraint added to refresh_tokens (user_id)
+2025-01-23T11:58:43.304Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/12-02-add-refresh-tokens.xml::create-refresh-tokens::aeiox ran successfully in 18ms
+Running Changeset: db/changelog/2024/12/14-01-add-password-reset-token.xml::add-password-reset-token::aeiox
+2025-01-23T11:58:43.318Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Table password_reset_token created
+2025-01-23T11:58:43.320Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Unique constraint added to password_reset_token(token_hash)
+2025-01-23T11:58:43.322Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Unique constraint added to password_reset_token(user_id)
+2025-01-23T11:58:43.323Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Foreign key constraint added to password_reset_token (user_id)
+2025-01-23T11:58:43.324Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/14-01-add-password-reset-token.xml::add-password-reset-token::aeiox ran successfully in 10ms
+Running Changeset: db/changelog/2024/12/15-01-add-parties.xml::parties-table-create::aeiox
+2025-01-23T11:58:43.336Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Table parties created
+2025-01-23T11:58:43.336Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/15-01-add-parties.xml::parties-table-create::aeiox ran successfully in 6ms
+Running Changeset: db/changelog/2024/12/15-01-add-parties.xml::parties-company-id-uc::aeiox
+2025-01-23T11:58:43.342Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Unique constraint added to parties(ic_tax)
+2025-01-23T11:58:43.342Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/15-01-add-parties.xml::parties-company-id-uc::aeiox ran successfully in 2ms
+Running Changeset: db/changelog/2024/12/15-01-add-parties.xml::parties-tax-id-uc::aeiox
+2025-01-23T11:58:43.348Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Unique constraint added to parties(dic_tax)
+2025-01-23T11:58:43.349Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/15-01-add-parties.xml::parties-tax-id-uc::aeiox ran successfully in 3ms
+Running Changeset: db/changelog/2024/12/15-01-add-parties.xml::parties-user-fk::aeiox
+2025-01-23T11:58:43.356Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Foreign key constraint added to parties (user_id)
+2025-01-23T11:58:43.356Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/15-01-add-parties.xml::parties-user-fk::aeiox ran successfully in 2ms
+Running Changeset: db/changelog/2024/12/15-01-invoices.xml::invoices-create-table::aeiox
+2025-01-23T11:58:43.370Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Table invoices created
+2025-01-23T11:58:43.370Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/15-01-invoices.xml::invoices-create-table::aeiox ran successfully in 7ms
+Running Changeset: db/changelog/2024/12/15-01-invoices.xml::invoices-customer-fk::aeiox
+2025-01-23T11:58:43.377Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Foreign key constraint added to invoices (customer_id)
+2025-01-23T11:58:43.377Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/15-01-invoices.xml::invoices-customer-fk::aeiox ran successfully in 3ms
+Running Changeset: db/changelog/2024/12/15-01-invoices.xml::invoices-supplier-fk::aeiox
+2025-01-23T11:58:43.383Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Foreign key constraint added to invoices (supplier_id)
+2025-01-23T11:58:43.383Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/15-01-invoices.xml::invoices-supplier-fk::aeiox ran successfully in 2ms
+Running Changeset: db/changelog/2024/12/15-01-invoices.xml::invoices-user-fk::aeiox
+2025-01-23T11:58:43.389Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Foreign key constraint added to invoices (user_id)
+2025-01-23T11:58:43.390Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2024/12/15-01-invoices.xml::invoices-user-fk::aeiox ran successfully in 3ms
+Running Changeset: db/changelog/2025/01/02-01-add-invoice-items.xml::add-invoice-items::aeiouxx
+2025-01-23T11:58:43.401Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Table invoice_items created
+2025-01-23T11:58:43.404Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Foreign key constraint added to invoice_items (invoice_id)
+2025-01-23T11:58:43.405Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2025/01/02-01-add-invoice-items.xml::add-invoice-items::aeiouxx ran successfully in 8ms
+Running Changeset: db/changelog/2025/01/22-01-add-user-details.xml::add-user-details::aeiox
+2025-01-23T11:58:43.419Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Columns account_non_expired(BOOLEAN),account_non_locked(BOOLEAN),credentials_non_expired(BOOLEAN),enabled(BOOLEAN) added to users
+2025-01-23T11:58:43.421Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Data updated in users
+2025-01-23T11:58:43.422Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Data updated in users
+2025-01-23T11:58:43.423Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Data updated in users
+2025-01-23T11:58:43.425Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : Data updated in users
+2025-01-23T11:58:43.426Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : NOT NULL constraint has been added to users.account_non_expired
+2025-01-23T11:58:43.427Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : NOT NULL constraint has been added to users.account_non_locked
+2025-01-23T11:58:43.429Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : NOT NULL constraint has been added to users.credentials_non_expired
+2025-01-23T11:58:43.430Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : NOT NULL constraint has been added to users.enabled
+2025-01-23T11:58:43.431Z  INFO 2136 --- [    Test worker] liquibase.changelog                      : ChangeSet db/changelog/2025/01/22-01-add-user-details.xml::add-user-details::aeiox ran successfully in 19ms
+2025-01-23T11:58:43.437Z  INFO 2136 --- [    Test worker] liquibase.util                           : UPDATE SUMMARY
+2025-01-23T11:58:43.438Z  INFO 2136 --- [    Test worker] liquibase.util                           : Run:                         15
+2025-01-23T11:58:43.438Z  INFO 2136 --- [    Test worker] liquibase.util                           : Previously run:               0
+2025-01-23T11:58:43.439Z  INFO 2136 --- [    Test worker] liquibase.util                           : Filtered out:                 0
+2025-01-23T11:58:43.439Z  INFO 2136 --- [    Test worker] liquibase.util                           : -------------------------------
+2025-01-23T11:58:43.439Z  INFO 2136 --- [    Test worker] liquibase.util                           : Total change sets:           15
+2025-01-23T11:58:43.440Z  INFO 2136 --- [    Test worker] liquibase.util                           : Update summary generated
+2025-01-23T11:58:43.442Z  INFO 2136 --- [    Test worker] liquibase.command                        : Update command completed successfully.
+Liquibase: Update has been successful. Rows affected: 15
+2025-01-23T11:58:43.444Z  INFO 2136 --- [    Test worker] liquibase.lockservice                    : Successfully released change log lock
+2025-01-23T11:58:43.445Z  INFO 2136 --- [    Test worker] liquibase.command                        : Command execution complete
+2025-01-23T11:58:43.587Z  INFO 2136 --- [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-01-23T11:58:43.669Z  INFO 2136 --- [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2025-01-23T11:58:43.714Z  INFO 2136 --- [    Test worker] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-01-23T11:58:43.865Z  INFO 2136 --- [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-01-23T11:58:45.178Z  INFO 2136 --- [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-01-23T11:58:45.182Z  INFO 2136 --- [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+DEBUG: setDebug: Jakarta Mail version 2.0.1
+2025-01-23T11:58:46.659Z  WARN 2136 --- [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-01-23T11:58:47.149Z  INFO 2136 --- [    Test worker] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@392791d3, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@2d7be8e1, org.springframework.security.web.context.SecurityContextHolderFilter@6ee401f, org.springframework.security.web.header.HeaderWriterFilter@365cf80e, org.springframework.web.filter.CorsFilter@717d1a91, org.springframework.security.web.authentication.logout.LogoutFilter@d376a28, com.nivlalulu.nnpro.security.JwtAuthenticationFilter@142943dc, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@39798cec, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@5875c69e, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@3974d1ec, org.springframework.security.web.session.SessionManagementFilter@146bf534, org.springframework.security.web.access.ExceptionTranslationFilter@7af6ad25, org.springframework.security.web.access.intercept.AuthorizationFilter@55b13d72]
+2025-01-23T11:58:48.870Z  INFO 2136 --- [    Test worker] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 41561 (http) with context path '/api'
+2025-01-23T11:58:48.884Z  INFO 2136 --- [    Test worker] c.n.n.service.impl.AuthIntegrationTest   : Started AuthIntegrationTest in 13.122 seconds (process running for 30.635)
+2025-01-23T11:58:49.432Z  INFO 2136 --- [o-auto-1-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-01-23T11:58:49.433Z  INFO 2136 --- [o-auto-1-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-01-23T11:58:49.434Z  INFO 2136 --- [o-auto-1-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 8.9</a> at Jan 23, 2025, 11:59:02 AM</p>
+</div>
+</div>
+</body>
+</html>

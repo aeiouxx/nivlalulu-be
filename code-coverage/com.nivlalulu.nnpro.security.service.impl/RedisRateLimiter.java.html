@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RedisRateLimiter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.security.service.impl</a> &gt; <span class="el_source">RedisRateLimiter.java</span></div><h1>RedisRateLimiter.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.security.service.impl;
+
+import com.nivlalulu.nnpro.security.service.IRateLimiter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+
+import java.time.Duration;
+
+//todo: Could use Bucket4j instead of misusing our cache
+@Service
+<span class="fc" id="L12">@RequiredArgsConstructor</span>
+public class RedisRateLimiter implements IRateLimiter {
+    private final RedisTemplate&lt;String, Integer&gt; redisTemplate;
+
+    @Override
+    public boolean isAllowed(String key, int limit, Duration window) {
+<span class="fc" id="L18">        String redisKey = &quot;rate_limit:&quot; + key;</span>
+<span class="fc" id="L19">        Integer currentCount = redisTemplate.opsForValue().get(redisKey);</span>
+
+<span class="pc bpc" id="L21" title="1 of 2 branches missed.">        if (currentCount == null) {</span>
+<span class="fc" id="L22">            redisTemplate.opsForValue().set(redisKey, 1, window);</span>
+<span class="fc" id="L23">            return true;</span>
+        }
+
+<span class="nc bnc" id="L26" title="All 2 branches missed.">        if (currentCount &gt;= limit) {</span>
+<span class="nc" id="L27">            return false; // Rate limit exceeded</span>
+        }
+
+<span class="nc" id="L30">        redisTemplate.opsForValue().increment(redisKey);</span>
+<span class="nc" id="L31">        return true;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

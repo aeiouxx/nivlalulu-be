@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PartySnapshotDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.dto.v1</a> &gt; <span class="el_source">PartySnapshotDto.java</span></div><h1>PartySnapshotDto.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.dto.v1;
+
+import com.nivlalulu.nnpro.common.controller.validation.OnCreate;
+import com.nivlalulu.nnpro.common.controller.validation.OnUpdate;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.AssertTrue;
+import lombok.Data;
+
+
+<span class="nc bnc" id="L10" title="All 62 branches missed.">@Data</span>
+public class PartySnapshotDto {
+    @Schema(description = &quot;Organization or person getName&quot;, example = &quot;John Doe&quot;)
+<span class="fc" id="L13">    String name;</span>
+    @Schema(description = &quot;Organization or person getAddress&quot;, example = &quot;1234 Main St&quot;)
+<span class="fc" id="L15">    String address;</span>
+    @Schema(description = &quot;Organization or person getCountry&quot;, example = &quot;Springfield&quot;)
+<span class="fc" id="L17">    String country;</span>
+    @Schema(description = &quot;Organization or person IC tax&quot;, example = &quot;12345678&quot;)
+<span class="fc" id="L19">    String icTax;</span>
+    @Schema(description = &quot;Organization or person DIC tax&quot;, example = &quot;12345678&quot;)
+<span class="fc" id="L21">    String dicTax;</span>
+    @Schema(description = &quot;Organization or person telephone&quot;, example = &quot;+420 123 456 789&quot;)
+<span class="fc" id="L23">    String telephone;</span>
+    @Schema(description = &quot;Organization or person email&quot;, example = &quot;nivlalulu@nivlalulu.test&quot;)
+<span class="fc" id="L25">    String email;</span>
+
+
+    @AssertTrue(
+            groups = {OnCreate.class},
+            message = &quot;Only one of IC or DIC tax must be provided&quot;
+    )
+    private boolean isExactlyOnePresent() {
+<span class="nc bnc" id="L33" title="All 6 branches missed.">        boolean isOnlyOnePresent = (getIcTax() == null) != (getDicTax() == null);</span>
+<span class="nc" id="L34">        return isOnlyOnePresent;</span>
+    }
+
+    @AssertTrue(
+            groups = {OnUpdate.class},
+            message = &quot;Only one of IC or DIC tax can be provided&quot;
+    )
+    private boolean isMaxOneTaxPresent() {
+<span class="nc bnc" id="L42" title="All 4 branches missed.">        boolean isNeitherPresent = getIcTax() == null &amp;&amp; getDicTax() == null;</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">        if (isNeitherPresent) {</span>
+<span class="nc" id="L44">            return true;</span>
+        }
+<span class="nc bnc" id="L46" title="All 6 branches missed.">        boolean isOnlyOnePresent = (getIcTax() == null) != (getDicTax() == null);</span>
+<span class="nc" id="L47">        return isOnlyOnePresent;</span>
+    }
+
+    public PartySnapshotDto(
+            String name,
+            String address,
+            String country,
+            String icTax,
+            String dicTax,
+            String telephone,
+<span class="fc" id="L57">            String email) {</span>
+<span class="fc" id="L58">        this.name = name;</span>
+<span class="fc" id="L59">        this.address = address;</span>
+<span class="fc" id="L60">        this.country = country;</span>
+<span class="fc" id="L61">        this.icTax = icTax;</span>
+<span class="fc" id="L62">        this.dicTax = dicTax;</span>
+<span class="fc" id="L63">        this.telephone = telephone;</span>
+<span class="fc" id="L64">        this.email = email;</span>
+<span class="fc" id="L65">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

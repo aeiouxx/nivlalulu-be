@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthControllerV1.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.controller.v1.exposed</a> &gt; <span class="el_source">AuthControllerV1.java</span></div><h1>AuthControllerV1.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.controller.v1.exposed;
+
+import com.nivlalulu.nnpro.dto.v1.AuthenticationResponseDto;
+import com.nivlalulu.nnpro.dto.v1.LoginRequestDto;
+import com.nivlalulu.nnpro.dto.v1.RegistrationRequestDto;
+import com.nivlalulu.nnpro.service.IAuthService;
+import com.nivlalulu.nnpro.service.IJwtTokenService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(&quot;/public/v1/auth&quot;)
+<span class="fc" id="L24">@RequiredArgsConstructor</span>
+@Tag(name = &quot;Authentication&quot;, description = &quot;Endpoint for authentication operations&quot;)
+public class AuthControllerV1 {
+    private final IAuthService authService;
+    private final IJwtTokenService refreshTokenService;
+
+    @Operation(
+            summary = &quot;Login&quot;,
+            description = &quot;Logs in a user and returns an access token. Sets a refresh token in a HttpOnly cookie.&quot;,
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(schema = @Schema(implementation = LoginRequestDto.class))),
+            tags = { &quot;Authentication&quot; }
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Successful login&quot;,
+            content = @Content(schema = @Schema(implementation = AuthenticationResponseDto.class))),
+        @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Invalid credentials&quot;,
+            content = @Content)
+    })
+    @PostMapping(&quot;/login&quot;)
+    public AuthenticationResponseDto login(@Valid @RequestBody LoginRequestDto loginRequest,
+                                           HttpServletResponse response) {
+<span class="fc" id="L46">        return authService.login(loginRequest, response);</span>
+    }
+
+    @Operation(
+            summary = &quot;Register&quot;,
+            description = &quot;Registers a new user and returns an access token. Sets a refresh token in a HttpOnly cookie.&quot;,
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(schema = @Schema(implementation = RegistrationRequestDto.class))),
+            tags = { &quot;Authentication&quot; }
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    description = &quot;User registered successfully.&quot;,
+                    responseCode = &quot;200&quot;,
+                    content = @Content(schema = @Schema(implementation = AuthenticationResponseDto.class))),
+            @ApiResponse(
+                    description = &quot;User registration failed because of invalid request format.&quot;,
+                    responseCode = &quot;400&quot;),
+            @ApiResponse(
+                    description = &quot;User with provided username or getEmail already exists.&quot;,
+                    responseCode = &quot;409&quot;)
+    })
+    @PostMapping(&quot;/register&quot;)
+    public AuthenticationResponseDto register(@Valid @RequestBody RegistrationRequestDto registrationRequest,
+                                              HttpServletResponse response) {
+<span class="nc" id="L71">        return authService.register(registrationRequest, response);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

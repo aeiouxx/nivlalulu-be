@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Invoice.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.model</a> &gt; <span class="el_source">Invoice.java</span></div><h1>Invoice.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.model;
+
+import com.nivlalulu.nnpro.enums.PaymentMethod;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
+@Getter
+<span class="pc" id="L16">@Setter</span>
+<span class="nc" id="L17">@AllArgsConstructor</span>
+<span class="fc" id="L18">@NoArgsConstructor</span>
+@Entity(name = &quot;invoices&quot;)
+@NamedEntityGraph(
+        name = Invoice.WITH_ITEMS_AND_PARTIES_GRAPH,
+        attributeNodes = @NamedAttributeNode(&quot;items&quot;))
+public class Invoice {
+    public static final String WITH_ITEMS_AND_PARTIES_GRAPH = &quot;invoice-with-items-and-parties&quot;;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = &quot;id&quot;, nullable = false, unique = true)
+<span class="fc" id="L28">    private UUID id;</span>
+
+    @Column(name = &quot;created_at&quot;, nullable = false, columnDefinition = &quot;TIMESTAMP WITH TIME ZONE&quot;)
+<span class="fc" id="L31">    private Instant createdAt;</span>
+
+    @Column(name=&quot;expires_at&quot;, nullable = false, columnDefinition = &quot;TIMESTAMP WITH TIME ZONE&quot;)
+<span class="fc" id="L34">    private Instant expiresAt;</span>
+
+    @Column(nullable = false)
+<span class="fc" id="L37">    private PaymentMethod paymentMethod;</span>
+
+    @Column(nullable = false)
+<span class="fc" id="L40">    private String variableSymbol;</span>
+
+<span class="pc" id="L42">    @OneToMany(mappedBy = &quot;invoice&quot;, cascade = CascadeType.ALL, orphanRemoval = true)</span>
+<span class="fc" id="L43">    private Set&lt;InvoiceItem&gt; items = new HashSet&lt;&gt;();</span>
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = &quot;customer_id&quot;, referencedColumnName = &quot;id&quot;)
+<span class="nc" id="L47">    private Party customer;</span>
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = &quot;supplier_id&quot;, referencedColumnName = &quot;id&quot;)
+<span class="nc" id="L51">    private Party supplier;</span>
+
+    // This data is denormalized on purpose,
+    // we want to keep a &quot;snapshot&quot; of the supplier / customer information
+    // at the time of the invoice creation.
+    // If we edit the supplier / customer information, the invoice should not be affected (unless we want it to be).
+    // ----------------------------------------------------------------------------------------------------
+    @Column(name = &quot;supplier_name&quot;, nullable = false)
+<span class="fc" id="L59">    private String supplierName;</span>
+    @Column(name = &quot;supplier_address&quot;, nullable = false)
+<span class="fc" id="L61">    private String supplierAddress;</span>
+    @Column(name = &quot;supplier_country&quot;, nullable = false)
+<span class="fc" id="L63">    private String supplierCountry;</span>
+    @Column(name = &quot;supplier_ic_tax&quot;, nullable = false)
+<span class="fc" id="L65">    private String supplierIcTax;</span>
+    @Column(name = &quot;supplier_dic_tax&quot;, nullable = false)
+<span class="fc" id="L67">    private String supplierDicTax;</span>
+    @Column(name = &quot;supplier_telephone&quot;, nullable = false)
+<span class="fc" id="L69">    private String supplierTelephone;</span>
+    @Column(name = &quot;supplier_email&quot;, nullable = false)
+<span class="fc" id="L71">    private String supplierEmail;</span>
+
+    @Column(name = &quot;customer_name&quot;, nullable = false)
+<span class="fc" id="L74">    private String customerName;</span>
+    @Column(name = &quot;customer_address&quot;, nullable = false)
+<span class="fc" id="L76">    private String customerAddress;</span>
+    @Column(name = &quot;customer_country&quot;, nullable = false)
+<span class="fc" id="L78">    private String customerCountry;</span>
+    @Column(name = &quot;customer_ic_tax&quot;, nullable = false)
+<span class="fc" id="L80">    private String customerIcTax;</span>
+    @Column(name = &quot;customer_dic_tax&quot;, nullable = false)
+<span class="fc" id="L82">    private String customerDicTax;</span>
+    // ----------------------------------------------------------------------------------------------------
+
+    @ManyToOne
+    @JoinColumn(name = &quot;user_id&quot;, referencedColumnName = &quot;id&quot;)
+<span class="nc" id="L87">    private User user;</span>
+
+    @Column(name = &quot;contact&quot;)
+<span class="fc" id="L90">    private String contact;</span>
+
+    public Invoice(Instant created,
+                   Instant expiration,
+                   PaymentMethod paymentMethod,
+                   String variableSymbol,
+                   Set&lt;InvoiceItem&gt; items,
+                   String contact,
+<span class="nc" id="L98">                   User user) {</span>
+<span class="nc" id="L99">        this.createdAt = created;</span>
+<span class="nc" id="L100">        this.expiresAt = expiration;</span>
+<span class="nc" id="L101">        this.paymentMethod = paymentMethod;</span>
+<span class="nc" id="L102">        this.variableSymbol = variableSymbol;</span>
+<span class="nc" id="L103">        this.items = items;</span>
+<span class="nc" id="L104">        this.contact = contact;</span>
+<span class="nc" id="L105">        this.user = user;</span>
+<span class="nc" id="L106">    }</span>
+
+    public Invoice(Instant created,
+                   Instant expiration,
+                   PaymentMethod paymentMethod,
+                   String variableSymbol,
+                   Set&lt;InvoiceItem&gt; items,
+                   Party customer,
+                   Party supplier,
+                   String contact,
+<span class="nc" id="L116">                   User user) {</span>
+<span class="nc" id="L117">        this.createdAt = created;</span>
+<span class="nc" id="L118">        this.expiresAt = expiration;</span>
+<span class="nc" id="L119">        this.paymentMethod = paymentMethod;</span>
+<span class="nc" id="L120">        this.variableSymbol = variableSymbol;</span>
+<span class="nc" id="L121">        this.items = items;</span>
+<span class="nc" id="L122">        this.customer = customer;</span>
+<span class="nc" id="L123">        this.supplier = supplier;</span>
+<span class="nc" id="L124">        this.contact = contact;</span>
+<span class="nc" id="L125">        this.user = user;</span>
+
+<span class="nc" id="L127">        snapshotSupplier(supplier);</span>
+<span class="nc" id="L128">        snapshotCustomer(customer);</span>
+<span class="nc" id="L129">    }</span>
+
+    public void snapshotSupplier(Party supplier) {
+<span class="nc" id="L132">        this.supplierName = supplier.getName();</span>
+<span class="nc" id="L133">        this.supplierAddress = supplier.getAddress();</span>
+<span class="nc" id="L134">        this.supplierCountry = supplier.getCountry();</span>
+<span class="nc" id="L135">        this.supplierIcTax = supplier.getIcTax();</span>
+<span class="nc" id="L136">        this.supplierDicTax = supplier.getDicTax();</span>
+<span class="nc" id="L137">        this.supplierTelephone = supplier.getTelephone();</span>
+<span class="nc" id="L138">        this.supplierEmail = supplier.getEmail();</span>
+<span class="nc" id="L139">    }</span>
+
+    public void snapshotCustomer(Party customer) {
+<span class="nc" id="L142">        this.customerName = customer.getName();</span>
+<span class="nc" id="L143">        this.customerAddress = customer.getAddress();</span>
+<span class="nc" id="L144">        this.customerCountry = customer.getCountry();</span>
+<span class="nc" id="L145">        this.customerIcTax = customer.getIcTax();</span>
+<span class="nc" id="L146">        this.customerDicTax = customer.getDicTax();</span>
+<span class="nc" id="L147">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

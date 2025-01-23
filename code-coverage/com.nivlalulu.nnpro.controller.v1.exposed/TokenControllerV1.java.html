@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TokenControllerV1.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.controller.v1.exposed</a> &gt; <span class="el_source">TokenControllerV1.java</span></div><h1>TokenControllerV1.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.controller.v1.exposed;
+
+import com.nivlalulu.nnpro.dto.v1.TokenDto;
+import com.nivlalulu.nnpro.service.IJwtTokenService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(&quot;/public/v1/token&quot;)
+<span class="fc" id="L18">@RequiredArgsConstructor</span>
+<span class="fc" id="L19">@Slf4j</span>
+@Tag(name = &quot;Token&quot;, description = &quot;Endpoint for token operations&quot;)
+public class TokenControllerV1 {
+    private final IJwtTokenService refreshTokenService;
+
+    @Operation(
+            summary = &quot;Refresh the access token&quot;,
+            description = &quot;Reissue the access token using the refresh token.&quot;
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Refresh ok&quot;),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User or token not found&quot;),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Token is invalid or expired&quot;),
+    })
+    @PostMapping(&quot;/refresh&quot;)
+    public TokenDto refreshAccessToken(HttpServletRequest request) {
+<span class="fc" id="L35">        return refreshTokenService.refresh(request);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

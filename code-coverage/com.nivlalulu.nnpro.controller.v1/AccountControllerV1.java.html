@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AccountControllerV1.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.controller.v1</a> &gt; <span class="el_source">AccountControllerV1.java</span></div><h1>AccountControllerV1.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.controller.v1;
+
+import com.nivlalulu.nnpro.dto.v1.ChangeEmailRequestDto;
+import com.nivlalulu.nnpro.dto.v1.ChangePasswordRequestDto;
+import com.nivlalulu.nnpro.dto.v1.ChangeUsernameRequestDto;
+import com.nivlalulu.nnpro.dto.v1.ChangeUsernameResponseDto;
+import com.nivlalulu.nnpro.model.User;
+import com.nivlalulu.nnpro.service.IJwtTokenService;
+import com.nivlalulu.nnpro.service.IUserCredentialsService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(&quot;/v1/account&quot;)
+<span class="fc" id="L29">@RequiredArgsConstructor</span>
+<span class="fc" id="L30">@Slf4j</span>
+@Tag(name = &quot;Account controller&quot;, description = &quot;Operations for managing a users account&quot;)
+public class AccountControllerV1 {
+    private final IUserCredentialsService credentialsService;
+    private final IJwtTokenService jwtTokenService;
+
+    @Operation(
+            summary = &quot;User logout&quot;,
+            description = &quot;Logs out the user by invalidating the `access token` and the `refresh_token`.&quot;
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;User logged out&quot;),
+
+    })
+    @PostMapping(&quot;/logout&quot;)
+    public void logout(@AuthenticationPrincipal User user,
+                       HttpServletRequest request,
+                       HttpServletResponse response) {
+<span class="nc" id="L48">        log.debug(&quot;User {} logging out&quot;, user.getUsername());</span>
+<span class="nc" id="L49">        jwtTokenService.logout(user, request, response);</span>
+<span class="nc" id="L50">    }</span>
+
+    @Operation(
+            summary = &quot;Change password&quot;,
+            description = &quot;Changes the password for the specified user.&quot;,
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = &quot;The old and new password&quot;,
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = ChangePasswordRequestDto.class))
+            )
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Password changed successfuly&quot;),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Invalid password&quot;),
+
+    })
+    @PostMapping(&quot;/password&quot;)
+    public void changePassword(@Valid @RequestBody ChangePasswordRequestDto request,
+                               @AuthenticationPrincipal User user) {
+<span class="nc" id="L69">        credentialsService.changePassword(user.getUsername(), request.oldPassword(), request.newPassword());</span>
+<span class="nc" id="L70">    }</span>
+
+    @Operation(
+            summary = &quot;Change username&quot;,
+            description = &quot;Changes the username for the specified user,&quot; +
+                    &quot; regenerates the `access token` and the `refresh_token`.&quot;,
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = &quot;The new username&quot;,
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = ChangeUsernameRequestDto.class))
+            )
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = &quot;200&quot;,
+                    description = &quot;Username changed successfuly&quot;,
+                    content = @Content(schema = @Schema(implementation = ChangeUsernameResponseDto.class))),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User not found&quot;),
+            @ApiResponse(responseCode = &quot;409&quot;, description = &quot;Username already in use&quot;)
+    })
+    @PostMapping(&quot;/username&quot;)
+    public ChangeUsernameResponseDto changeUsername(@Valid @RequestBody ChangeUsernameRequestDto dto,
+                               HttpServletRequest request,
+                               HttpServletResponse response,
+                               @AuthenticationPrincipal User user) {
+<span class="nc" id="L95">        var newUsername = credentialsService.changeUsername(user.getUsername(), dto.newUsername());</span>
+<span class="nc" id="L96">        var newTokenDto = jwtTokenService.refreshAndInvalidate(newUsername, request, response);</span>
+<span class="nc" id="L97">        return new ChangeUsernameResponseDto(newUsername, newTokenDto);</span>
+    }
+
+    @Operation(
+            summary = &quot;Change email&quot;,
+            description = &quot;Changes the email for the specified user.&quot;,
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = &quot;The new email&quot;,
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = ChangeEmailRequestDto.class))
+            )
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Email changed successfuly&quot;),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;User not found&quot;),
+            @ApiResponse(responseCode = &quot;409&quot;, description = &quot;Email already in use&quot;)
+    })
+    @PostMapping(&quot;/email&quot;)
+    public void changeEmail(@Valid @RequestBody ChangeEmailRequestDto request,
+                            @AuthenticationPrincipal User user) {
+<span class="nc" id="L117">        var newEmail = credentialsService.changeEmail(user.getUsername(), request.newEmail());</span>
+<span class="nc" id="L118">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

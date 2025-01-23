@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InvoiceSearchDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.dto.v1</a> &gt; <span class="el_source">InvoiceSearchDto.java</span></div><h1>InvoiceSearchDto.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.dto.v1;
+
+import com.nivlalulu.nnpro.enums.PaymentMethod;
+import com.nivlalulu.nnpro.model.Invoice;
+import com.nivlalulu.nnpro.model.User;
+import com.nivlalulu.nnpro.specification.InvoiceSpecification;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.web.bind.annotation.BindParam;
+
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
+
+
+<span class="nc bnc" id="L17" title="All 94 branches missed.">@Data</span>
+@Schema(
+        description = &quot;Search criteria for invoices, used to filter invoices, performs LIKE matching on string fields&quot;)
+public class InvoiceSearchDto {
+
+    public Specification&lt;Invoice&gt; toSpecification(User user) {
+<span class="nc" id="L23">        Specification&lt;Invoice&gt; specification = Specification.where(null);</span>
+<span class="nc bnc" id="L24" title="All 2 branches missed.">        if (id != null) {</span>
+<span class="nc" id="L25">            specification = specification.and(InvoiceSpecification.hasId(id));</span>
+        }
+<span class="nc bnc" id="L27" title="All 2 branches missed.">        if (variableSymbol != null) {</span>
+<span class="nc" id="L28">            specification = specification.and(InvoiceSpecification.hasVariableSymbol(variableSymbol));</span>
+        }
+<span class="nc bnc" id="L30" title="All 2 branches missed.">        if (supplierName != null) {</span>
+<span class="nc" id="L31">            specification = specification.and(InvoiceSpecification.hasSupplierNameLike(supplierName));</span>
+        }
+<span class="nc bnc" id="L33" title="All 2 branches missed.">        if (customerName != null) {</span>
+<span class="nc" id="L34">            specification = specification.and(InvoiceSpecification.hasCustomerNameLike(customerName));</span>
+        }
+<span class="nc bnc" id="L36" title="All 2 branches missed.">        if (paymentMethod != null) {</span>
+<span class="nc" id="L37">            specification = specification.and(InvoiceSpecification.hasPaymentMethod(paymentMethod));</span>
+        }
+<span class="nc bnc" id="L39" title="All 4 branches missed.">        if (createdAtStart != null || createdAtEnd != null) {</span>
+<span class="nc" id="L40">            specification = specification.and(InvoiceSpecification.createdBetween(createdAtStart, createdAtEnd));</span>
+        }
+<span class="nc bnc" id="L42" title="All 4 branches missed.">        if (expiresAtStart != null || expiresAtEnd != null) {</span>
+<span class="nc" id="L43">            specification = specification.and(InvoiceSpecification.expiresBetween(expiresAtStart, expiresAtEnd));</span>
+        }
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        if (contact != null) {</span>
+<span class="nc" id="L46">            specification = specification.and(InvoiceSpecification.hasContactLike(contact));</span>
+        }
+
+<span class="nc bnc" id="L49" title="All 4 branches missed.">        if (itemNames != null &amp;&amp; !itemNames.isEmpty()) {</span>
+<span class="nc" id="L50">            specification = specification.and(InvoiceSpecification.anyItemNamesLike(itemNames));</span>
+        }
+
+<span class="nc" id="L53">        specification = specification.and((root, query, criteriaBuilder) -&gt;</span>
+<span class="nc" id="L54">                criteriaBuilder.equal(root.get(&quot;user&quot;), user));</span>
+<span class="nc" id="L55">        return specification;</span>
+    }
+
+    @Schema(
+            description = &quot;Unique identifier of the invoice&quot;,
+            example = &quot;123e4567-e89b-12d3-a456-426614174000&quot;)
+<span class="nc" id="L61">    private UUID id;</span>
+
+    @Schema(
+            description = &quot;Variable symbol&quot;,
+            example = &quot;123456&quot;)
+    @BindParam(&quot;variable_symbol&quot;)
+<span class="nc" id="L67">    private String variableSymbol;</span>
+
+    @Schema(
+            description = &quot;Search for invoices with this supplier name&quot;,
+            example = &quot;John Doe&quot;)
+    @BindParam(&quot;supplier_name&quot;)
+<span class="nc" id="L73">    private String supplierName;</span>
+
+    @Schema(
+            description = &quot;Search for invoices with this customer name&quot;,
+            example = &quot;Customer One&quot;)
+    @BindParam(&quot;customer_name&quot;)
+<span class="nc" id="L79">    private String customerName;</span>
+
+    @BindParam(&quot;payment_method&quot;)
+    @Schema(description = &quot;Payment method&quot;, example = &quot;P&quot;)
+<span class="nc" id="L83">    private PaymentMethod paymentMethod;</span>
+
+    @Schema(
+            description = &quot;Search for invoices created after this date (inclusive), &quot; +
+                    &quot;if null and `created_at_end` is specified,&quot; +
+                    &quot;will match all invoices created before the end date (inclusive)&quot;,
+            example = &quot;2021-01-01T00:00:00Z&quot;)
+    @BindParam(&quot;created_at_start&quot;)
+<span class="nc" id="L91">    private Instant createdAtStart;</span>
+
+    @Schema(
+            description = &quot;Search for invoices created before this date (inclusive), &quot; +
+                    &quot;if null and `created_at_start` is specified,&quot; +
+                    &quot;will match all invoices created after the start date (inclusive)&quot;,
+            example = &quot;2021-01-01T00:00:00Z&quot;)
+    @BindParam(&quot;created_at_end&quot;)
+<span class="nc" id="L99">    private Instant createdAtEnd;</span>
+
+
+    @Schema(
+            description = &quot;Search for invoices expiring after this date (inclusive), &quot; +
+                    &quot;if null and `expires_at_end` is specified,&quot; +
+                    &quot;will match all invoices expiring before the end date (inclusive)&quot;,
+            example = &quot;2021-01-01T00:00:00Z&quot;)
+    @BindParam(&quot;expires_at_start&quot;)
+<span class="nc" id="L108">    private Instant expiresAtStart;</span>
+
+    @Schema(
+            description = &quot;Search for invoices expiring after this date (inclusive), &quot; +
+                    &quot;if null and `expires_at_start` is specified,&quot; +
+                    &quot;will match all invoices expiring after the start date (inclusive)&quot;,
+            example = &quot;2021-01-01T00:00:00Z&quot;)
+    @BindParam(&quot;expires_at_end&quot;)
+<span class="nc" id="L116">    private Instant expiresAtEnd;</span>
+
+    @Schema(
+            description = &quot;Search for invoice whose contact information contains this string&quot;,
+            example = &quot;John Doe&quot;)
+<span class="nc" id="L121">    private String contact;</span>
+
+    @Schema(
+            description = &quot;Search for invoices with items containing any of these names, meaning a single match suffices&quot;,
+            example = &quot;Product One&quot;)
+    @BindParam(&quot;item_names&quot;)
+<span class="nc" id="L127">    private List&lt;String&gt; itemNames;</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

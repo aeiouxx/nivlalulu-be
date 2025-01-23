@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SimpleMailSender.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.common.email.impl</a> &gt; <span class="el_source">SimpleMailSender.java</span></div><h1>SimpleMailSender.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.common.email.impl;
+
+
+import com.nivlalulu.nnpro.common.email.IMailSender;
+import com.nivlalulu.nnpro.common.email.IMailTemplateEngine;
+import com.nivlalulu.nnpro.configuration.AsyncConfiguration;
+import org.simplejavamail.api.email.Email;
+import org.simplejavamail.api.mailer.Mailer;
+import org.simplejavamail.api.mailer.config.TransportStrategy;
+import org.simplejavamail.email.EmailBuilder;
+import org.simplejavamail.mailer.MailerBuilder;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+
+@Component
+@Async
+public class SimpleMailSender implements IMailSender {
+    private final String from;
+    private final Mailer mailer;
+    private final IMailTemplateEngine mailTemplateEngine;
+
+    public SimpleMailSender(
+            @Value(&quot;${mail.host}&quot;)
+            String host,
+            @Value(&quot;${mail.port}&quot;)
+            int port,
+            @Value(&quot;${mail.username}&quot;)
+            String username,
+            @Value(&quot;${mail.password}&quot;)
+            String password,
+            @Value(&quot;${mail.from:${mail.username}}&quot;)
+            String from,
+            @Value(&quot;${mail.debug}&quot;)
+            boolean withDebug,
+            IMailTemplateEngine mailTemplateEngine
+<span class="fc" id="L37">    ) {</span>
+<span class="fc" id="L38">        this.from = from;</span>
+<span class="fc" id="L39">        this.mailTemplateEngine = mailTemplateEngine;</span>
+<span class="fc" id="L40">        this.mailer = MailerBuilder</span>
+<span class="fc" id="L41">                .withSMTPServer(host, port, username, password)</span>
+<span class="fc" id="L42">                .withTransportStrategy(TransportStrategy.SMTP_TLS)</span>
+<span class="fc" id="L43">                .withDebugLogging(withDebug)</span>
+<span class="fc" id="L44">                .buildMailer();</span>
+<span class="fc" id="L45">    }</span>
+
+
+    @Override
+    @Async(AsyncConfiguration.NOTIFICATION_EXECUTOR_KEY)
+    public void sendResetCode(String userEmail, String resetToken) {
+<span class="nc" id="L51">        String body = mailTemplateEngine.generatePasswordResetEmail(resetToken);</span>
+<span class="nc" id="L52">        Email email = EmailBuilder.startingBlank()</span>
+<span class="nc" id="L53">                .from(from)</span>
+<span class="nc" id="L54">                .to(userEmail)</span>
+<span class="nc" id="L55">                .withSubject(&quot;Password reset&quot;)</span>
+<span class="nc" id="L56">                .withHTMLText(body)</span>
+<span class="nc" id="L57">                .buildEmail();</span>
+<span class="nc" id="L58">        mailer.sendMail(email);</span>
+<span class="nc" id="L59">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PartyControllerV1.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.controller.v1</a> &gt; <span class="el_source">PartyControllerV1.java</span></div><h1>PartyControllerV1.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.controller.v1;
+
+import com.nivlalulu.nnpro.common.controller.validation.OnCreate;
+import com.nivlalulu.nnpro.common.controller.validation.OnUpdate;
+import com.nivlalulu.nnpro.dto.v1.PartyDto;
+import com.nivlalulu.nnpro.model.Party;
+import com.nivlalulu.nnpro.model.User;
+import com.nivlalulu.nnpro.security.ownership.IsOwnedByUser;
+import com.nivlalulu.nnpro.service.IPartyService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+@RestController
+@RequestMapping(&quot;/v1/party&quot;)
+<span class="fc" id="L28">@RequiredArgsConstructor</span>
+@Validated
+<span class="fc" id="L30">@Slf4j</span>
+@Tag(name = &quot;Party management&quot;, description = &quot;Operations related to global management of user parties.&quot;)
+public class PartyControllerV1 {
+    private final IPartyService partyService;
+
+    @Operation(
+            summary = &quot;List parties (optionally paginated)&quot;,
+            description = &quot;&quot;&quot;
+            Returns a (paginated) list of parties.
+            Supports sorting by the following fields:
+            - `createdAt`
+            - `expiresAt`
+            - `contact`.
+            
+            Sort format: `fieldName,asc|desc`.
+            &quot;&quot;&quot;
+    )
+    @GetMapping
+    @PageableAsQueryParam
+    public Page&lt;PartyDto&gt; getParties(
+            @AuthenticationPrincipal User user,
+            @RequestParam(required = false) Pageable pageable) {
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        if (pageable == null) {</span>
+<span class="nc" id="L53">            log.debug(&quot;No paging information provided. Returning all parties.&quot;);</span>
+<span class="nc" id="L54">            pageable = Pageable.unpaged();</span>
+        }
+<span class="nc" id="L56">        log.info(&quot;User '{}' requested parties with paging: {}&quot;, user.getUsername(), pageable);</span>
+<span class="nc" id="L57">        return partyService.findForUser(user, pageable);</span>
+    }
+
+    @Operation(
+            summary = &quot;Retrieve an party&quot;,
+            description = &quot;Returns the party with the specified customer facing identifier.&quot;
+    )
+    @GetMapping(&quot;/{id}&quot;)
+    @IsOwnedByUser(entityClass = Party.class)
+    public PartyDto getParty(
+            @AuthenticationPrincipal User user,
+            @PathVariable UUID id) {
+<span class="nc" id="L69">        log.info(&quot;User '{}' requested party with id: {}&quot;, user.getUsername(), id);</span>
+<span class="nc" id="L70">        return partyService.findById(id);</span>
+    }
+
+    @PostMapping
+    @Operation(
+            summary = &quot;Create a party&quot;,
+            description = &quot;Creates a new party.&quot;,
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = &quot;Party to create&quot;,
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = PartyDto.class)))
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = &quot;201&quot;,
+                    description = &quot;Party created&quot;,
+                    content = @Content(schema = @Schema(implementation = PartyDto.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid input&quot;),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = &quot;401&quot;, description = &quot;Unauthorized&quot;)
+    })
+    public PartyDto saveParty(
+            @AuthenticationPrincipal User user,
+            @Validated(OnCreate.class) @RequestBody PartyDto partyDto) {
+<span class="nc" id="L94">        log.info(&quot;User '{}' requested to create party: {}&quot;, user.getUsername(), partyDto);</span>
+<span class="nc" id="L95">        return partyService.createParty(partyDto, user);</span>
+    }
+
+    @Operation(
+            summary = &quot;Update a party&quot;,
+            description = &quot;Updates an existing party.&quot;
+    )
+    @IsOwnedByUser(entityClass = Party.class)
+    @PutMapping(&quot;/{id}&quot;)
+    public PartyDto updateParty(
+            @AuthenticationPrincipal User user,
+            @PathVariable UUID id,
+            @Validated(OnUpdate.class) @RequestBody PartyDto partyDto) {
+<span class="nc" id="L108">        log.info(&quot;User '{}' requested to update party with id: {}&quot;, user.getUsername(), id);</span>
+<span class="nc" id="L109">        return partyService.updateParty(partyDto, user);</span>
+    }
+
+    @Operation(
+            summary = &quot;Delete a party&quot;,
+            description = &quot;Deletes an existing party.&quot;
+    )
+    @IsOwnedByUser(entityClass = Party.class)
+    @DeleteMapping(&quot;/{id}&quot;)
+    public PartyDto deleteParty(
+            @AuthenticationPrincipal User user,
+            @PathVariable UUID id) {
+<span class="nc" id="L121">        log.info(&quot;User '{}' requested to delete party with id: {}&quot;, user.getUsername(), id);</span>
+<span class="nc" id="L122">        return partyService.deleteParty(id);</span>
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

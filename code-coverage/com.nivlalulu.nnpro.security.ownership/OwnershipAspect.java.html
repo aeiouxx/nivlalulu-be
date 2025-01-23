@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OwnershipAspect.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.security.ownership</a> &gt; <span class="el_source">OwnershipAspect.java</span></div><h1>OwnershipAspect.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.security.ownership;
+
+import com.nivlalulu.nnpro.common.exceptions.NotFoundException;
+import com.nivlalulu.nnpro.common.exceptions.UnauthorizedException;
+import com.nivlalulu.nnpro.model.User;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+
+import java.util.Map;
+
+@Aspect
+@Component
+<span class="fc" id="L21">@RequiredArgsConstructor</span>
+<span class="fc" id="L22">@Slf4j</span>
+public class OwnershipAspect {
+    private final Map&lt;Class&lt;?&gt;, IOwnershipChecker&gt; checkers;
+
+    @Pointcut(&quot;@annotation(isOwnedByUser)&quot;)
+    public void isOwnedByUserAnnotationPointcut(IsOwnedByUser isOwnedByUser) {
+        // pointcut
+<span class="nc" id="L29">    }</span>
+
+    @Before(&quot;isOwnedByUserAnnotationPointcut(isOwnedByUser)&quot;)
+    public void checkOwnership(JoinPoint jp, IsOwnedByUser isOwnedByUser) {
+<span class="nc" id="L33">        var user = getUserFromSecurityContext();</span>
+
+<span class="nc" id="L35">        Class&lt;?&gt; entityClass = isOwnedByUser.entityClass();</span>
+<span class="nc" id="L36">        IOwnershipChecker checker = checkers.get(entityClass);</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">        if (checker == null) {</span>
+<span class="nc" id="L38">            log.error(&quot;No ownership checker found for entity class '{}'&quot;, entityClass);</span>
+<span class="nc" id="L39">            throw new IllegalArgumentException(&quot;No ownership checker found for entity class&quot;);</span>
+        }
+
+
+        // 3)
+<span class="nc" id="L44">        String paramName = isOwnedByUser.resourceIdParam();</span>
+<span class="nc" id="L45">        Object resourceId = getResourceId(jp, paramName);</span>
+
+<span class="nc" id="L47">        boolean exists = checker.resourceExists(resourceId);</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        if (!exists) {</span>
+<span class="nc" id="L49">            throw new NotFoundException(entityClass.getSimpleName(), paramName, resourceId.toString());</span>
+        }
+
+<span class="nc" id="L52">        boolean isOwned = checker.isOwnedBy(resourceId, user);</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">        if (!isOwned) {</span>
+<span class="nc" id="L54">            throw new UnauthorizedException(&quot;You do not own this &quot; + entityClass.getSimpleName());</span>
+        }
+
+<span class="nc" id="L57">        log.debug(&quot;User [{}] is verified as owner of {} with ID = {}.&quot;, user.getId(),</span>
+<span class="nc" id="L58">                entityClass.getSimpleName(), resourceId);</span>
+<span class="nc" id="L59">    }</span>
+
+    private static Object getResourceId(JoinPoint jp, String paramName) {
+<span class="nc" id="L62">        Object[] args = jp.getArgs();</span>
+<span class="nc" id="L63">        MethodSignature sig = (MethodSignature) jp.getSignature();</span>
+<span class="nc" id="L64">        var params = sig.getMethod().getParameters();</span>
+
+<span class="nc" id="L66">        Object resourceId = null;</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        for (int i = 0; i &lt; params.length; i++) {</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">            if (params[i].getName().equals(paramName)) {</span>
+<span class="nc" id="L69">                resourceId = args[i];</span>
+<span class="nc" id="L70">                break;</span>
+            }
+        }
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        if (resourceId == null) {</span>
+<span class="nc" id="L74">            throw new IllegalArgumentException(&quot;Could not find param '&quot; + paramName + &quot;' in method arguments&quot;);</span>
+        }
+<span class="nc" id="L76">        return resourceId;</span>
+    }
+
+    private User getUserFromSecurityContext() {
+<span class="nc" id="L80">        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="nc bnc" id="L81" title="All 4 branches missed.">        if (authentication == null || !authentication.isAuthenticated()) {</span>
+<span class="nc" id="L82">            log.debug(&quot;User is not authenticated, are you using this annotation in a secured endpoint?&quot;);</span>
+<span class="nc" id="L83">            throw new UnauthorizedException(&quot;User is not authenticated&quot;);</span>
+        }
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        if (authentication.getPrincipal() instanceof User user) {</span>
+<span class="nc" id="L86">            return user;</span>
+        }
+<span class="nc" id="L88">        throw new UnauthorizedException(&quot;Unknown details.&quot;);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

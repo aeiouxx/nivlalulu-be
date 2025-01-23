@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Sha256Provider.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.common.hashing.impl</a> &gt; <span class="el_source">Sha256Provider.java</span></div><h1>Sha256Provider.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.common.hashing.impl;
+
+import com.nivlalulu.nnpro.common.hashing.IHashProvider;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+
+@Component
+<span class="fc" id="L15">@Slf4j</span>
+<span class="fc" id="L16">public class Sha256Provider implements IHashProvider {</span>
+    private static final String DIGEST_ALGORITHM = &quot;SHA-256&quot;;
+
+    public String hash(String input) {
+        try {
+<span class="fc" id="L21">            MessageDigest digest = MessageDigest.getInstance(DIGEST_ALGORITHM);</span>
+<span class="fc" id="L22">            var encoded = digest.digest( input.getBytes(StandardCharsets.UTF_8) );</span>
+<span class="fc" id="L23">            return bytesToHex(encoded);</span>
+<span class="nc" id="L24">        } catch (NoSuchAlgorithmException e) {</span>
+<span class="nc" id="L25">            log.error(&quot;Error while hashing.&quot;, e);</span>
+            // don't leak the actual cause to the client
+<span class="nc" id="L27">            throw new RuntimeException(&quot;Internal error occurred.&quot;);</span>
+        }
+    }
+
+    public String hmac(String input, String key) {
+        try {
+<span class="nc" id="L33">            Mac mac = Mac.getInstance(&quot;HmacSHA256&quot;);</span>
+<span class="nc" id="L34">            SecretKeySpec secretKey = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), &quot;HmacSHA256&quot;);</span>
+<span class="nc" id="L35">            mac.init(secretKey);</span>
+<span class="nc" id="L36">            byte[] derivedBytes = mac.doFinal(input.getBytes(StandardCharsets.UTF_8));</span>
+<span class="nc" id="L37">            return Base64.getEncoder().encodeToString(derivedBytes);</span>
+<span class="nc" id="L38">        } catch (Exception e) {</span>
+<span class="nc" id="L39">            throw new RuntimeException(&quot;Error while hashing with HMAC SHA-256.&quot;, e);</span>
+        }
+    }
+
+    private String bytesToHex(byte[] hash) {
+<span class="fc" id="L44">        StringBuilder hexString = new StringBuilder(2 * hash.length);</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        for (byte b : hash) {</span>
+<span class="fc" id="L46">            String hex = String.format(&quot;%02x&quot;, b);</span>
+<span class="fc" id="L47">            hexString.append(hex);</span>
+        }
+<span class="fc" id="L49">        return hexString.toString();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

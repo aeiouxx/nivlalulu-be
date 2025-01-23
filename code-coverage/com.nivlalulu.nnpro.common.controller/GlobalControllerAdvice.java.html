@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GlobalControllerAdvice.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.common.controller</a> &gt; <span class="el_source">GlobalControllerAdvice.java</span></div><h1>GlobalControllerAdvice.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.common.controller;
+
+import com.nivlalulu.nnpro.common.exceptions.*;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSourceResolvable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConversionException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
+
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@ControllerAdvice
+<span class="fc" id="L20">@Slf4j</span>
+<span class="fc" id="L21">public class GlobalControllerAdvice {</span>
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity&lt;?&gt; handleBadRequestException(BadRequestException e) {
+<span class="nc" id="L24">        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());</span>
+    }
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity&lt;?&gt; handleUnauthorizedException(UnauthorizedException ex) {
+<span class="fc" id="L28">        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());</span>
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity&lt;?&gt; handleNotFoundException(NotFoundException e) {
+<span class="fc" id="L33">        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());</span>
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity&lt;?&gt; handleConflictException(ConflictException e) {
+<span class="nc" id="L38">        return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());</span>
+    }
+
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; handleValidationExceptions(MethodArgumentNotValidException ex) {
+<span class="nc" id="L43">        Map&lt;String, String&gt; errors = ex.getBindingResult()</span>
+<span class="nc" id="L44">                .getFieldErrors()</span>
+<span class="nc" id="L45">                .stream()</span>
+<span class="nc" id="L46">                .collect(</span>
+<span class="nc" id="L47">                        Collectors.toMap(</span>
+<span class="nc" id="L48">                                error -&gt; error.getField(),</span>
+<span class="nc" id="L49">                                error -&gt; error.getDefaultMessage()</span>
+                        )
+                );
+<span class="nc" id="L52">        return new ResponseEntity&lt;&gt;(errors, HttpStatus.BAD_REQUEST);</span>
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; handleHandlerMethodValidationException(HandlerMethodValidationException ex) {
+<span class="nc" id="L57">        Map&lt;String, String&gt; errors = ex.getAllValidationResults()</span>
+<span class="nc" id="L58">                .stream()</span>
+<span class="nc" id="L59">                .collect(</span>
+<span class="nc" id="L60">                        Collectors.toMap(</span>
+<span class="nc" id="L61">                                result -&gt; result.getMethodParameter().getParameterName(),</span>
+<span class="nc" id="L62">                                result -&gt; result.getResolvableErrors().stream()</span>
+<span class="nc" id="L63">                                        .map(MessageSourceResolvable::getDefaultMessage)</span>
+<span class="nc" id="L64">                                        .collect(Collectors.joining(&quot;, &quot;))</span>
+                        )
+                );
+<span class="nc" id="L67">        return new ResponseEntity&lt;&gt;(errors, HttpStatus.BAD_REQUEST);</span>
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity&lt;?&gt; handleInvalidTokenException(InvalidTokenException e) {
+<span class="fc" id="L72">        return ResponseEntity</span>
+<span class="fc" id="L73">                .status(HttpStatus.BAD_REQUEST)</span>
+<span class="fc" id="L74">                .body(e.getMessage());</span>
+    }
+
+    @ExceptionHandler(ExpiredTokenException.class)
+    public ResponseEntity&lt;?&gt; handleInvalidTokenException(ExpiredTokenException e) {
+<span class="nc" id="L79">        return ResponseEntity</span>
+<span class="nc" id="L80">                .status(HttpStatus.UNAUTHORIZED)</span>
+<span class="nc" id="L81">                .body(e.getMessage());</span>
+    }
+
+    @ExceptionHandler(HttpMessageConversionException.class)
+    public ResponseEntity&lt;?&gt; handleHttpMessageConversionException(HttpMessageConversionException e) {
+<span class="nc" id="L86">        return ResponseEntity</span>
+<span class="nc" id="L87">                .status(HttpStatus.BAD_REQUEST)</span>
+<span class="nc" id="L88">                .body(&quot;Invalid request body&quot;);</span>
+    }
+
+
+    @ExceptionHandler
+    public ResponseEntity&lt;?&gt; handleUncaughtException(Exception e) {
+<span class="nc" id="L94">        log.error(&quot;[UNCAUGHT!!!!]\tUncaught exception&quot;, e);</span>
+<span class="nc" id="L95">        return ResponseEntity</span>
+<span class="nc" id="L96">                .status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L97">                .body(&quot;Something went wrong&quot;);</span>
+    }
+
+    @ExceptionHandler
+    public ResponseEntity&lt;?&gt; handleAccessDeniedException(AccessDeniedException e) {
+<span class="nc" id="L102">        return ResponseEntity</span>
+<span class="nc" id="L103">                .status(HttpStatus.FORBIDDEN)</span>
+<span class="nc" id="L104">                .body(e.getMessage());</span>
+    }
+
+    @ExceptionHandler(TooManyRequestsException.class)
+    public ResponseEntity&lt;?&gt; handleTooManyRequestsException(TooManyRequestsException e) {
+<span class="nc" id="L109">        return ResponseEntity</span>
+<span class="nc" id="L110">                .status(HttpStatus.TOO_MANY_REQUESTS)</span>
+<span class="nc" id="L111">                .body(e.getMessage());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InvoiceControllerV1.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.controller.v1</a> &gt; <span class="el_source">InvoiceControllerV1.java</span></div><h1>InvoiceControllerV1.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.controller.v1;
+
+import com.nivlalulu.nnpro.common.controller.validation.OnCreate;
+import com.nivlalulu.nnpro.common.controller.validation.OnUpdate;
+import com.nivlalulu.nnpro.dto.v1.InvoiceDto;
+import com.nivlalulu.nnpro.dto.v1.InvoiceSearchDto;
+import com.nivlalulu.nnpro.model.User;
+import com.nivlalulu.nnpro.service.IInvoiceService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+@RestController
+@RequestMapping(&quot;/v1/invoices&quot;)
+<span class="fc" id="L30">@RequiredArgsConstructor</span>
+@Validated
+<span class="fc" id="L32">@Slf4j</span>
+@Tag(name = &quot;Invoice management&quot;, description = &quot;Operations related to managing invoices.&quot;)
+public class InvoiceControllerV1 {
+    private final IInvoiceService invoiceService;
+
+    @Operation(summary = &quot;Search invoices with filters, sorting, and pagination&quot;)
+    @GetMapping(&quot;/search&quot;)
+    @PageableAsQueryParam
+    public Page&lt;InvoiceDto&gt; searchInvoices(
+            @AuthenticationPrincipal User user,
+            @ModelAttribute InvoiceSearchDto searchDto,
+            @RequestParam(required = false) Pageable pageable,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) String sortOrder) {
+<span class="nc" id="L46">        log.info(&quot;User '{}' requested to search invoices&quot;, user.getUsername());</span>
+<span class="nc" id="L47">        Sort sort = null;</span>
+<span class="nc bnc" id="L48" title="All 4 branches missed.">        if (sortBy != null &amp;&amp; sortOrder != null) {</span>
+<span class="nc" id="L49">            sort = Sort.by(Sort.Direction.fromString(sortOrder), sortBy);</span>
+        }
+<span class="nc" id="L51">        return invoiceService.search(user, searchDto, pageable, sort);</span>
+    }
+
+    @Operation(
+            summary = &quot;List invoices (optionally paginated)&quot;,
+            description = &quot;&quot;&quot;
+            Returns a (paginated) list of invoices.
+            Supports sorting by the following fields:
+            - `createdAt`
+            - `expiresAt`
+            - `contact`.
+            
+            Sort format: `fieldName,asc|desc`.
+            &quot;&quot;&quot;
+    )
+    @GetMapping
+    @PageableAsQueryParam
+    public Page&lt;InvoiceDto&gt; getInvoices(
+            @AuthenticationPrincipal User user,
+            @RequestParam(required = false)
+            Pageable pageable) {
+<span class="nc bnc" id="L72" title="All 2 branches missed.">        if (pageable == null) {</span>
+<span class="nc" id="L73">            log.debug(&quot;No paging information provided. Returning all invoices.&quot;);</span>
+<span class="nc" id="L74">            pageable = Pageable.unpaged();</span>
+        }
+<span class="nc" id="L76">        log.info(&quot;User '{}' requested invoices with paging: {}&quot;, user.getUsername(), pageable);</span>
+<span class="nc" id="L77">        return invoiceService.findForUser(user, pageable);</span>
+    }
+
+    @Operation(
+            summary = &quot;Retrieve an invoice&quot;,
+            description = &quot;Returns the invoice with the specified customer facing identifier.&quot;
+    )
+    @GetMapping(&quot;/{id}&quot;)
+    public InvoiceDto getInvoice(
+            @AuthenticationPrincipal User user,
+            @PathVariable UUID id) {
+<span class="nc" id="L88">        log.info(&quot;User '{}' requested invoice with id: {}&quot;, user.getUsername(), id);</span>
+<span class="nc" id="L89">        return invoiceService.findInvoiceByIdForUser(id, user);</span>
+    }
+
+    @PostMapping
+    @Operation(
+            summary = &quot;Create an invoice&quot;,
+            description = &quot;Creates a new invoice.&quot;,
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                description = &quot;Invoice to create&quot;,
+                required = true,
+                content = @Content(schema = @Schema(implementation = InvoiceDto.class)))
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = &quot;201&quot;,
+                    description = &quot;Invoice created&quot;,
+                    content = @Content(schema = @Schema(implementation = InvoiceDto.class))
+            ),
+            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid input&quot;),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Unauthorized&quot;)
+    })
+    @ResponseStatus(HttpStatus.CREATED)
+    public InvoiceDto createInvoice(
+            @AuthenticationPrincipal User user,
+            @Validated(OnCreate.class) @RequestBody InvoiceDto invoiceDto) {
+<span class="nc" id="L114">        log.info(&quot;User '{}' requested to create invoice: {}&quot;, user.getUsername(), invoiceDto);</span>
+<span class="nc" id="L115">        return invoiceService.createInvoice(invoiceDto, user);</span>
+    }
+
+    @Operation(
+            summary = &quot;Update an invoice&quot;,
+            description = &quot;Updates an existing invoice.&quot;
+    )
+    @PutMapping(&quot;/{id}&quot;)
+    public InvoiceDto updateInvoice(
+            @AuthenticationPrincipal User user,
+            @PathVariable UUID id,
+            @Validated(OnUpdate.class) @RequestBody InvoiceDto invoiceDto) {
+<span class="nc" id="L127">        log.info(&quot;User '{}' requested to update invoice with id: {}&quot;, user.getUsername(), id);</span>
+<span class="nc" id="L128">        return invoiceService.updateInvoice(id, invoiceDto, user);</span>
+    }
+
+    @Operation(
+            summary = &quot;Delete an invoice&quot;,
+            description = &quot;Deletes an existing invoice.&quot;
+    )
+    @DeleteMapping(&quot;/{id}&quot;)
+    public InvoiceDto deleteInvoice(
+            @AuthenticationPrincipal User user,
+            @PathVariable UUID id) {
+<span class="nc" id="L139">        log.info(&quot;User '{}' requested to delete invoice with id: {}&quot;, user.getUsername(), id);</span>
+<span class="nc" id="L140">        return invoiceService.deleteInvoice(id);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

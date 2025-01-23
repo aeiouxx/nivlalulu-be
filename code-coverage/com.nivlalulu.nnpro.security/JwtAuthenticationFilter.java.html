@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JwtAuthenticationFilter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">nivlalulu-app</a> &gt; <a href="index.source.html" class="el_package">com.nivlalulu.nnpro.security</a> &gt; <span class="el_source">JwtAuthenticationFilter.java</span></div><h1>JwtAuthenticationFilter.java</h1><pre class="source lang-java linenums">package com.nivlalulu.nnpro.security;
+
+import com.nivlalulu.nnpro.common.context.AccessTokenContextHolder;
+import com.nivlalulu.nnpro.security.service.ITokenBlacklistService;
+import com.nivlalulu.nnpro.service.IJwtTokenService;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.PathMatcher;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+
+@Component
+<span class="fc" id="L27">@RequiredArgsConstructor</span>
+<span class="fc" id="L28">@Slf4j</span>
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private final JwtTokenProvider jwtTokenProvider;
+    private final UserDetailsService userDetailsService;
+    private final ITokenBlacklistService tokenBlacklistService;
+<span class="fc" id="L33">    private final PathMatcher pathMatcher = new AntPathMatcher();</span>
+
+<span class="fc" id="L35">    private static final List&lt;String&gt; NO_AUTH_PATHS = List.of(</span>
+            &quot;/api/swagger-ui/**&quot;,
+            &quot;/api/v3/api-docs/**&quot;,
+            &quot;/api/public/**&quot;
+    );
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+<span class="fc" id="L46">        var uri = request.getRequestURI();</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        if (isExcluded(uri)) {</span>
+<span class="fc" id="L48">            filterChain.doFilter(request, response);</span>
+<span class="fc" id="L49">            return;</span>
+        }
+<span class="fc" id="L51">        log.debug(&quot;Secured URL: '{}', verifying token&quot;, uri);</span>
+<span class="fc" id="L52">        final String accessToken = jwtTokenProvider.extractAccessToken(request);</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        if (accessToken == null) {</span>
+<span class="fc" id="L54">            log.debug(&quot;Access token is missing, rejecting request&quot;);</span>
+<span class="fc" id="L55">            denyRequestInvalidToken(response);</span>
+<span class="fc" id="L56">            return;</span>
+        }
+        try {
+<span class="fc" id="L59">            var existingAuth = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">            if (existingAuth != null) {</span>
+<span class="nc" id="L61">                log.error(&quot;Security context set already, this should not happen!&quot;);</span>
+<span class="nc" id="L62">                return;</span>
+            }
+<span class="fc" id="L64">            var jti = jwtTokenProvider.extractJti(accessToken);</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">            if (tokenBlacklistService.isBlacklisted(jti)) {</span>
+<span class="fc" id="L66">                log.debug(&quot;Token is blacklisted, rejecting request&quot;);</span>
+<span class="fc" id="L67">                denyRequestInvalidToken(response);</span>
+<span class="fc" id="L68">                return;</span>
+            }
+<span class="fc" id="L70">            Optional&lt;UserDetails&gt; userDetailsOpt = fetchDetailsIfAccessTokenValid(accessToken);</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">            if (userDetailsOpt.isEmpty()) {</span>
+<span class="fc" id="L72">                log.debug(&quot;Invalid token, rejecting request&quot;);</span>
+<span class="fc" id="L73">                denyRequestInvalidToken(response);</span>
+<span class="fc" id="L74">                return;</span>
+            }
+<span class="fc" id="L76">            var details = userDetailsOpt.get();</span>
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">            if (isUserDetailsInvalidSetErrorResponse(details, response)) {</span>
+<span class="nc" id="L78">                return;</span>
+            }
+<span class="fc" id="L80">            setSecurityContext(request, accessToken, details);</span>
+<span class="fc" id="L81">            log.debug(&quot;Security context set, proceeding with request: {}&quot;, uri);</span>
+<span class="nc" id="L82">        } catch (Exception e) {</span>
+<span class="nc" id="L83">            log.error(&quot;Error occurred while setting security context&quot;, e);</span>
+<span class="nc" id="L84">            denyRequestInvalidToken(response);</span>
+<span class="nc" id="L85">            return;</span>
+<span class="fc" id="L86">        }</span>
+<span class="fc" id="L87">        filterChain.doFilter(request, response);</span>
+<span class="fc" id="L88">    }</span>
+
+    /**
+     *  Checks whether the user details object is valid for authentication, i.e. not expired / locked / disabled...
+     * @param details User details to check
+     * @param response If user details are incorrect, sets the response status and message
+     * @return true if request was denied, false if request should proceed
+     */
+    private boolean isUserDetailsInvalidSetErrorResponse(UserDetails details,
+                                                         HttpServletResponse response) throws IOException {
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        if (!details.isAccountNonExpired()) {</span>
+<span class="nc" id="L99">            log.debug(&quot;Account expired, rejecting request&quot;);</span>
+<span class="nc" id="L100">            denyRequestAccountExpired(response);</span>
+<span class="nc" id="L101">            return true;</span>
+        }
+
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">        if (!details.isAccountNonLocked()) {</span>
+<span class="nc" id="L105">            log.debug(&quot;Account locked, rejecting request&quot;);</span>
+<span class="nc" id="L106">            denyRequestAccountLocked(response);</span>
+<span class="nc" id="L107">            return true;</span>
+        }
+
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">        if (!details.isCredentialsNonExpired()) {</span>
+<span class="nc" id="L111">            log.debug(&quot;Credentials expired, rejecting request&quot;);</span>
+<span class="nc" id="L112">            denyRequestCredentialsExpired(response);</span>
+<span class="nc" id="L113">            return true;</span>
+        }
+
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">        if (!details.isEnabled()) {</span>
+<span class="nc" id="L117">            log.debug(&quot;Account disabled, rejecting request&quot;);</span>
+<span class="nc" id="L118">            denyRequestAccountDisabled(response);</span>
+<span class="nc" id="L119">            return true;</span>
+        }
+
+<span class="fc" id="L122">        return false;</span>
+    }
+
+    private void denyRequestInvalidToken(HttpServletResponse response) throws IOException {
+<span class="fc" id="L126">        setErrorResponse(</span>
+                response,
+                HttpServletResponse.SC_UNAUTHORIZED,
+                &quot;invalid_token&quot;,
+                &quot;The provided token is invalid&quot;
+        );
+<span class="fc" id="L132">    }</span>
+    private void denyRequestAccountExpired(HttpServletResponse response) throws IOException {
+<span class="nc" id="L134">        setErrorResponse(response,</span>
+                HttpServletResponse.SC_FORBIDDEN,
+                &quot;account_expired&quot;,
+                &quot;User account has expired.&quot;);
+<span class="nc" id="L138">    }</span>
+    private void denyRequestAccountLocked(HttpServletResponse response) throws IOException {
+<span class="nc" id="L140">        setErrorResponse(response,</span>
+                HttpServletResponse.SC_FORBIDDEN,
+                &quot;account_locked&quot;,
+                &quot;User account is locked.&quot;);
+<span class="nc" id="L144">    }</span>
+    private void denyRequestAccountDisabled(HttpServletResponse response) throws IOException {
+<span class="nc" id="L146">        setErrorResponse(response,</span>
+                HttpServletResponse.SC_FORBIDDEN,
+                &quot;account_disabled&quot;,
+                &quot;User account is disabled.&quot;);
+<span class="nc" id="L150">    }</span>
+    private void denyRequestCredentialsExpired(HttpServletResponse response) throws IOException {
+<span class="nc" id="L152">        setErrorResponse(response,</span>
+                HttpServletResponse.SC_FORBIDDEN,
+                &quot;credentials_expired&quot;,
+                &quot;User credentials have expired.&quot;);
+<span class="nc" id="L156">    }</span>
+
+    private void setErrorResponse(HttpServletResponse response,
+                                  int statusCode,
+                                  String errorCode,
+                                  String errorMessage) throws IOException {
+<span class="fc" id="L162">        response.setStatus(statusCode);</span>
+<span class="fc" id="L163">        response.setContentType(&quot;application/json&quot;);</span>
+<span class="fc" id="L164">        response.setCharacterEncoding(&quot;UTF-8&quot;);</span>
+
+<span class="fc" id="L166">        String responseBody = String.format(</span>
+            &quot;{\&quot;error\&quot;: \&quot;%s\&quot;, \&quot;message\&quot;: \&quot;%s\&quot;}&quot;,
+            errorCode,
+            errorMessage
+        );
+
+<span class="fc" id="L172">        try (final var writer = response.getWriter()) {</span>
+<span class="fc" id="L173">            writer.write(responseBody);</span>
+<span class="fc" id="L174">            writer.flush();</span>
+        }
+<span class="fc" id="L176">    }</span>
+
+    // todo: could use shouldNotFilter instead?
+    private boolean isExcluded(String uri) {
+<span class="fc" id="L180">        var isExcluded = NO_AUTH_PATHS.stream()</span>
+<span class="fc" id="L181">                .anyMatch(url -&gt; pathMatcher.match(url, uri));</span>
+<span class="fc" id="L182">        log.debug(&quot;Request URI: '{}', excluded: {}&quot;, uri, isExcluded);</span>
+<span class="fc" id="L183">        return isExcluded;</span>
+    }
+
+    private Optional&lt;UserDetails&gt; fetchDetailsIfAccessTokenValid(String token) {
+        UserDetails userDetails;
+        try {
+<span class="fc" id="L189">            var username = jwtTokenProvider.extractUsername(token, JwtTokenType.ACCESS);</span>
+<span class="fc" id="L190">            userDetails = userDetailsService.loadUserByUsername(username);</span>
+<span class="nc" id="L191">        } catch (Exception e) {</span>
+<span class="nc" id="L192">            log.error(&quot;Error retrieving user details: '{}'&quot;, e.getMessage());</span>
+<span class="nc" id="L193">            return Optional.empty();</span>
+<span class="fc" id="L194">        }</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">        return jwtTokenProvider.isTokenValid(token, JwtTokenType.ACCESS, userDetails)</span>
+<span class="fc" id="L196">                ? Optional.of(userDetails)</span>
+<span class="fc" id="L197">                : Optional.empty();</span>
+    }
+
+    private void setSecurityContext(HttpServletRequest request, String token, UserDetails details) {
+<span class="fc" id="L201">        UsernamePasswordAuthenticationToken authentication</span>
+<span class="fc" id="L202">                = new UsernamePasswordAuthenticationToken(details, null, details.getAuthorities());</span>
+<span class="fc" id="L203">        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));</span>
+<span class="fc" id="L204">        AccessTokenContextHolder.setAccessToken(token);</span>
+<span class="fc" id="L205">        SecurityContextHolder.getContext().setAuthentication(authentication);</span>
+<span class="fc" id="L206">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
