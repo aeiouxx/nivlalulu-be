@@ -1,5 +1,6 @@
 package com.nivlalulu.nnpro.service.impl;
 
+import com.nivlalulu.nnpro.common.context.AccessTokenContextHolder;
 import com.nivlalulu.nnpro.common.exceptions.ExpiredTokenException;
 import com.nivlalulu.nnpro.common.exceptions.InvalidTokenException;
 import com.nivlalulu.nnpro.common.exceptions.NotFoundException;
@@ -10,6 +11,7 @@ import com.nivlalulu.nnpro.repository.IRefreshTokenRepository;
 import com.nivlalulu.nnpro.repository.IUserRepository;
 import com.nivlalulu.nnpro.security.JwtTokenProvider;
 import com.nivlalulu.nnpro.security.JwtTokenType;
+import com.nivlalulu.nnpro.security.service.ITokenBlacklistService;
 import com.nivlalulu.nnpro.service.IJwtTokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,7 +20,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 @Service
@@ -28,6 +32,7 @@ public class JwtTokenService implements IJwtTokenService {
     private final IRefreshTokenRepository refreshTokenRepository;
     private final IUserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final ITokenBlacklistService tokenBlacklistService;
 
     @Override
     public TokenDto refresh(HttpServletRequest request) {
@@ -54,6 +59,29 @@ public class JwtTokenService implements IJwtTokenService {
     @Override
     @Transactional
     public void logout(User user, HttpServletRequest request, HttpServletResponse response) {
+        InvalidateRefreshTokenAndDeleteCookie(user, request, response);
+        InvalidateAccessTokenIfNeeded(user);
+    }
+
+    private void InvalidateAccessTokenIfNeeded(User user) {
+        var accessToken = AccessTokenContextHolder.getAccessToken();
+        if (accessToken != null) {
+            Instant expirationDate = jwtTokenProvider.extractExpiration(accessToken, JwtTokenType.ACCESS);
+            Instant now = Instant.now();
+            if (expirationDate.isAfter(now)) {
+                var jti = jwtTokenProvider.extractJti(accessToken);
+                Duration timeToLive = Duration.between(now, expirationDate);
+                log.debug("Blacklisting access token: {}, for {}", jti, timeToLive.toString());
+                tokenBlacklistService.blacklist(jti, timeToLive);
+            } else {
+                log.debug("Access token is already expired, no need to blacklist.");
+            }
+        } else {
+            log.warn("No access token found for user {}", user.getUsername());
+        }
+    }
+
+    private void InvalidateRefreshTokenAndDeleteCookie(User user, HttpServletRequest request, HttpServletResponse response) {
         var token = jwtTokenProvider.extractRefreshTokenFromCookie(request);
         if (token != null) {
             String tokenId = jwtTokenProvider.extractRefreshTokenId(token);
@@ -63,8 +91,6 @@ public class JwtTokenService implements IJwtTokenService {
             log.warn("No refresh token found for user {}", user.getUsername());
         }
         jwtTokenProvider.invalidateRefreshTokenCookie(response);
-
-        // could blacklist access token here via the token blacklist service
     }
 
     private record TokenData(String tokenId, User user) { }
