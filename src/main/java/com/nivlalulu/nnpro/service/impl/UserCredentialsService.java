@@ -31,11 +31,13 @@ public class UserCredentialsService implements IUserCredentialsService {
 
     @Override
     @Transactional
-    // Existing token is implicitly invalidated as we can't resend it anyway and have a OneToOne relationship
     public void createAndSendPasswordResetToken(String username) {
         var now = Instant.now();
         var user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException("User", "username", username));
+        passwordResetTokenRepository
+                .findByUser(user)
+                .ifPresent(passwordResetTokenRepository::delete);
         TokenData generated = generateToken(now);
         var token = new PasswordResetToken(generated.hash, generated.expiration, user);
         log.debug("Generated token '{}' for user '{}', email '{}'.",
