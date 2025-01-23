@@ -61,8 +61,8 @@ public class UserCredentialsIntegrationTest {
         registry.add("spring.datasource.password", postgres::getPassword);
 
         // Redis properties
-        registry.add("spring.redis.host", redis::getHost);
-        registry.add("spring.redis.port", () -> redis.getMappedPort(6379));
+        registry.add("spring.data.redis.host", redis::getHost);
+        registry.add("spring.data.redis.port", redis::getFirstMappedPort);
     }
 
     @BeforeEach

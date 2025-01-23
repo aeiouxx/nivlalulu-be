@@ -98,4 +98,12 @@ tasks.named('test') {
 	useJUnitPlatform()
 	finalizedBy jacocoTestReport
 	systemProperty 'spring.profiles.active', 'test'
+
+	testLogging {
+		events "passed", "skipped", "failed"
+		showExceptions true
+		showCauses true
+		showStackTraces true
+		showStandardStreams true
+	}
 }
