@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
@@ -47,11 +48,21 @@ public class UserCredentialsIntegrationTest {
             .withPassword("test_pass")
             .waitingFor(Wait.forListeningPort());
 
+    @Container
+    static GenericContainer<?> redis = new GenericContainer<>("redis:latest")
+            .withExposedPorts(6379)
+            .waitingFor(Wait.forListeningPort());
+
     @DynamicPropertySource
     static void postgresProps(DynamicPropertyRegistry registry) {
+        // PostgreSQL properties
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
+
+        // Redis properties
+        registry.add("spring.redis.host", redis::getHost);
+        registry.add("spring.redis.port", () -> redis.getMappedPort(6379));
     }
 
     @BeforeEach
@@ -74,7 +85,7 @@ public class UserCredentialsIntegrationTest {
         ResponseEntity<Void> response = restTemplate.postForEntity("/public/v1/password-reset/request",
                 dto,
                 Void.class);
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode(), "Actual response: " + response);
         Assertions.assertFalse(passwordResetTokenRepository.findAll().isEmpty());
     }
 

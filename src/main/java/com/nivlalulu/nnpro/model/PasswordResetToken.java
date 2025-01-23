@@ -26,7 +26,7 @@ public class PasswordResetToken {
     @Column(name = "expiry_date", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private Instant expiryDate;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.LAZY, optional = false, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
