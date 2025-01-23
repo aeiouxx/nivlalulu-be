@@ -77,18 +77,16 @@ public class UserCredentialsService implements IUserCredentialsService {
                     log.debug("Token does not exist");
                     return new UnauthorizedException("Invalid password reset token");
                 });
+        var user = passwordResetToken.getUser();
         if (passwordResetToken.isExpired(Instant.now())) {
-            log.debug("Token expired for user {}", passwordResetToken.getUser().getUsername());
+            log.debug("Token expired for user {}", user.getUsername());
             throw new UnauthorizedException("Invalid password reset token");
         }
-        log.debug("Password reset token found for user {}",
-                passwordResetToken.getUser().getUsername());
-        var user = passwordResetToken.getUser();
+        log.debug("Password reset token found for user {}", user.getUsername());
         var newPasswordHash = passwordEncoder.encode(newPassword);
         user.setPassword(newPasswordHash);
+        user.setPasswordResetToken(null);
         userRepository.save(user);
-        passwordResetTokenRepository.delete(passwordResetToken);
-        log.debug("Password reset for user {}", user.getUsername());
     }
 
     @Override
