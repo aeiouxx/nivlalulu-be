@@ -3,11 +3,13 @@ package com.nivlalulu.nnpro.service.impl;
 import com.nivlalulu.nnpro.common.email.IMailSender;
 import com.nivlalulu.nnpro.common.exceptions.ConflictException;
 import com.nivlalulu.nnpro.common.exceptions.NotFoundException;
+import com.nivlalulu.nnpro.common.exceptions.TooManyRequestsException;
 import com.nivlalulu.nnpro.common.exceptions.UnauthorizedException;
 import com.nivlalulu.nnpro.common.hashing.IHashProvider;
 import com.nivlalulu.nnpro.model.PasswordResetToken;
 import com.nivlalulu.nnpro.repository.IPasswordResetTokenRepository;
 import com.nivlalulu.nnpro.repository.IUserRepository;
+import com.nivlalulu.nnpro.security.service.IRateLimiter;
 import com.nivlalulu.nnpro.service.IUserCredentialsService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Base64;
 
@@ -29,23 +32,41 @@ public class UserCredentialsService implements IUserCredentialsService {
     private final IMailSender mailSender;
     private final IHashProvider hashProvider;
 
+    private final IRateLimiter rateLimiter;
+    private final String PASSWORD_RESET_RATE_LIMIT_KEY = "password";
+    private final int PASSWORD_RESET_RATE_LIMIT = 10;
+    private final Duration PASSWORD_RESET_RATE_WINDOW = Duration.ofMinutes(5);
+
+
     @Override
     @Transactional
     public void createAndSendPasswordResetToken(String username) {
+        String limitKey = PASSWORD_RESET_RATE_LIMIT_KEY + "-" + username;
         var now = Instant.now();
         var user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException("User", "username", username));
-        passwordResetTokenRepository
-                .findByUser(user)
-                .ifPresent(passwordResetTokenRepository::delete);
-        TokenData generated = generateToken(now);
-        var token = new PasswordResetToken(generated.hash, generated.expiration, user);
+        if (!rateLimiter.isAllowed(limitKey, PASSWORD_RESET_RATE_LIMIT, PASSWORD_RESET_RATE_WINDOW)) {
+            log.info("Rate limit exceeded for user {}", username);
+            throw new TooManyRequestsException("Too many password reset attempts. Please try again later.");
+        }
+        var data = generateToken(now);
+        var token = passwordResetTokenRepository.findByUser(user)
+                .map(existing -> {
+                    existing.setTokenHash(data.hash);
+                    existing.setExpiryDate(data.expiration);
+                    return existing;
+                })
+                .orElseGet(() -> new PasswordResetToken(data.hash, data.expiration, user));
         log.debug("Generated token '{}' for user '{}', email '{}'.",
-                generated.hash, user.getUsername(), user.getEmail());
+                token.getTokenHash(),
+                user.getUsername(),
+                user.getEmail());
         passwordResetTokenRepository.save(token);
         log.debug("Sending password reset email to user '{}', email '{}'", user.getUsername(), user.getEmail());
-        mailSender.sendResetCode(user.getEmail(), generated.token);
+        mailSender.sendResetCode(user.getEmail(), data.token);
     }
+
+
 
     @Override
     @Transactional
