@@ -1,5 +1,7 @@
 package com.nivlalulu.nnpro.security;
 
+import com.nivlalulu.nnpro.common.context.AccessTokenContextHolder;
+import com.nivlalulu.nnpro.security.service.ITokenBlacklistService;
 import com.nivlalulu.nnpro.service.IJwtTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -27,7 +29,7 @@ import java.util.Optional;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserDetailsService userDetailsService;
-    private final IJwtTokenService jwtTokenService;
+    private final ITokenBlacklistService tokenBlacklistService;
     private final PathMatcher pathMatcher = new AntPathMatcher();
 
     private static final List<String> NO_AUTH_PATHS = List.of(
@@ -47,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         log.debug("Secured URL: '{}', verifying token", uri);
-        final String accessToken = extractAccessToken(request);
+        final String accessToken = jwtTokenProvider.extractAccessToken(request);
         if (accessToken == null) {
             log.debug("Access token is missing, rejecting request");
             denyRequestInvalidToken(response);
@@ -59,7 +61,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 log.error("Security context set already, this should not happen!");
                 return;
             }
-
+            var jti = jwtTokenProvider.extractJti(accessToken);
+            if (tokenBlacklistService.isBlacklisted(jti)) {
+                log.debug("Token is blacklisted, rejecting request");
+                denyRequestInvalidToken(response);
+                return;
+            }
             Optional<UserDetails> userDetailsOpt = fetchDetailsIfAccessTokenValid(accessToken);
             if (userDetailsOpt.isEmpty()) {
                 log.debug("Invalid token, rejecting request");
@@ -176,14 +183,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return isExcluded;
     }
 
-    private String extractAccessToken(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader("Authorization");
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            return null;
-        }
-        return authorizationHeader.substring(7);
-    }
-
     private Optional<UserDetails> fetchDetailsIfAccessTokenValid(String token) {
         UserDetails userDetails;
         try {
@@ -202,6 +201,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         UsernamePasswordAuthenticationToken authentication
                 = new UsernamePasswordAuthenticationToken(details, null, details.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        AccessTokenContextHolder.setAccessToken(token);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }

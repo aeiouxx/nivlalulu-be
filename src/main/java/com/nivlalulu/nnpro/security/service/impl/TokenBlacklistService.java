@@ -1,5 +1,6 @@
 package com.nivlalulu.nnpro.security.service.impl;
 
+import com.nivlalulu.nnpro.security.JwtTokenProvider;
 import com.nivlalulu.nnpro.security.service.ITokenBlacklistService;
 import com.nivlalulu.nnpro.security.service.ITokenCacheService;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 
-@Deprecated
 @Service
 @RequiredArgsConstructor
 @Slf4j

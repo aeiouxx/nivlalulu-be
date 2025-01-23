@@ -45,7 +45,7 @@ public class AccountControllerV1 {
     public void logout(@AuthenticationPrincipal User user,
                        HttpServletRequest request,
                        HttpServletResponse response) {
-        log.debug("User {} logged out", user.getUsername());
+        log.debug("User {} logging out", user.getUsername());
         jwtTokenService.logout(user, request, response);
     }
 

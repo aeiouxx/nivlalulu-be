@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
-@Deprecated
 @Service
 @RequiredArgsConstructor
 public class RedisTokenCacheService implements ITokenCacheService {

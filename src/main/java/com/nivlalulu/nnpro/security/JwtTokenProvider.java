@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -31,6 +32,8 @@ public class JwtTokenProvider {
     private static final long REFRESH_EXPIRATION = 7L * 24L * 60L * 60L * 1000L;
     public static final Duration ACCESS_EXPIRATION_TIME = Duration.ofMillis(ACCESS_EXPIRATION);
     public static final Duration REFRESH_EXPIRATION_TIME = Duration.ofMillis(REFRESH_EXPIRATION);
+
+    private static final String CLAIM_ACCESS_JTI = "jti";
 
     private static final String CLAIM_AUTHORITIES = "authorities";
     private static final String CLAIM_REFRESH_ID = "rtid";
@@ -102,14 +105,31 @@ public class JwtTokenProvider {
                         .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toList())
                 );
+        claims.put(CLAIM_ACCESS_JTI, UUID.randomUUID().toString());
         return generateToken(
                 claims,
                 username,
                 jwtKeyProvider.getKey(JwtTokenType.ACCESS),
                 ACCESS_EXPIRATION);
     }
+
+    public String extractJti(String token) {
+        return extractSignedClaim(token, JwtTokenType.ACCESS, claims -> claims.get(CLAIM_ACCESS_JTI, String.class));
+    }
     // < Access
     // > Common
+    public String extractAccessToken(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            return null;
+        }
+        return authorizationHeader.substring(7);
+    }
+
+    public Instant extractExpiration(String token, JwtTokenType type) {
+        return extractSignedClaim(token, type, claims -> claims.getExpiration().toInstant());
+    }
+
     public boolean isTokenValid(String token, JwtTokenType type) {
         var user = extractUsername(token, type);
         var details = userDetailsService.loadUserByUsername(user);
