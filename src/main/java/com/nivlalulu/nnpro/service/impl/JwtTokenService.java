@@ -52,13 +52,19 @@ public class JwtTokenService implements IJwtTokenService {
     }
 
     @Override
+    @Transactional
     public void logout(User user, HttpServletRequest request, HttpServletResponse response) {
         var token = jwtTokenProvider.extractRefreshTokenFromCookie(request);
-        String tokenId = jwtTokenProvider.extractRefreshTokenId(token);
-        invalidateRefreshToken(tokenId);
+        if (token != null) {
+            String tokenId = jwtTokenProvider.extractRefreshTokenId(token);
+            invalidateRefreshToken(tokenId);
+        }
+        else {
+            log.warn("No refresh token found for user {}", user.getUsername());
+        }
         jwtTokenProvider.invalidateRefreshTokenCookie(response);
 
-        // could blacklist access token here
+        // could blacklist access token here via the token blacklist service
     }
 
     private record TokenData(String tokenId, User user) { }
